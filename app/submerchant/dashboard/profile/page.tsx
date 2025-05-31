@@ -24,7 +24,7 @@ import {
   IconMail,
   IconPhone,
   IconCalendar,
-  IconInfo
+  IconInfoCircle
 } from "@tabler/icons-react";
 
 export default function SubmerchantProfilePage() {
@@ -91,7 +91,7 @@ export default function SubmerchantProfilePage() {
 
       {/* Info Alert */}
       <Alert>
-        <IconInfo className="h-4 w-4" />
+        <IconInfoCircle className="h-4 w-4" />
         <AlertDescription>
           As a submerchant, your business information is managed by your parent merchant. Only password changes are allowed.
         </AlertDescription>

@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { IconInfo, IconBuilding } from "@tabler/icons-react";
+import { IconInfoCircle, IconBuilding } from "@tabler/icons-react";
 
 // Mock terminals data for submerchant
 const mockTerminals = [
@@ -104,7 +104,7 @@ export default function SubmerchantTerminalsPage() {
 
       {/* Info Alert */}
       <Alert>
-        <IconInfo className="h-4 w-4" />
+        <IconInfoCircle className="h-4 w-4" />
         <AlertDescription>
           Your terminal devices are assigned and managed by your parent merchant. For terminal support or issues, contact your parent merchant directly.
         </AlertDescription>
