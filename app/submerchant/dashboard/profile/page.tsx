@@ -47,8 +47,6 @@ export default function SubmerchantProfilePage() {
       name: "BluWave Limited",
       id: "MERCHANT-001"
     },
-    dailyLimit: "₦50,000",
-    monthlyLimit: "₦1,000,000",
     commissionRate: "2.5%"
   };
 
@@ -208,15 +206,15 @@ export default function SubmerchantProfilePage() {
           </CardContent>
         </Card>
 
-        {/* Account Limits & Security */}
+        {/* Account Security */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <IconShield className="h-5 w-5" />
                 <div>
-                  <CardTitle>Security & Limits</CardTitle>
-                  <CardDescription>Account limits and security settings</CardDescription>
+                  <CardTitle>Account Security</CardTitle>
+                  <CardDescription>Manage your password and security settings</CardDescription>
                 </div>
               </div>
               <Dialog open={changePasswordOpen} onOpenChange={setChangePasswordOpen}>
@@ -286,19 +284,13 @@ export default function SubmerchantProfilePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-4">
-              <div>
-                <Label className="text-sm font-medium text-muted-foreground">Daily Transaction Limit</Label>
-                <p className="text-lg font-semibold">{profileData.dailyLimit}</p>
-              </div>
-              
-              <div>
-                <Label className="text-sm font-medium text-muted-foreground">Monthly Transaction Limit</Label>
-                <p className="text-lg font-semibold">{profileData.monthlyLimit}</p>
-              </div>
-              
-              <div className="pt-2">
-                <p className="text-sm text-muted-foreground">
-                  Transaction limits are set by your parent merchant. Contact them to request changes.
+              <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">Security Information</h4>
+                <p className="text-sm text-blue-800 dark:text-blue-200 mb-2">
+                  Your account security is managed through your password. Transaction limits and other security settings are controlled by your parent merchant.
+                </p>
+                <p className="text-sm text-blue-800 dark:text-blue-200">
+                  For questions about transaction limits or account restrictions, please contact your parent merchant: <strong>BluWave Limited</strong>
                 </p>
               </div>
             </div>

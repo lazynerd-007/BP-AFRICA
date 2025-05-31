@@ -53,7 +53,7 @@ const dailyTransactionsData = [
 const recentTransactions = [
   { 
     id: 'TXN-67890', 
-    amount: '₦25,000.00', 
+    amount: '₵25,000.00', 
     customer: 'John Doe',
     date: '2023-10-15T14:30:00',
     status: 'Successful',
@@ -61,7 +61,7 @@ const recentTransactions = [
   },
   { 
     id: 'TXN-67891', 
-    amount: '₦45,000.00', 
+    amount: '₵45,000.00', 
     customer: 'Jane Smith',
     date: '2023-10-15T13:15:00',
     status: 'Successful',
@@ -69,7 +69,7 @@ const recentTransactions = [
   },
   { 
     id: 'TXN-67892', 
-    amount: '₦12,500.00', 
+    amount: '₵12,500.00', 
     customer: 'Mike Johnson',
     date: '2023-10-15T11:45:00',
     status: 'Pending',
@@ -77,7 +77,7 @@ const recentTransactions = [
   },
   { 
     id: 'TXN-67893', 
-    amount: '₦38,000.00', 
+    amount: '₵38,000.00', 
     customer: 'Sarah Wilson',
     date: '2023-10-15T10:20:00',
     status: 'Successful',
@@ -85,7 +85,7 @@ const recentTransactions = [
   },
   { 
     id: 'TXN-67894', 
-    amount: '₦15,750.00', 
+    amount: '₵15,750.00', 
     customer: 'David Brown',
     date: '2023-10-15T09:30:00',
     status: 'Failed',
@@ -137,7 +137,7 @@ export default function SubmerchantDashboardPage() {
             <IconCash className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₦8,450,000.00</div>
+            <div className="text-2xl font-bold">₵8,450,000.00</div>
             <div className="flex items-center text-xs text-green-500 mt-1">
               <IconArrowUpRight className="h-3 w-3 mr-1" />
               <span>+15.2% from last period</span>
@@ -205,7 +205,7 @@ export default function SubmerchantDashboardPage() {
                   <XAxis dataKey="name" />
                   <YAxis />
                   <Tooltip formatter={(value, name) => [
-                    name === 'revenue' ? `₦${value.toLocaleString()}` : value,
+                    name === 'revenue' ? `₵${value.toLocaleString()}` : value,
                     name === 'revenue' ? 'Revenue' : 'Transactions'
                   ]} />
                   <Legend />
@@ -238,7 +238,7 @@ export default function SubmerchantDashboardPage() {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
                   <YAxis />
-                  <Tooltip formatter={(value) => `₦${value.toLocaleString()}`} />
+                  <Tooltip formatter={(value) => `₵${value.toLocaleString()}`} />
                   <Legend />
                   <Bar 
                     dataKey="amount" 

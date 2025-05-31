@@ -7,7 +7,6 @@ import {
   IconHome, 
   IconTransfer,
   IconCreditCard, 
-  IconReportMoney,
   IconUser,
   IconWallet,
   IconBuilding,
@@ -74,11 +73,6 @@ export default function SubmerchantDashboardLayout({ children }: { children: Rea
       href: "/submerchant/dashboard/terminals",
       icon: <IconDevices className="w-5 h-5" />,
       label: "Terminals",
-    },
-    {
-      href: "/submerchant/dashboard/reports",
-      icon: <IconReportMoney className="w-5 h-5" />,
-      label: "Reports",
     },
     {
       href: "/submerchant/dashboard/parent-merchant",
