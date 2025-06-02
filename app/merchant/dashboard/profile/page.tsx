@@ -21,7 +21,6 @@ import {
 } from "@tabler/icons-react";
 
 export default function ProfilePage() {
-  const [isEditing, setIsEditing] = useState(false);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
   const [isEditingTwoFactor, setIsEditingTwoFactor] = useState(false);
   
