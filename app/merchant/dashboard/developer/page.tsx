@@ -44,6 +44,7 @@ import {
   IconBook,
   IconExternalLink,
 } from "@tabler/icons-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Mock API Keys
 const mockApiKeys = [
@@ -93,6 +94,7 @@ const mockWebhooks = [
 export default function DeveloperPage() {
   const [showApiKey, setShowApiKey] = useState<Record<string, boolean>>({});
   const [newKeyName, setNewKeyName] = useState("");
+  const [newKeyEnvironment, setNewKeyEnvironment] = useState("");
   const [newIpAddress, setNewIpAddress] = useState("");
   const [newIpDescription, setNewIpDescription] = useState("");
   const [newWebhookUrl, setNewWebhookUrl] = useState("");
@@ -228,6 +230,19 @@ export default function DeveloperPage() {
                           value={newKeyName}
                           onChange={(e) => setNewKeyName(e.target.value)}
                         />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="key-environment">Environment</Label>
+                        <Select value={newKeyEnvironment} onValueChange={setNewKeyEnvironment}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select environment" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="production">Production</SelectItem>
+                            <SelectItem value="sandbox">Sandbox</SelectItem>
+                            <SelectItem value="development">Development</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                     <DialogFooter>

@@ -11,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -23,6 +22,8 @@ import {
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
+  const [isEditingTwoFactor, setIsEditingTwoFactor] = useState(false);
   
   // Mock user data for display only
   const userData = {
@@ -44,8 +45,22 @@ export default function ProfilePage() {
     establishedDate: "2020-01-15",
   };
 
-  const handleEditToggle = () => {
-    setIsEditing(!isEditing);
+  const handlePasswordEditToggle = () => {
+    setIsEditingPassword(!isEditingPassword);
+  };
+
+  const handleTwoFactorEditToggle = () => {
+    setIsEditingTwoFactor(!isEditingTwoFactor);
+  };
+
+  const handlePasswordSave = () => {
+    // Handle password save logic here
+    setIsEditingPassword(false);
+  };
+
+  const handleTwoFactorSave = () => {
+    // Handle two-factor auth logic here
+    setIsEditingTwoFactor(false);
   };
 
   return (
@@ -69,23 +84,6 @@ export default function ProfilePage() {
             <p className="text-sm text-muted-foreground">{userData.email}</p>
           </div>
         </div>
-        <Button 
-          variant={isEditing ? "default" : "outline"} 
-          onClick={handleEditToggle}
-          className="flex items-center gap-2"
-        >
-          {isEditing ? (
-            <>
-              <IconDeviceFloppy className="h-4 w-4" />
-              Save Changes
-            </>
-          ) : (
-            <>
-              <IconEdit className="h-4 w-4" />
-              Change Password
-            </>
-          )}
-        </Button>
       </div>
 
       {/* Business Information - Read Only */}
@@ -183,69 +181,128 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
 
-      {/* Security Settings - Password Change Only */}
+      {/* Password Change Section */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <IconShield className="h-5 w-5" />
-            Security Settings
-          </CardTitle>
-          <CardDescription>
-            Change your account password
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <IconShield className="h-5 w-5" />
+                Change Password
+              </CardTitle>
+              <CardDescription>
+                Update your account password
+              </CardDescription>
+            </div>
+            <Button 
+              variant={isEditingPassword ? "default" : "outline"} 
+              onClick={isEditingPassword ? handlePasswordSave : handlePasswordEditToggle}
+              className="flex items-center gap-2"
+            >
+              {isEditingPassword ? (
+                <>
+                  <IconDeviceFloppy className="h-4 w-4" />
+                  Save Password
+                </>
+              ) : (
+                <>
+                  <IconEdit className="h-4 w-4" />
+                  Change Password
+                </>
+              )}
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="current-password">Current Password</Label>
-            <Input id="current-password" type="password" disabled={!isEditing} />
+            <Input id="current-password" type="password" disabled={!isEditingPassword} />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="new-password">New Password</Label>
-              <Input id="new-password" type="password" disabled={!isEditing} />
+              <Input id="new-password" type="password" disabled={!isEditingPassword} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirm-password">Confirm New Password</Label>
-              <Input id="confirm-password" type="password" disabled={!isEditing} />
+              <Input id="confirm-password" type="password" disabled={!isEditingPassword} />
             </div>
           </div>
+        </CardContent>
+      </Card>
 
-          <Separator className="my-4" />
-          
+      {/* Two-Factor Authentication Section */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <IconShield className="h-5 w-5" />
+                Two-Factor Authentication
+              </CardTitle>
+              <CardDescription>
+                Add an extra layer of security to your account
+              </CardDescription>
+            </div>
+            <Button 
+              variant={isEditingTwoFactor ? "default" : "outline"} 
+              onClick={isEditingTwoFactor ? handleTwoFactorSave : handleTwoFactorEditToggle}
+              className="flex items-center gap-2"
+            >
+              {isEditingTwoFactor ? (
+                <>
+                  <IconDeviceFloppy className="h-4 w-4" />
+                  Save Settings
+                </>
+              ) : (
+                <>
+                  <IconEdit className="h-4 w-4" />
+                  Configure 2FA
+                </>
+              )}
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
           <div>
-            <h3 className="text-lg font-medium mb-2">Two-Factor Authentication</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Add an extra layer of security to your account by enabling two-factor authentication.
+              Two-factor authentication adds an extra layer of security to your account by requiring a verification code in addition to your password.
             </p>
-            <Button variant={isEditing ? "default" : "outline"} disabled={!isEditing}>
+            <Button variant={isEditingTwoFactor ? "default" : "outline"} disabled={!isEditingTwoFactor}>
               Enable Two-Factor Authentication
             </Button>
           </div>
+        </CardContent>
+      </Card>
 
-          <Separator className="my-4" />
-          
-          <div>
-            <h3 className="text-lg font-medium mb-2">Login Sessions</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Manage your active login sessions across devices.
-            </p>
-            <div className="rounded-md border p-4 mb-3">
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="font-medium">Current Session</p>
-                  <p className="text-sm text-muted-foreground">Lagos, Nigeria • Chrome on Windows</p>
-                  <p className="text-xs text-muted-foreground">Started: Today at 09:45 AM</p>
-                </div>
-                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                  Active
-                </Badge>
+      {/* Login Sessions Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <IconShield className="h-5 w-5" />
+            Login Sessions
+          </CardTitle>
+          <CardDescription>
+            Manage your active login sessions across devices
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="rounded-md border p-4 mb-3">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="font-medium">Current Session</p>
+                <p className="text-sm text-muted-foreground">Lagos, Nigeria • Chrome on Windows</p>
+                <p className="text-xs text-muted-foreground">Started: Today at 09:45 AM</p>
               </div>
+              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                Active
+              </Badge>
             </div>
-            <Button variant="outline" className="w-full">
-              Log Out All Other Devices
-            </Button>
           </div>
+          <Button variant="outline" className="w-full">
+            Log Out All Other Devices
+          </Button>
         </CardContent>
       </Card>
     </div>

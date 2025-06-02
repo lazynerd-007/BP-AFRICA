@@ -33,6 +33,7 @@ import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { IconSearch, IconDownload, IconFilter, IconCalendar, IconEye, IconChevronLeft, IconChevronRight, IconChevronsLeft, IconChevronsRight } from "@tabler/icons-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Mock transactions data
 const mockTransactions = [
@@ -167,6 +168,7 @@ export default function MerchantTransactionsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
+  const [timeframeFilter, setTimeframeFilter] = useState("30days");
   
   // Filter state
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
@@ -284,6 +286,27 @@ export default function MerchantTransactionsPage() {
         </p>
       </div>
       
+      {/* Timeframe Filter */}
+      <div className="flex items-center gap-4">
+        <Label htmlFor="timeframe-filter" className="text-sm font-medium">
+          Time Period:
+        </Label>
+        <Select value={timeframeFilter} onValueChange={setTimeframeFilter}>
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Select timeframe" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="today">Today</SelectItem>
+            <SelectItem value="7days">Last 7 days</SelectItem>
+            <SelectItem value="30days">Last 30 days</SelectItem>
+            <SelectItem value="90days">Last 90 days</SelectItem>
+            <SelectItem value="6months">Last 6 months</SelectItem>
+            <SelectItem value="1year">Last year</SelectItem>
+            <SelectItem value="custom">Custom range</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-2">
@@ -292,7 +315,12 @@ export default function MerchantTransactionsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground">
-              Last 30 days
+              {timeframeFilter === "today" ? "Today" : 
+               timeframeFilter === "7days" ? "Last 7 days" :
+               timeframeFilter === "30days" ? "Last 30 days" :
+               timeframeFilter === "90days" ? "Last 90 days" :
+               timeframeFilter === "6months" ? "Last 6 months" :
+               timeframeFilter === "1year" ? "Last year" : "Selected period"}
             </p>
           </CardContent>
         </Card>
@@ -304,7 +332,12 @@ export default function MerchantTransactionsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground">
-              Last 30 days
+              {timeframeFilter === "today" ? "Today" : 
+               timeframeFilter === "7days" ? "Last 7 days" :
+               timeframeFilter === "30days" ? "Last 30 days" :
+               timeframeFilter === "90days" ? "Last 90 days" :
+               timeframeFilter === "6months" ? "Last 6 months" :
+               timeframeFilter === "1year" ? "Last year" : "Selected period"}
             </p>
           </CardContent>
         </Card>
@@ -316,7 +349,12 @@ export default function MerchantTransactionsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground">
-              Last 30 days
+              {timeframeFilter === "today" ? "Today" : 
+               timeframeFilter === "7days" ? "Last 7 days" :
+               timeframeFilter === "30days" ? "Last 30 days" :
+               timeframeFilter === "90days" ? "Last 90 days" :
+               timeframeFilter === "6months" ? "Last 6 months" :
+               timeframeFilter === "1year" ? "Last year" : "Selected period"}
             </p>
           </CardContent>
         </Card>

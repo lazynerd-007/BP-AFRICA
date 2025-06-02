@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   IconWallet,
-  IconArrowsRightLeft,
   IconSend,
   IconDownload,
   IconPlus,
@@ -42,7 +41,6 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
-import Link from "next/link";
 
 // Type definitions
 interface ExternalCustomer {
@@ -830,13 +828,6 @@ export default function MerchantWalletPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Link href="/merchant/dashboard/transactions">
-                <Button variant="outline" className="w-full justify-start">
-                  <IconArrowsRightLeft className="h-4 w-4 mr-2" />
-                  Transaction History
-                </Button>
-              </Link>
-              
               {/* Statement Download Dialog */}
               <Dialog open={statementOpen} onOpenChange={setStatementOpen}>
                 <DialogTrigger asChild>
@@ -926,13 +917,6 @@ export default function MerchantWalletPage() {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
-              
-              <Link href="/merchant/dashboard/transfers">
-                <Button variant="outline" className="w-full justify-start">
-                  <IconHistory className="h-4 w-4 mr-2" />
-                  Transfer History
-                </Button>
-              </Link>
             </div>
           </CardContent>
         </Card>
