@@ -29,55 +29,66 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { IconQrcode, IconReceipt, IconPlus, IconCopy, IconDownload, IconEye } from "@tabler/icons-react";
+import { IconQrcode, IconReceipt, IconPlus, IconCopy, IconDownload, IconEye, IconTrash } from "@tabler/icons-react";
+
+// Type definitions
+interface PaymentLink {
+  id: string;
+  title: string;
+  amount: number;
+  currency: string;
+  description: string;
+  type: "one-time" | "recurring";
+  url: string;
+  created: string;
+}
+
+interface QrCode {
+  id: string;
+  title: string;
+  currency: string;
+  description: string;
+  qrCodeUrl: string;
+  created: string;
+}
 
 export default function MerchantPaymentsPage() {
   // State for modals
   const [paymentLinkModalOpen, setPaymentLinkModalOpen] = useState(false);
   const [qrCodeModalOpen, setQrCodeModalOpen] = useState(false);
+  const [viewLinkModalOpen, setViewLinkModalOpen] = useState(false);
+  const [selectedLink, setSelectedLink] = useState<PaymentLink | null>(null);
   
-  // State for existing items (simulate existing items)
-  const [hasPaymentLink, setHasPaymentLink] = useState(false);
-  const [hasQrCode, setHasQrCode] = useState(false);
+  // State for multiple items
+  const [paymentLinks, setPaymentLinks] = useState<PaymentLink[]>([]);
+  const [qrCodes, setQrCodes] = useState<QrCode[]>([]);
   
   // Form states for payment link
   const [linkTitle, setLinkTitle] = useState("");
   const [linkAmount, setLinkAmount] = useState("");
   const [linkDescription, setLinkDescription] = useState("");
-  const [linkType, setLinkType] = useState("one-time");
+  const [linkType, setLinkType] = useState<"one-time" | "recurring">("one-time");
   
   // Form states for QR code
   const [qrTitle, setQrTitle] = useState("");
-  const [qrAmount, setQrAmount] = useState("");
   const [qrDescription, setQrDescription] = useState("");
-  
-  // Mock data for existing payment link and QR code
-  const existingPaymentLink = {
-    id: "PLK-001",
-    title: "Product Payment",
-    amount: 150.00,
-    currency: "GHS",
-    description: "Payment for premium product",
-    type: "one-time",
-    url: "https://pay.bluepay.com/link/PLK-001",
-    created: "2023-11-15T10:30:00"
-  };
-  
-  const existingQrCode = {
-    id: "QRC-001",
-    title: "Store Counter Payment",
-    amount: 0, // Dynamic amount
-    currency: "GHS",
-    description: "Scan to pay at our store",
-    qrCodeUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
-    created: "2023-11-15T09:15:00"
-  };
   
   // Handle form submissions
   const handleCreatePaymentLink = () => {
-    if (!linkTitle || !linkAmount) return;
+    if (!linkTitle || (linkType === "one-time" && !linkAmount)) return;
     
-    setHasPaymentLink(true);
+    const newLink: PaymentLink = {
+      id: `PLK-${Date.now()}`,
+      title: linkTitle,
+      amount: linkType === "one-time" ? parseFloat(linkAmount) : 0,
+      currency: "GHS",
+      description: linkDescription,
+      type: linkType,
+      url: `https://pay.bluepay.com/link/PLK-${Date.now()}`,
+      created: new Date().toISOString()
+    };
+
+    setPaymentLinks([...paymentLinks, newLink]);
     setPaymentLinkModalOpen(false);
     
     // Reset form
@@ -90,13 +101,34 @@ export default function MerchantPaymentsPage() {
   const handleCreateQrCode = () => {
     if (!qrTitle) return;
     
-    setHasQrCode(true);
+    const newQrCode: QrCode = {
+      id: `QRC-${Date.now()}`,
+      title: qrTitle,
+      currency: "GHS",
+      description: qrDescription,
+      qrCodeUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
+      created: new Date().toISOString()
+    };
+
+    setQrCodes([...qrCodes, newQrCode]);
     setQrCodeModalOpen(false);
     
     // Reset form
     setQrTitle("");
-    setQrAmount("");
     setQrDescription("");
+  };
+
+  const handleDeletePaymentLink = (id: string) => {
+    setPaymentLinks(paymentLinks.filter(link => link.id !== id));
+  };
+
+  const handleDeleteQrCode = (id: string) => {
+    setQrCodes(qrCodes.filter(qr => qr.id !== id));
+  };
+
+  const handleViewLink = (link: PaymentLink) => {
+    setSelectedLink(link);
+    setViewLinkModalOpen(true);
   };
   
   const copyToClipboard = (text: string) => {
@@ -127,33 +159,46 @@ export default function MerchantPaymentsPage() {
         <TabsContent value="payment-links" className="space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-semibold">Your Payment Links</h2>
-            {!hasPaymentLink && (
-              <Dialog open={paymentLinkModalOpen} onOpenChange={setPaymentLinkModalOpen}>
-                <DialogTrigger asChild>
-                  <Button size="sm">
-                    <IconPlus className="h-4 w-4 mr-2" />
-                    Create New Link
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[500px]">
-                  <DialogHeader>
-                    <DialogTitle>Create Payment Link</DialogTitle>
-                    <DialogDescription>
-                      Create a payment link to share with your customers for payments.
-                    </DialogDescription>
-                  </DialogHeader>
+            <Dialog open={paymentLinkModalOpen} onOpenChange={setPaymentLinkModalOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm">
+                  <IconPlus className="h-4 w-4 mr-2" />
+                  Create New Link
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                  <DialogTitle>Create Payment Link</DialogTitle>
+                  <DialogDescription>
+                    Create a payment link to share with your customers for payments.
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="link-title">Title</Label>
+                    <Input
+                      id="link-title"
+                      placeholder="Enter payment link title"
+                      value={linkTitle}
+                      onChange={(e) => setLinkTitle(e.target.value)}
+                    />
+                  </div>
                   
-                  <div className="grid gap-4 py-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="link-title">Title</Label>
-                      <Input
-                        id="link-title"
-                        placeholder="Enter payment link title"
-                        value={linkTitle}
-                        onChange={(e) => setLinkTitle(e.target.value)}
-                      />
-                    </div>
-                    
+                  <div className="grid gap-2">
+                    <Label htmlFor="link-type">Payment Type</Label>
+                    <Select value={linkType} onValueChange={setLinkType}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select payment type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="one-time">One-time Payment</SelectItem>
+                        <SelectItem value="recurring">Recurring Payment</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  {linkType === "one-time" && (
                     <div className="grid gap-2">
                       <Label htmlFor="link-amount">Amount (GHS)</Label>
                       <Input
@@ -164,90 +209,99 @@ export default function MerchantPaymentsPage() {
                         onChange={(e) => setLinkAmount(e.target.value)}
                       />
                     </div>
-                    
-                    <div className="grid gap-2">
-                      <Label htmlFor="link-type">Payment Type</Label>
-                      <Select value={linkType} onValueChange={setLinkType}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select payment type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="one-time">One-time Payment</SelectItem>
-                          <SelectItem value="recurring">Recurring Payment</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="grid gap-2">
-                      <Label htmlFor="link-description">Description (Optional)</Label>
-                      <Textarea
-                        id="link-description"
-                        placeholder="Enter payment description"
-                        value={linkDescription}
-                        onChange={(e) => setLinkDescription(e.target.value)}
-                      />
-                    </div>
-                  </div>
+                  )}
                   
-                  <DialogFooter>
-                    <Button variant="outline" onClick={() => setPaymentLinkModalOpen(false)}>
-                      Cancel
-                    </Button>
-                    <Button onClick={handleCreatePaymentLink} disabled={!linkTitle || !linkAmount}>
-                      Create Link
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            )}
+                  <div className="grid gap-2">
+                    <Label htmlFor="link-description">Description (Optional)</Label>
+                    <Textarea
+                      id="link-description"
+                      placeholder="Enter payment description"
+                      value={linkDescription}
+                      onChange={(e) => setLinkDescription(e.target.value)}
+                    />
+                  </div>
+                </div>
+                
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setPaymentLinkModalOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleCreatePaymentLink} disabled={!linkTitle || (linkType === "one-time" && !linkAmount)}>
+                    Create Link
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
           
-          {hasPaymentLink ? (
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>{existingPaymentLink.title}</CardTitle>
-                    <CardDescription>
-                      Created on {new Date(existingPaymentLink.created).toLocaleDateString()}
-                    </CardDescription>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold">
-                      {existingPaymentLink.currency} {existingPaymentLink.amount.toFixed(2)}
+          {paymentLinks.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {paymentLinks.map((link) => (
+                <Card key={link.id}>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="text-lg">{link.title}</CardTitle>
+                        <CardDescription>
+                          Created on {new Date(link.created).toLocaleDateString()}
+                        </CardDescription>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xl font-bold">
+                          {link.type === "one-time" ? 
+                            `${link.currency} ${link.amount.toFixed(2)}` : 
+                            'Recurring'
+                          }
+                        </div>
+                        <div className="text-sm text-muted-foreground capitalize">
+                          {link.type}
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-sm text-muted-foreground capitalize">
-                      {existingPaymentLink.type}
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">
+                        {link.description || "No description"}
+                      </p>
+                      
+                      <div className="flex items-center gap-2">
+                        <Input
+                          value={link.url}
+                          readOnly
+                          className="flex-1 text-xs"
+                        />
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => copyToClipboard(link.url)}
+                          title="Copy Link"
+                        >
+                          <IconCopy className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="icon"
+                          onClick={() => handleViewLink(link)}
+                          title="View Details"
+                        >
+                          <IconEye className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="icon"
+                          onClick={() => handleDeletePaymentLink(link.id)}
+                          className="text-red-500 hover:text-red-600"
+                          title="Delete Link"
+                        >
+                          <IconTrash className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground">
-                    {existingPaymentLink.description}
-                  </p>
-                  
-                  <div className="flex items-center gap-2">
-                    <Input
-                      value={existingPaymentLink.url}
-                      readOnly
-                      className="flex-1"
-                    />
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => copyToClipboard(existingPaymentLink.url)}
-                    >
-                      <IconCopy className="h-4 w-4" />
-                    </Button>
-                    <Button variant="outline" size="icon">
-                      <IconEye className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           ) : (
             <Card>
               <CardHeader className="pb-2">
@@ -268,119 +322,108 @@ export default function MerchantPaymentsPage() {
         <TabsContent value="qr-codes" className="space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-semibold">Your QR Codes</h2>
-            {!hasQrCode && (
-              <Dialog open={qrCodeModalOpen} onOpenChange={setQrCodeModalOpen}>
-                <DialogTrigger asChild>
-                  <Button size="sm">
-                    <IconPlus className="h-4 w-4 mr-2" />
+            <Dialog open={qrCodeModalOpen} onOpenChange={setQrCodeModalOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm">
+                  <IconPlus className="h-4 w-4 mr-2" />
+                  Generate QR Code
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                  <DialogTitle>Generate QR Code</DialogTitle>
+                  <DialogDescription>
+                    Generate a QR code for in-person payments at your store.
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="qr-title">Title</Label>
+                    <Input
+                      id="qr-title"
+                      placeholder="Enter QR code title"
+                      value={qrTitle}
+                      onChange={(e) => setQrTitle(e.target.value)}
+                    />
+                  </div>
+                  
+                  <div className="grid gap-2">
+                    <Label htmlFor="qr-description">Description (Optional)</Label>
+                    <Textarea
+                      id="qr-description"
+                      placeholder="Enter QR code description"
+                      value={qrDescription}
+                      onChange={(e) => setQrDescription(e.target.value)}
+                    />
+                  </div>
+                </div>
+                
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setQrCodeModalOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleCreateQrCode} disabled={!qrTitle}>
                     Generate QR Code
                   </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[500px]">
-                  <DialogHeader>
-                    <DialogTitle>Generate QR Code</DialogTitle>
-                    <DialogDescription>
-                      Generate a QR code for in-person payments at your store.
-                    </DialogDescription>
-                  </DialogHeader>
-                  
-                  <div className="grid gap-4 py-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="qr-title">Title</Label>
-                      <Input
-                        id="qr-title"
-                        placeholder="Enter QR code title"
-                        value={qrTitle}
-                        onChange={(e) => setQrTitle(e.target.value)}
-                      />
-                    </div>
-                    
-                    <div className="grid gap-2">
-                      <Label htmlFor="qr-amount">Fixed Amount (GHS) - Optional</Label>
-                      <Input
-                        id="qr-amount"
-                        type="number"
-                        placeholder="Leave empty for dynamic amount"
-                        value={qrAmount}
-                        onChange={(e) => setQrAmount(e.target.value)}
-                      />
-                      <p className="text-xs text-muted-foreground">
-                        If left empty, customers can enter any amount when scanning
-                      </p>
-                    </div>
-                    
-                    <div className="grid gap-2">
-                      <Label htmlFor="qr-description">Description (Optional)</Label>
-                      <Textarea
-                        id="qr-description"
-                        placeholder="Enter QR code description"
-                        value={qrDescription}
-                        onChange={(e) => setQrDescription(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  
-                  <DialogFooter>
-                    <Button variant="outline" onClick={() => setQrCodeModalOpen(false)}>
-                      Cancel
-                    </Button>
-                    <Button onClick={handleCreateQrCode} disabled={!qrTitle}>
-                      Generate QR Code
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            )}
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
           
-          {hasQrCode ? (
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>{existingQrCode.title}</CardTitle>
-                    <CardDescription>
-                      Created on {new Date(existingQrCode.created).toLocaleDateString()}
-                    </CardDescription>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-lg font-semibold">
-                      {existingQrCode.amount > 0 ? 
-                        `${existingQrCode.currency} ${existingQrCode.amount.toFixed(2)}` : 
-                        'Dynamic Amount'
-                      }
-                    </div>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground">
-                    {existingQrCode.description}
-                  </p>
-                  
-                  <div className="flex items-center justify-center p-6 bg-white border-2 border-dashed border-muted rounded-lg">
-                    <div className="text-center space-y-2">
-                      <div className="w-32 h-32 bg-muted/20 border-2 border-muted rounded-lg flex items-center justify-center">
-                        <IconQrcode className="h-16 w-16 text-muted-foreground" />
+          {qrCodes.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {qrCodes.map((qr) => (
+                <Card key={qr.id}>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="text-lg">{qr.title}</CardTitle>
+                        <CardDescription>
+                          Created on {new Date(qr.created).toLocaleDateString()}
+                        </CardDescription>
                       </div>
-                      <p className="text-sm text-muted-foreground">QR Code Preview</p>
+                      <div className="text-right">
+                        <div className="text-lg font-semibold">
+                          Dynamic Amount
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="flex gap-2">
-                    <Button variant="outline" className="flex-1">
-                      <IconDownload className="h-4 w-4 mr-2" />
-                      Download
-                    </Button>
-                    <Button variant="outline" className="flex-1">
-                      <IconCopy className="h-4 w-4 mr-2" />
-                      Copy Link
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">
+                        {qr.description || "No description"}
+                      </p>
+                      
+                      <div className="flex items-center justify-center p-6 bg-white border-2 border-dashed border-muted rounded-lg">
+                        <div className="text-center space-y-2">
+                          <div className="w-24 h-24 bg-muted/20 border-2 border-muted rounded-lg flex items-center justify-center">
+                            <IconQrcode className="h-12 w-12 text-muted-foreground" />
+                          </div>
+                          <p className="text-xs text-muted-foreground">QR Code Preview</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-2">
+                        <Button variant="outline" className="flex-1" size="sm">
+                          <IconDownload className="h-4 w-4 mr-2" />
+                          Download
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleDeleteQrCode(qr.id)}
+                          className="text-red-500 hover:text-red-600"
+                        >
+                          <IconTrash className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           ) : (
             <Card>
               <CardHeader className="pb-2">
@@ -398,6 +441,84 @@ export default function MerchantPaymentsPage() {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* View Link Details Modal */}
+      <Dialog open={viewLinkModalOpen} onOpenChange={setViewLinkModalOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Payment Link Details</DialogTitle>
+            <DialogDescription>
+              View payment link information and statistics
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedLink && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium text-muted-foreground">Title</Label>
+                  <p className="font-medium">{selectedLink.title}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-muted-foreground">Type</Label>
+                  <p className="capitalize">{selectedLink.type}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-muted-foreground">Amount</Label>
+                  <p>{selectedLink.type === "one-time" ? 
+                    `${selectedLink.currency} ${selectedLink.amount.toFixed(2)}` : 
+                    'Recurring Payment'
+                  }</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-muted-foreground">Created</Label>
+                  <p>{new Date(selectedLink.created).toLocaleDateString()}</p>
+                </div>
+              </div>
+              
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">Description</Label>
+                <p>{selectedLink.description || "No description provided"}</p>
+              </div>
+              
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">Payment URL</Label>
+                <div className="flex items-center gap-2 mt-1">
+                  <Input
+                    value={selectedLink.url}
+                    readOnly
+                    className="flex-1"
+                  />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => copyToClipboard(selectedLink.url)}
+                  >
+                    <IconCopy className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+                <div className="text-center">
+                  <p className="text-2xl font-bold">0</p>
+                  <p className="text-sm text-muted-foreground">Total Payments</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold">GHS 0.00</p>
+                  <p className="text-sm text-muted-foreground">Total Amount</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setViewLinkModalOpen(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 } 

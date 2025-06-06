@@ -48,16 +48,14 @@ import {
   IconFilter,
   IconDownload,
   IconEye,
-  IconPlus,
-  IconRefresh,
 } from "@tabler/icons-react";
 
-// Sample data for settlements
+// Sample data for settlements - BluPay settling commissions to Partner Banks
 const settlements = [
   {
     id: "ST-123456",
     merchantName: "BluWave Limited",
-    amount: "₦2,450,000.00",
+    amount: "₦24,500.00",
     date: "2023-10-15",
     transactionCount: 123,
     status: "Completed",
@@ -66,11 +64,12 @@ const settlements = [
     bankName: "EcoBank Ghana",
     settlementTime: "T+1",
     commissionEarned: "₦24,500.00",
+    totalMerchantVolume: "₦2,450,000.00",
   },
   {
     id: "ST-123457",
     merchantName: "Chensha City Ghana Ltd",
-    amount: "₦1,875,000.00",
+    amount: "₦18,750.00",
     date: "2023-10-15",
     transactionCount: 98,
     status: "Pending",
@@ -79,11 +78,12 @@ const settlements = [
     bankName: "EcoBank Ghana",
     settlementTime: "T+1",
     commissionEarned: "₦18,750.00",
+    totalMerchantVolume: "₦1,875,000.00",
   },
   {
     id: "ST-123458",
     merchantName: "Blu Penguin",
-    amount: "₦3,125,000.00",
+    amount: "₦31,250.00",
     date: "2023-10-14",
     transactionCount: 156,
     status: "Completed",
@@ -92,11 +92,12 @@ const settlements = [
     bankName: "EcoBank Ghana",
     settlementTime: "T+1",
     commissionEarned: "₦31,250.00",
+    totalMerchantVolume: "₦3,125,000.00",
   },
   {
     id: "ST-123459",
     merchantName: "Timings Ltd",
-    amount: "₦1,250,000.00",
+    amount: "₦12,500.00",
     date: "2023-10-14",
     transactionCount: 67,
     status: "Completed",
@@ -105,11 +106,12 @@ const settlements = [
     bankName: "EcoBank Ghana",
     settlementTime: "T+1",
     commissionEarned: "₦12,500.00",
+    totalMerchantVolume: "₦1,250,000.00",
   },
   {
     id: "ST-123460",
     merchantName: "QuickServe Ltd",
-    amount: "₦950,000.00",
+    amount: "₦0.00",
     date: "2023-10-13",
     transactionCount: 45,
     status: "Failed",
@@ -118,12 +120,13 @@ const settlements = [
     bankName: "EcoBank Ghana",
     settlementTime: "T+1",
     commissionEarned: "₦0.00",
+    totalMerchantVolume: "₦950,000.00",
     failureReason: "Insufficient account balance"
   },
   {
     id: "ST-123461",
     merchantName: "GhanaTech Solutions",
-    amount: "₦2,850,000.00",
+    amount: "₦28,500.00",
     date: "2023-10-13",
     transactionCount: 142,
     status: "Completed",
@@ -132,11 +135,12 @@ const settlements = [
     bankName: "Ghana Commercial Bank",
     settlementTime: "T+1",
     commissionEarned: "₦28,500.00",
+    totalMerchantVolume: "₦2,850,000.00",
   },
   {
     id: "ST-123462",
     merchantName: "BluWave Limited",
-    amount: "₦1,950,000.00",
+    amount: "₦19,500.00",
     date: "2023-10-12",
     transactionCount: 97,
     status: "Completed",
@@ -145,11 +149,12 @@ const settlements = [
     bankName: "EcoBank Ghana",
     settlementTime: "T+1",
     commissionEarned: "₦19,500.00",
+    totalMerchantVolume: "₦1,950,000.00",
   },
   {
     id: "ST-123463",
     merchantName: "Chensha City Ghana Ltd",
-    amount: "₦750,000.00",
+    amount: "₦7,500.00",
     date: "2023-10-12",
     transactionCount: 37,
     status: "Pending",
@@ -158,11 +163,12 @@ const settlements = [
     bankName: "EcoBank Ghana",
     settlementTime: "T+1",
     commissionEarned: "₦7,500.00",
+    totalMerchantVolume: "₦750,000.00",
   },
   {
     id: "ST-123464",
     merchantName: "QuickServe Ltd",
-    amount: "₦1,350,000.00",
+    amount: "₦13,500.00",
     date: "2023-10-11",
     transactionCount: 67,
     status: "Completed",
@@ -171,11 +177,12 @@ const settlements = [
     bankName: "EcoBank Ghana",
     settlementTime: "T+1",
     commissionEarned: "₦13,500.00",
+    totalMerchantVolume: "₦1,350,000.00",
   },
   {
     id: "ST-123465",
     merchantName: "Blu Penguin",
-    amount: "₦2,250,000.00",
+    amount: "₦22,500.00",
     date: "2023-10-11",
     transactionCount: 112,
     status: "Completed",
@@ -184,15 +191,8 @@ const settlements = [
     bankName: "EcoBank Ghana",
     settlementTime: "T+1",
     commissionEarned: "₦22,500.00",
+    totalMerchantVolume: "₦2,250,000.00",
   },
-];
-
-// Banks for filtering
-const banks = [
-  { id: "1", name: "EcoBank Ghana" },
-  { id: "2", name: "Ghana Commercial Bank" },
-  { id: "3", name: "Stanbic Bank Ghana" },
-  { id: "4", name: "Fidelity Bank Ghana" },
 ];
 
 // Merchants for filtering
@@ -208,14 +208,12 @@ const merchants = [
 export default function SettlementsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [bankFilter, setBankFilter] = useState("all");
   const [merchantFilter, setMerchantFilter] = useState("all");
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedSettlement, setSelectedSettlement] = useState<typeof settlements[0] | null>(null);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
-  const [showRetryDialog, setShowRetryDialog] = useState(false);
   
   // Filter settlements based on search and filters
   const filteredSettlements = settlements.filter(settlement => {
@@ -229,9 +227,6 @@ export default function SettlementsPage() {
     // Status filter
     const matchesStatus = statusFilter === "all" || settlement.status.toLowerCase() === statusFilter.toLowerCase();
     
-    // Bank filter
-    const matchesBank = bankFilter === "all" || settlement.bankName === bankFilter;
-    
     // Merchant filter
     const matchesMerchant = merchantFilter === "all" || settlement.merchantName === merchantFilter;
     
@@ -240,7 +235,7 @@ export default function SettlementsPage() {
     const matchesStartDate = !startDate || settlementDate >= startDate;
     const matchesEndDate = !endDate || settlementDate <= endDate;
     
-    return matchesSearch && matchesStatus && matchesBank && matchesMerchant && matchesStartDate && matchesEndDate;
+    return matchesSearch && matchesStatus && matchesMerchant && matchesStartDate && matchesEndDate;
   });
 
   // Status badge variant mapper
@@ -262,19 +257,12 @@ export default function SettlementsPage() {
     return "";
   };
 
-  // Handle settlement retry
-  const handleRetrySettlement = () => {
-    // In a real app, this would make an API call to retry the settlement
-    alert(`Settlement ${selectedSettlement?.id} retry initiated.`);
-    setShowRetryDialog(false);
-  };
-
   return (
     <div className="p-6 space-y-6">
       <div className="flex flex-col space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight">Settlements</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Commission Settlements</h1>
         <p className="text-muted-foreground">
-          Manage and track all settlement transactions to merchants
+          Track commission settlements from BluPay to your bank
         </p>
       </div>
       
@@ -282,9 +270,9 @@ export default function SettlementsPage() {
         <CardHeader>
           <div className="flex flex-col md:flex-row justify-between gap-4">
             <div>
-              <CardTitle>Settlement Transactions</CardTitle>
+              <CardTitle>BluPay Commission Settlements</CardTitle>
               <CardDescription>
-                View and manage settlement transactions for all merchants
+                View commission settlements paid by BluPay to your bank from merchant transactions
               </CardDescription>
             </div>
             
@@ -314,18 +302,13 @@ export default function SettlementsPage() {
                   <IconDownload className="h-4 w-4" />
                   <span className="hidden sm:inline">Export</span>
                 </Button>
-                
-                <Button className="flex items-center gap-1">
-                  <IconPlus className="h-4 w-4" />
-                  <span className="hidden sm:inline">New Settlement</span>
-                </Button>
               </div>
             </div>
           </div>
           
           {/* Filter panel */}
           {showFilters && (
-            <div className="mt-4 p-4 border rounded-md grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <div className="mt-4 p-4 border rounded-md grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Status</label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -337,21 +320,6 @@ export default function SettlementsPage() {
                     <SelectItem value="completed">Completed</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="failed">Failed</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Bank</label>
-                <Select value={bankFilter} onValueChange={setBankFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Filter by bank" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Banks</SelectItem>
-                    {banks.map(bank => (
-                      <SelectItem key={bank.id} value={bank.name}>{bank.name}</SelectItem>
-                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -417,12 +385,11 @@ export default function SettlementsPage() {
                 </Popover>
               </div>
               
-              <div className="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-5 flex justify-end">
+              <div className="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4 flex justify-end">
                 <Button
                   variant="outline"
                   onClick={() => {
                     setStatusFilter("all");
-                    setBankFilter("all");
                     setMerchantFilter("all");
                     setStartDate(undefined);
                     setEndDate(undefined);
@@ -444,11 +411,11 @@ export default function SettlementsPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Settlement ID</TableHead>
-                <TableHead>Merchant</TableHead>
+                <TableHead>Merchant Source</TableHead>
                 <TableHead>Date</TableHead>
-                <TableHead className="text-center">Transactions</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-                <TableHead className="text-right">Commission</TableHead>
+                <TableHead className="text-center">Count</TableHead>
+                <TableHead className="text-right">Commission Amount</TableHead>
+                <TableHead className="text-right">Merchant Volume</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -462,7 +429,7 @@ export default function SettlementsPage() {
                     <TableCell>{settlement.date}</TableCell>
                     <TableCell className="text-center">{settlement.transactionCount}</TableCell>
                     <TableCell className="text-right">{settlement.amount}</TableCell>
-                    <TableCell className="text-right">{settlement.commissionEarned}</TableCell>
+                    <TableCell className="text-right">{settlement.totalMerchantVolume}</TableCell>
                     <TableCell>
                       <Badge 
                         variant={getStatusVariant(settlement.status)}
@@ -484,21 +451,6 @@ export default function SettlementsPage() {
                         >
                           <IconEye className="h-4 w-4" />
                         </Button>
-                        
-                        {settlement.status === "Failed" && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50"
-                            onClick={() => {
-                              setSelectedSettlement(settlement);
-                              setShowRetryDialog(true);
-                            }}
-                            title="Retry Settlement"
-                          >
-                            <IconRefresh className="h-4 w-4" />
-                          </Button>
-                        )}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -506,7 +458,7 @@ export default function SettlementsPage() {
               ) : (
                 <TableRow>
                   <TableCell colSpan={8} className="h-24 text-center">
-                    No settlement transactions found.
+                    No commission settlements found.
                   </TableCell>
                 </TableRow>
               )}
@@ -554,7 +506,7 @@ export default function SettlementsPage() {
                 <p>{selectedSettlement?.reference}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Merchant</p>
+                <p className="text-sm font-medium text-muted-foreground">Merchant Source</p>
                 <p>{selectedSettlement?.merchantName}</p>
               </div>
               <div>
@@ -562,23 +514,23 @@ export default function SettlementsPage() {
                 <p>{selectedSettlement?.date}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Bank</p>
+                <p className="text-sm font-medium text-muted-foreground">Receiving Bank</p>
                 <p>{selectedSettlement?.bankName}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Account</p>
+                <p className="text-sm font-medium text-muted-foreground">Bank Account</p>
                 <p>{selectedSettlement?.account}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Amount</p>
+                <p className="text-sm font-medium text-muted-foreground">Commission Amount</p>
                 <p>{selectedSettlement?.amount}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Commission</p>
-                <p>{selectedSettlement?.commissionEarned}</p>
+                <p className="text-sm font-medium text-muted-foreground">Merchant Volume</p>
+                <p>{selectedSettlement?.totalMerchantVolume}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Transactions</p>
+                <p className="text-sm font-medium text-muted-foreground">Count</p>
                 <p>{selectedSettlement?.transactionCount}</p>
               </div>
               <div>
@@ -603,62 +555,6 @@ export default function SettlementsPage() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowDetailsDialog(false)}>
               Close
-            </Button>
-            {selectedSettlement?.status === "Failed" && (
-              <Button 
-                onClick={() => {
-                  setShowDetailsDialog(false);
-                  setShowRetryDialog(true);
-                }}
-              >
-                Retry Settlement
-              </Button>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      
-      {/* Retry Settlement Dialog */}
-      <Dialog open={showRetryDialog} onOpenChange={setShowRetryDialog}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <div className="flex items-center gap-2 text-yellow-600">
-              <IconRefresh className="h-5 w-5" />
-              <DialogTitle>Retry Settlement</DialogTitle>
-            </div>
-            <DialogDescription>
-              {selectedSettlement?.id} - {selectedSettlement?.merchantName}
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="grid gap-4 py-4">
-            <p>
-              Are you sure you want to retry this failed settlement?
-            </p>
-            
-            <div className="bg-muted p-4 rounded-md">
-              <p className="text-sm font-medium">Failure Reason:</p>
-              <p className="text-sm text-red-500">{selectedSettlement?.failureReason}</p>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Amount</p>
-                <p className="font-medium">{selectedSettlement?.amount}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Date</p>
-                <p>{selectedSettlement?.date}</p>
-              </div>
-            </div>
-          </div>
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowRetryDialog(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleRetrySettlement}>
-              Confirm Retry
             </Button>
           </DialogFooter>
         </DialogContent>

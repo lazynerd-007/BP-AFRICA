@@ -299,9 +299,6 @@ export default function ProfilePage() {
               </Badge>
             </div>
           </div>
-          <Button variant="outline" className="w-full">
-            Log Out All Other Devices
-          </Button>
         </CardContent>
       </Card>
     </div>

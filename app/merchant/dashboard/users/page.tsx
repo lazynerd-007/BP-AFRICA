@@ -56,6 +56,7 @@ import {
   IconCode,
   IconMail,
   IconCalendar,
+  IconReceipt,
 } from "@tabler/icons-react";
 
 // Mock users data
@@ -93,6 +94,7 @@ const initialUsers = [
 const roles = [
   { id: "admin", name: "Admin", description: "Full access to all features" },
   { id: "developer", name: "Developer", description: "Access to development tools and APIs" },
+  { id: "finance", name: "Finance", description: "Access to financial reports and transactions" },
 ];
 
 interface User {
@@ -174,6 +176,8 @@ export default function UsersPage() {
         return <IconShield className="h-4 w-4" />;
       case "developer":
         return <IconCode className="h-4 w-4" />;
+      case "finance":
+        return <IconReceipt className="h-4 w-4" />;
       default:
         return <IconUsers className="h-4 w-4" />;
     }
@@ -185,6 +189,8 @@ export default function UsersPage() {
         return "destructive";
       case "developer":
         return "secondary";
+      case "finance":
+        return "outline";
       default:
         return "outline";
     }
@@ -204,7 +210,7 @@ export default function UsersPage() {
       </div>
 
       {/* Users Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Total Users</CardDescription>
@@ -241,6 +247,20 @@ export default function UsersPage() {
           <CardContent>
             <p className="text-xs text-muted-foreground">
               Development team
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>Finance</CardDescription>
+            <CardTitle className="text-2xl">
+              {users.filter(user => user.role === "finance").length}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-muted-foreground">
+              Finance team
             </p>
           </CardContent>
         </Card>
