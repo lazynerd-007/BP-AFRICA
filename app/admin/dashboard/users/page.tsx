@@ -272,7 +272,8 @@ export default function UsersPage() {
     "Super Administrator",
     "Administrator",
     "Financial Administrator",
-    "Manager"
+    "Manager",
+    "Business Development Manager"
   ]
   
   // Define log action types
@@ -294,6 +295,7 @@ export default function UsersPage() {
       name: "",
       email: "",
       role: "",
+      bdmTag: "",
       password: "",
       confirmPassword: "",
     },
@@ -624,6 +626,25 @@ export default function UsersPage() {
                       </FormItem>
                     )}
                   />
+                  
+                  {form.watch("role") === "Business Development Manager" && (
+                    <FormField
+                      control={form.control}
+                      name="bdmTag"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>BDM Tag</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter BDM tag" {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            Unique identifier for this Business Development Manager
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
