@@ -9,7 +9,7 @@ interface AuthContextType {
     role: UserRole;
     name?: string;
   } | null;
-  login: (email: string, password: string, userType: "admin" | "merchant" | "partner-bank" | "submerchant") => Promise<void>;
+  login: (email: string, password: string, userType: "admin" | "merchant" | "partner-bank" | "submerchant") => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
   error: string | null;
