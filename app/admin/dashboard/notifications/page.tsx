@@ -132,12 +132,6 @@ export default function NotificationsPage() {
   
   return (
     <div className="px-4 lg:px-6 space-y-6">
-      <div className="flex flex-col space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">Notifications</h2>
-        <p className="text-muted-foreground">
-          Manage your alerts and notification preferences
-        </p>
-      </div>
       
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <Tabs 

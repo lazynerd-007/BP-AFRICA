@@ -397,12 +397,7 @@ export default function UsersPage() {
   
   return (
     <div className="px-4 lg:px-6 space-y-6">
-      <div className="flex flex-col space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">User Management</h2>
-        <p className="text-muted-foreground">
-          Manage user accounts and access permissions
-        </p>
-      </div>
+      
       
       <Tabs defaultValue="view" className="w-full">
         <TabsList className="grid w-full max-w-md grid-cols-3 mb-6">

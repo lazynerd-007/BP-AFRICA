@@ -118,12 +118,7 @@ export default function TransactionsPage() {
   
   return (
     <div className="px-4 lg:px-6 space-y-6">
-      <div className="flex flex-col space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">Transactions</h2>
-        <p className="text-muted-foreground">
-          View, manage and download transaction reports
-        </p>
-      </div>
+      
       
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <div>

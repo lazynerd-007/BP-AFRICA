@@ -307,12 +307,6 @@ export default function HelpCenterPage() {
   
   return (
     <div className="px-4 lg:px-6 space-y-6">
-      <div className="flex flex-col space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">Help Center</h2>
-        <p className="text-muted-foreground">
-          Access support resources and get assistance
-        </p>
-      </div>
       
       <div className="flex items-center space-x-2">
         <div className="relative flex-1 max-w-md">

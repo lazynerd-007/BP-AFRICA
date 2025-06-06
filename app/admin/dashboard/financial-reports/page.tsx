@@ -416,12 +416,6 @@ export default function FinancialReportsPage() {
 
   return (
     <div className="px-4 lg:px-6 space-y-6">
-      <div className="flex flex-col space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">Financial Reports</h2>
-        <p className="text-muted-foreground">
-          View and analyze financial reports and commission distributions
-        </p>
-      </div>
       
       <Tabs defaultValue="summary" className="w-full">
         <TabsList className="mb-4">

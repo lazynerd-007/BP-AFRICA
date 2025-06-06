@@ -166,12 +166,6 @@ export default function SystemLogsPage() {
   
   return (
     <div className="px-4 lg:px-6 space-y-6">
-      <div className="flex flex-col space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">System Logs</h2>
-        <p className="text-muted-foreground">
-          Monitor and analyze system activity logs
-        </p>
-      </div>
       
       <Card>
         <CardHeader className="bg-muted/50 flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4">

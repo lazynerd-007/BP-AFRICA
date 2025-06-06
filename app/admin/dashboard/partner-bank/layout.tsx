@@ -36,12 +36,6 @@ export default function PartnerBankLayout({
 
   return (
     <div className="px-4 lg:px-6 space-y-6">
-      <div className="flex flex-col space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">Partner Banks</h2>
-        <p className="text-muted-foreground">
-          Manage banking partnerships and integrations
-        </p>
-      </div>
       
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList>

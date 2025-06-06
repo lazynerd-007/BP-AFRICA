@@ -256,12 +256,6 @@ export default function ApprovalsPage() {
 
   return (
     <div className="px-4 lg:px-6 space-y-6">
-      <div className="flex flex-col space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">Approval Management</h2>
-        <p className="text-muted-foreground">
-          Manage approval requests for merchant and partner bank changes
-        </p>
-      </div>
       
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="mb-4">

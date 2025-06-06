@@ -286,12 +286,6 @@ export default function SystemStatusPage() {
   
   return (
     <div className="px-4 lg:px-6 space-y-6">
-      <div className="flex flex-col space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">System Status</h2>
-        <p className="text-muted-foreground">
-          Monitor the health and performance of all system components
-        </p>
-      </div>
       
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
         <div className="text-sm text-muted-foreground">
