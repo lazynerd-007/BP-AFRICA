@@ -273,7 +273,7 @@ export default function TransactionsPage() {
             <CardTitle className="text-sm font-medium">
               Successful Payouts
             </CardTitle>
-        
+        upd
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
