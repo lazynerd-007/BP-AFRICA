@@ -185,18 +185,18 @@ export default function MerchantPaymentsPage() {
                     />
                   </div>
                   
-                  <div className="grid gap-2">
-                    <Label htmlFor="link-type">Payment Type</Label>
-                    <Select value={linkType} onValueChange={setLinkType}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select payment type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="one-time">One-time Payment</SelectItem>
-                        <SelectItem value="recurring">Recurring Payment</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                                      <div className="grid gap-2">
+                      <Label htmlFor="link-type">Payment Type</Label>
+                      <Select value={linkType} onValueChange={(value) => setLinkType(value as "one-time" | "recurring")}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select payment type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="one-time">One-time Payment</SelectItem>
+                          <SelectItem value="recurring">Recurring Payment</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   
                   {linkType === "one-time" && (
                     <div className="grid gap-2">
