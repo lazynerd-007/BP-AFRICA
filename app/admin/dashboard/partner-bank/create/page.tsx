@@ -13,6 +13,7 @@ export default function CreatePartnerBank() {
   const [formData, setFormData] = useState<{
     bankName: string;
     emailAddress: string;
+    accountManager: string;
     settlementFile: File | null;
     commissionBankName: string;
     commissionAccountName: string;
@@ -25,6 +26,7 @@ export default function CreatePartnerBank() {
     // Partner Bank Details
     bankName: "",
     emailAddress: "",
+    accountManager: "",
     settlementFile: null,
     
     // Commission Bank Details
@@ -66,6 +68,7 @@ export default function CreatePartnerBank() {
     setFormData({
       bankName: "",
       emailAddress: "",
+      accountManager: "",
       settlementFile: null,
       commissionBankName: "",
       commissionAccountName: "",
@@ -117,6 +120,17 @@ export default function CreatePartnerBank() {
                 value={formData.emailAddress}
                 onChange={handleChange}
                 required
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="accountManager">Account Manager</Label>
+              <Input 
+                id="accountManager"
+                name="accountManager"
+                value={formData.accountManager}
+                onChange={handleChange}
+                placeholder="Optional"
               />
             </div>
             

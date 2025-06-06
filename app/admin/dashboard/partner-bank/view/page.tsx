@@ -22,6 +22,7 @@ const mockPartnerBanks = [
     id: 1,
     name: "Ghana Commercial Bank",
     email: "gcb@example.com",
+    accountManager: "John Mensah",
     commissionRatio: "0.05",
     settlements: 125,
     merchants: 48,
@@ -31,6 +32,7 @@ const mockPartnerBanks = [
     id: 2,
     name: "Ecobank Ghana",
     email: "ecobank@example.com",
+    accountManager: "Sarah Asante",
     commissionRatio: "0.04",
     settlements: 98,
     merchants: 32,
@@ -40,6 +42,7 @@ const mockPartnerBanks = [
     id: 3,
     name: "Stanbic Bank Ghana",
     email: "stanbic@example.com",
+    accountManager: "Michael Osei",
     commissionRatio: "0.045",
     settlements: 112,
     merchants: 41,
@@ -49,6 +52,7 @@ const mockPartnerBanks = [
     id: 4,
     name: "Zenith Bank Ghana",
     email: "zenith@example.com",
+    accountManager: "Rebecca Adjei",
     commissionRatio: "0.05",
     settlements: 87,
     merchants: 29,
@@ -58,6 +62,7 @@ const mockPartnerBanks = [
     id: 5,
     name: "Absa Bank Ghana",
     email: "absa@example.com",
+    accountManager: "David Kwame",
     commissionRatio: "0.035",
     settlements: 76,
     merchants: 25,
@@ -97,6 +102,7 @@ export default function ViewPartnerBanks() {
             <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead>Partner Bank</TableHead>
+                <TableHead>Account Manager</TableHead>
                 <TableHead>Commission Rate</TableHead>
                 <TableHead className="text-center">Settlements</TableHead>
                 <TableHead className="text-center">Merchants</TableHead>
@@ -109,6 +115,7 @@ export default function ViewPartnerBanks() {
                 filteredBanks.map((bank) => (
                   <TableRow key={bank.id}>
                     <TableCell className="font-medium">{bank.name}</TableCell>
+                    <TableCell>{bank.accountManager}</TableCell>
                     <TableCell>{parseFloat(bank.commissionRatio) * 100}%</TableCell>
                     <TableCell className="text-center">{bank.settlements}</TableCell>
                     <TableCell className="text-center">{bank.merchants}</TableCell>
@@ -137,7 +144,7 @@ export default function ViewPartnerBanks() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center">
+                  <TableCell colSpan={7} className="h-24 text-center">
                     No partner banks found.
                   </TableCell>
                 </TableRow>

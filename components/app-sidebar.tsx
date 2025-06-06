@@ -76,7 +76,7 @@ const adminData = {
       icon: IconClipboardCheck,
     },
     {
-      title: "OVA",
+      title: "OVA (MTN)",
       url: "/dashboard/ova",
       icon: IconCreditCard,
     },

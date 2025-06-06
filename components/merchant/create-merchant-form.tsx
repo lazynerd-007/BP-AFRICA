@@ -38,6 +38,7 @@ const formSchema = z.object({
   settlementFrequency: z.string({ required_error: "Settlement frequency is required" }),
   surchargeOn: z.string({ required_error: "Surcharge setting is required" }),
   partnerBank: z.string({ required_error: "Partner bank is required" }),
+  bdm: z.string().optional(),
   terminalId: z.string().optional(),
   subMerchantSettlementAccount: z.string().optional(),
   phoneNumber: z.string().min(10, { message: "Valid phone number is required" }),
@@ -83,6 +84,7 @@ export function CreateMerchant() {
       settlementFrequency: "",
       surchargeOn: "",
       partnerBank: "",
+      bdm: "",
       terminalId: "",
       subMerchantSettlementAccount: "",
       phoneNumber: "",
@@ -299,6 +301,34 @@ export function CreateMerchant() {
                             <SelectItem value="bank1">Bank 1</SelectItem>
                             <SelectItem value="bank2">Bank 2</SelectItem>
                             <SelectItem value="bank3">Bank 3</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="bdm"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>BDM (Optional)</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select BDM" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="john-asante">John Asante</SelectItem>
+                            <SelectItem value="sarah-mensah">Sarah Mensah</SelectItem>
+                            <SelectItem value="michael-osei">Michael Osei</SelectItem>
+                            <SelectItem value="rebecca-adjei">Rebecca Adjei</SelectItem>
+                            <SelectItem value="david-kwame">David Kwame</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />

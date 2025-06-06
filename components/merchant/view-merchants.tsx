@@ -20,6 +20,7 @@ const merchantData = [
     name: "Chensha City Ghana Ltd",
     email: "support@chenshacity.com",
     phone: "+233555123456",
+    bdm: "John Asante",
     status: "Active",
   },
   {
@@ -27,6 +28,7 @@ const merchantData = [
     name: "Timings Ltd",
     email: "contact@timingsltd.com",
     phone: "+233571234567",
+    bdm: "Sarah Mensah",
     status: "Active",
   },
   {
@@ -34,6 +36,7 @@ const merchantData = [
     name: "BluWave Limited",
     email: "info@bluwave.com",
     phone: "+233559876543",
+    bdm: "Michael Osei",
     status: "Inactive",
   },
 ];
@@ -54,6 +57,7 @@ export function ViewMerchants() {
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Phone</TableHead>
+              <TableHead>BDM</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -64,6 +68,7 @@ export function ViewMerchants() {
                 <TableCell className="font-medium">{merchant.name}</TableCell>
                 <TableCell>{merchant.email}</TableCell>
                 <TableCell>{merchant.phone}</TableCell>
+                <TableCell>{merchant.bdm}</TableCell>
                 <TableCell>{merchant.status}</TableCell>
                 <TableCell>
                   <Link href={`/admin/dashboard/merchant/${merchant.id}`}>

@@ -95,7 +95,7 @@ export default function MerchantDashboardLayout({ children }: { children: ReactN
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <aside className="w-64 border-r bg-card p-4 flex flex-col h-screen">
+      <aside className="w-64 border-r bg-card p-4 flex flex-col h-screen fixed left-0 top-0">
         {/* Header */}
         <div className="flex items-center space-x-2 mb-6 px-3 flex-shrink-0">
           <div className="h-8 w-8 rounded-full bg-primary"></div>
@@ -129,8 +129,8 @@ export default function MerchantDashboardLayout({ children }: { children: ReactN
         </div>
       </aside>
 
-      {/* Main content */}
-      <main className="flex-1">{children}</main>
+      {/* Main content - with left margin to account for fixed sidebar */}
+      <main className="flex-1 ml-64">{children}</main>
     </div>
   );
 } 
