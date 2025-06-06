@@ -40,6 +40,7 @@ interface PartnerBank {
   id: string;
   name: string;
   email: string;
+  accountManager: string;
   commissionRatio: string;
   settlements: number;
   merchants: number;

@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { IconFilter, IconPlus, IconSearch, IconUser, IconUsers, IconClock, IconMapPin, IconDeviceLaptop, IconActivity, IconRepeat } from "@tabler/icons-react"
+import { IconFilter, IconPlus, IconSearch, IconUser, IconUsers, IconClock, IconMapPin, IconDeviceLaptop, IconActivity } from "@tabler/icons-react"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -810,7 +810,6 @@ export default function UsersPage() {
                                 <span>{log.userName}</span>
                                 {userActionCounts[log.userId] > 2 && (
                                   <Badge variant="outline" className="ml-2 px-1.5 py-0 text-xs bg-amber-50 text-amber-700 border-amber-200">
-                                    <IconRepeat className="h-3 w-3 mr-1" />
                                     {userActionCounts[log.userId]}
                                   </Badge>
                                 )}
@@ -880,7 +879,6 @@ export default function UsersPage() {
                   </div>
                   
                   <div className="flex items-center">
-                    <IconRepeat className="h-4 w-4 mr-2 text-amber-600" />
                     <span className="text-sm text-muted-foreground">Badge shows users with multiple activities</span>
                   </div>
                 </div>
