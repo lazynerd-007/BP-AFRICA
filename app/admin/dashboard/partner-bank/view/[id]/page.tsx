@@ -62,6 +62,7 @@ const mockPartnerBanks = [
     id: "1",
     name: "Ghana Commercial Bank",
     email: "gcb@example.com",
+    accountManager: "John Mensah",
     commissionRatio: "0.05",
     settlements: 125,
     merchants: 48,
@@ -92,6 +93,7 @@ const mockPartnerBanks = [
     id: "2",
     name: "Ecobank Ghana",
     email: "ecobank@example.com",
+    accountManager: "Sarah Asante",
     commissionRatio: "0.04",
     settlements: 98,
     merchants: 32,
@@ -122,6 +124,7 @@ const mockPartnerBanks = [
     id: "3",
     name: "Stanbic Bank Ghana",
     email: "stanbic@example.com",
+    accountManager: "Michael Osei",
     commissionRatio: "0.045",
     settlements: 112,
     merchants: 41,
@@ -152,6 +155,7 @@ const mockPartnerBanks = [
     id: "4",
     name: "Zenith Bank Ghana",
     email: "zenith@example.com",
+    accountManager: "Rebecca Adjei",
     commissionRatio: "0.05",
     settlements: 87,
     merchants: 29,
@@ -182,6 +186,7 @@ const mockPartnerBanks = [
     id: "5",
     name: "Absa Bank Ghana",
     email: "absa@example.com",
+    accountManager: "David Kwame",
     commissionRatio: "0.035",
     settlements: 76,
     merchants: 25,
@@ -294,10 +299,14 @@ export default function PartnerBankDetailPage() {
                 <p>{bank.email}</p>
               </div>
               <div>
+                <p className="text-sm font-medium text-muted-foreground">Account Manager</p>
+                <p>{bank.accountManager}</p>
+              </div>
+              <div>
                 <p className="text-sm font-medium text-muted-foreground">Swift Code</p>
                 <p>{bank.swiftCode}</p>
               </div>
-              <div className="col-span-2">
+              <div className="col-span-1">
                 <p className="text-sm font-medium text-muted-foreground">Address</p>
                 <p>{bank.address}</p>
               </div>
