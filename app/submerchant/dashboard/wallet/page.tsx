@@ -772,7 +772,7 @@ export default function SubmerchantWalletPage() {
                           {startDate ? format(startDate, "PPP") : "Pick a date"}
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="w-auto p-0" align="start">
+                      <DialogContent className="w-auto p-0">
                           <Calendar
                             mode="single"
                             selected={startDate}
