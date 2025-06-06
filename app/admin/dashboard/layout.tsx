@@ -1,3 +1,5 @@
+"use client";
+
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import {
@@ -5,6 +7,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { CurrencyProvider } from "@/lib/currency-context"
+
 
 export default function DashboardLayout({
   children,

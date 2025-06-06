@@ -185,13 +185,13 @@ export default function ProfilePage() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="flex items-center gap-2">
-                <IconShield className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-2">
+            <IconShield className="h-5 w-5" />
                 Change Password
-              </CardTitle>
-              <CardDescription>
+          </CardTitle>
+          <CardDescription>
                 Update your account password
-              </CardDescription>
+          </CardDescription>
             </div>
             <Button 
               variant={isEditingPassword ? "default" : "outline"} 
@@ -287,17 +287,17 @@ export default function ProfilePage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="rounded-md border p-4 mb-3">
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="font-medium">Current Session</p>
-                <p className="text-sm text-muted-foreground">Lagos, Nigeria • Chrome on Windows</p>
-                <p className="text-xs text-muted-foreground">Started: Today at 09:45 AM</p>
+            <div className="rounded-md border p-4 mb-3">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="font-medium">Current Session</p>
+                  <p className="text-sm text-muted-foreground">Lagos, Nigeria • Chrome on Windows</p>
+                  <p className="text-xs text-muted-foreground">Started: Today at 09:45 AM</p>
+                </div>
+                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                  Active
+                </Badge>
               </div>
-              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                Active
-              </Badge>
-            </div>
           </div>
         </CardContent>
       </Card>

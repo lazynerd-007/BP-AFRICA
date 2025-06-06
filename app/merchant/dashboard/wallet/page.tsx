@@ -9,7 +9,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   IconWallet,
   IconSend,
@@ -20,8 +19,6 @@ import {
   IconAlertCircle,
   IconCalendar,
   IconBuildingBank,
-  IconSearch,
-  IconArrowUp,
   IconArrowDown,
   IconTrash,
 } from "@tabler/icons-react";
@@ -253,7 +250,9 @@ export default function MerchantWalletPage() {
 
   const addExternalCustomer = () => {
     const newId = Math.max(...externalCustomers.map(c => c.id)) + 1;
-    setExternalCustomers([...externalCustomers, {
+    setExternalCustomers([
+      ...externalCustomers,
+      {
       id: newId,
       name: "",
       email: "",
@@ -261,7 +260,8 @@ export default function MerchantWalletPage() {
       amount: "",
       narration: "",
       network: ""
-    }]);
+      }
+    ]);
   };
 
   const removeExternalCustomer = (id: number) => {
@@ -276,396 +276,233 @@ export default function MerchantWalletPage() {
     ));
   };
 
+  const filteredMerchants = bluepayMerchants.filter(merchant =>
+    merchant.name.toLowerCase().includes(bluepayMerchantSearch.toLowerCase())
+  );
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex flex-col space-y-2">
         <h1 className="text-2xl font-bold tracking-tight">Wallet</h1>
         <p className="text-muted-foreground">
-          Manage your merchant wallet, fund, and make transfers
+          Manage your account balance and transfers
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="md:col-span-2">
-          <CardHeader className="pb-2">
-            <CardTitle>Balance</CardTitle>
-            <CardDescription>Current wallet balance</CardDescription>
+      {/* Balance Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Available Balance</CardTitle>
+            <IconWallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center">
-                <IconWallet className="h-8 w-8 text-primary mr-3" />
-                <div>
-                  <p className="text-muted-foreground text-sm">Available Balance</p>
-                  <p className="text-3xl font-bold">GHS 12,500.00</p>
-                </div>
-              </div>
-              
-              <div className="flex flex-wrap gap-2">
-                {/* Funding Method Selection Dialog */}
-                <Dialog open={fundingMethodModalOpen} onOpenChange={setFundingMethodModalOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="flex items-center">
-                      <IconPlus className="h-4 w-4 mr-2" />
-                      Fund Wallet
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>BluPay Wallet Funding Form</DialogTitle>
-                    </DialogHeader>
-                    
-                    <div className="py-6">
-                      <h2 className="text-xl font-medium text-gray-700 mb-6">How do you wish to fund your wallet?</h2>
-                      <Select onValueChange={handleFundingMethodSelect}>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select funding method" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="collections">Collections</SelectItem>
-                          <SelectItem value="momo">MoMo</SelectItem>
-                        </SelectContent>
-                      </Select>
+            <div className="text-2xl font-bold">₦235,410.00</div>
+            <p className="text-xs text-muted-foreground">
+              Available for transfer
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pending Settlement</CardTitle>
+            <IconHistory className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">₦45,670.00</div>
+            <p className="text-xs text-muted-foreground">
+              Settlement in 1-2 business days
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Reserved Funds</CardTitle>
+            <IconAlertCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">₦8,250.00</div>
+            <p className="text-xs text-muted-foreground">
+              Held for risk management
+            </p>
+          </CardContent>
+        </Card>
                     </div>
                     
-                    <DialogFooter>
-                      <Button variant="outline" onClick={() => setFundingMethodModalOpen(false)} className="bg-red-500 hover:bg-red-600 text-white">
-                        Cancel
-                      </Button>
-                      <Button className="bg-blue-500 hover:bg-blue-600" disabled={true}>
-                        Next
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-                
-                {/* Collections Modal */}
-                <Dialog open={collectionsModalOpen} onOpenChange={setCollectionsModalOpen}>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>Fund Wallet</DialogTitle>
-                      <DialogDescription>
-                        You can transfer into your wallet to make a payout. You cannot transfer in more than your daily inflow.
-                      </DialogDescription>
-                    </DialogHeader>
-                    
-                    <div className="grid gap-4 py-4">
-                      <div className="grid gap-2">
-                        <Label htmlFor="amount">Enter amount</Label>
-                        <Input
-                          id="amount"
-                          type="number"
-                          placeholder="Enter amount"
-                          value={fundAmount}
-                          onChange={(e) => setFundAmount(e.target.value)}
-                        />
-                        <p className="text-sm text-red-500">*Max amount (0 GHS)</p>
-                      </div>
-                    </div>
-                    
-                    <DialogFooter>
-                      <Button variant="outline" onClick={() => setCollectionsModalOpen(false)} className="bg-red-500 hover:bg-red-600 text-white">
-                        Cancel
-                      </Button>
-                      <Button 
-                        onClick={handleCollectionsProceed}
-                        disabled={!fundAmount || parseFloat(fundAmount) <= 0}
-                        className="bg-blue-500 hover:bg-blue-600"
-                      >
-                        Proceed
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-                
-                {/* MoMo Modal */}
-                <Dialog open={momoModalOpen} onOpenChange={setMomoModalOpen}>
-                  <DialogContent className="sm:max-w-[500px]">
-                    <DialogHeader>
-                      <DialogTitle className="text-xl">BluPay Wallet Funding Form</DialogTitle>
-                    </DialogHeader>
-                    
-                    <div className="grid gap-4 py-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="customer-name">Customer Name:</Label>
-                        <Input 
-                          id="customer-name" 
-                          placeholder="e.g. Banco Limited"
-                          value={customerName}
-                          onChange={(e) => setCustomerName(e.target.value)}
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="customer-email">Customer Email:</Label>
-                        <Input 
-                          id="customer-email" 
-                          type="email"
-                          placeholder="e.g. example@company.com"
-                          value={customerEmail}
-                          onChange={(e) => setCustomerEmail(e.target.value)}
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="amount">Amount:</Label>
-                        <Input 
-                          id="amount" 
-                          type="number"
-                          placeholder="Enter amount"
-                          value={fundAmount}
-                          onChange={(e) => setFundAmount(e.target.value)}
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="customer-mobile">Customer Mobile Number:</Label>
-                        <Input 
-                          id="customer-mobile" 
-                          placeholder="e.g. +233 XX XXX XXXX"
-                          value={customerMobile}
-                          onChange={(e) => setCustomerMobile(e.target.value)}
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="sender-network">Sender&apos;s Mobile Network:</Label>
-                        <Select onValueChange={setSenderNetwork} value={senderNetwork}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select network" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="mtn">MTN</SelectItem>
-                            <SelectItem value="vodafone">Vodafone</SelectItem>
-                            <SelectItem value="airtel">Airtel</SelectItem>
-                            <SelectItem value="tigo">Tigo</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    
-                    <DialogFooter>
-                      <Button variant="outline" onClick={() => setMomoModalOpen(false)} className="bg-red-500 hover:bg-red-600 text-white">
-                        Cancel
-                      </Button>
-                      <Button onClick={handleMomoProceed} className="bg-blue-500 hover:bg-blue-600">
-                        Fund Wallet
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-                
-                {/* Transfer Dialog */}
+      {/* Quick Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>Common wallet operations</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Dialog open={transferModalOpen} onOpenChange={(open) => {
                   setTransferModalOpen(open);
                   if (!open) resetTransferModal();
                 }}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" className="flex items-center">
-                      <IconSend className="h-4 w-4 mr-2" />
-                      Transfer
+                <Button className="h-20 flex flex-col gap-2">
+                  <IconSend className="h-6 w-6" />
+                  <span>Transfer Money</span>
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[600px]">
-                    {/* Transfer Type Selection */}
                     {transferStep === "type" && (
                       <>
                         <DialogHeader>
-                          <DialogTitle className="text-xl text-center">Merchant Payout</DialogTitle>
-                          <DialogDescription className="text-center text-gray-500">
-                            Make payout by entering MoMo details below.
+                      <DialogTitle>Choose Transfer Type</DialogTitle>
+                      <DialogDescription>
+                        Select how you want to send money
                           </DialogDescription>
                         </DialogHeader>
                         
-                        <div className="py-6">
-                          <Label className="text-lg text-gray-700 mb-4 block">Who do you wish to send MoMo to?</Label>
-                          <Select onValueChange={handleTransferTypeSelect}>
-                            <SelectTrigger className="w-full h-12">
-                              <SelectValue placeholder="Select transfer type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="bluepay">BluPay Merchant</SelectItem>
-                              <SelectItem value="external">External merchant</SelectItem>
-                            </SelectContent>
-                          </Select>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Card 
+                          className="cursor-pointer border-2 hover:border-primary transition-colors"
+                          onClick={() => handleTransferTypeSelect("bluepay")}
+                        >
+                          <CardContent className="flex flex-col items-center justify-center p-6">
+                            <IconBuildingBank className="h-12 w-12 text-primary mb-4" />
+                            <h3 className="font-semibold">BluPay Merchant</h3>
+                            <p className="text-sm text-muted-foreground text-center">
+                              Transfer to another BluPay merchant
+                            </p>
+                          </CardContent>
+                        </Card>
+                        
+                        <Card 
+                          className="cursor-pointer border-2 hover:border-primary transition-colors"
+                          onClick={() => handleTransferTypeSelect("external")}
+                        >
+                          <CardContent className="flex flex-col items-center justify-center p-6">
+                            <IconSend className="h-12 w-12 text-primary mb-4" />
+                            <h3 className="font-semibold">External Transfer</h3>
+                            <p className="text-sm text-muted-foreground text-center">
+                              Send money to mobile wallets
+                            </p>
+                          </CardContent>
+                        </Card>
+                      </div>
                         </div>
                       </>
                     )}
 
-                    {/* BluPay Transfer Form */}
                     {transferStep === "form" && transferType === "bluepay" && (
                       <>
                         <DialogHeader>
-                          <DialogTitle className="text-xl">BluPay Merchant Transfer Form</DialogTitle>
+                      <DialogTitle>Transfer to BluPay Merchant</DialogTitle>
+                      <DialogDescription>
+                        Enter the merchant details and amount
+                      </DialogDescription>
                         </DialogHeader>
                         
-                        <div className="grid gap-6 py-4">
-                          <div className="space-y-2">
-                            <Label className="text-lg">Search for Bluepay merchant name</Label>
-                            <div className="relative">
-                              <IconSearch className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <div className="grid gap-4 py-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="merchant-search">Search Merchant</Label>
                               <Input
-                                placeholder="Search by merchant name..."
-                                className="pl-10"
+                          id="merchant-search"
+                          placeholder="Type merchant name or ID..."
                                 value={bluepayMerchantSearch}
                                 onChange={(e) => setBluepayMerchantSearch(e.target.value)}
                               />
-                            </div>
                             {bluepayMerchantSearch && (
-                              <div className="border rounded-md max-h-32 overflow-y-auto">
-                                {bluepayMerchants
-                                  .filter(m => m.name.toLowerCase().includes(bluepayMerchantSearch.toLowerCase()))
-                                  .map(merchant => (
+                          <div className="border rounded-md max-h-40 overflow-y-auto">
+                            {filteredMerchants.map((merchant) => (
                                     <div
                                       key={merchant.id}
-                                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                                className="p-2 hover:bg-muted cursor-pointer"
                                       onClick={() => handleBluepayMerchantSelect(merchant.id)}
                                     >
                                       {merchant.name}
                                     </div>
-                                  ))
-                                }
+                            ))}
                               </div>
                             )}
                           </div>
                           
-                          <div className="space-y-2">
-                            <Label className="text-lg">Enter Amount</Label>
-                            <div className="relative">
+                      <div className="grid gap-2">
+                        <Label htmlFor="amount">Amount (GHS)</Label>
                               <Input
+                          id="amount"
                                 type="number"
-                                placeholder="0"
+                          placeholder="0.00"
                                 value={bluepayAmount}
                                 onChange={(e) => setBluepayAmount(e.target.value)}
-                                className="text-center text-xl pr-20"
-                              />
-                              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex flex-col">
-                                <button 
-                                  className="text-gray-400 hover:text-gray-600"
-                                  onClick={() => setBluepayAmount(prev => String(Math.max(0, parseFloat(prev || "0") + 1)))}
-                                >
-                                  <IconArrowUp className="h-4 w-4" />
-                                </button>
-                                <button 
-                                  className="text-gray-400 hover:text-gray-600"
-                                  onClick={() => setBluepayAmount(prev => String(Math.max(0, parseFloat(prev || "0") - 1)))}
-                                >
-                                  <IconArrowDown className="h-4 w-4" />
-                                </button>
-                              </div>
-                            </div>
+                        />
                           </div>
                         </div>
                         
                         <DialogFooter>
-                          <Button 
-                            variant="outline" 
-                            onClick={() => setTransferStep("type")}
-                            className="bg-red-500 hover:bg-red-600 text-white"
-                          >
-                            Cancel
+                      <Button variant="outline" onClick={() => setTransferStep("type")}>
+                        Back
                           </Button>
                           <Button 
                             onClick={proceedToBluepayPreview}
                             disabled={!selectedBluepayMerchant || !bluepayAmount}
-                            className="bg-blue-500 hover:bg-blue-600"
                           >
-                            Proceed
+                        Continue
                           </Button>
                         </DialogFooter>
                       </>
                     )}
 
-                    {/* External Transfer Form */}
                     {transferStep === "form" && transferType === "external" && (
                       <>
                         <DialogHeader>
-                          <DialogTitle className="text-xl text-center">Merchant Payout</DialogTitle>
-                          <DialogDescription className="text-center text-gray-500">
-                            Make payout by entering MoMo details below.
+                      <DialogTitle>External Transfer</DialogTitle>
+                      <DialogDescription>
+                        Send money to mobile wallets. You can add multiple recipients.
                           </DialogDescription>
                         </DialogHeader>
                         
-                        <div className="py-4">
-                          <div className="mb-4">
-                            <Label className="text-lg text-gray-700 mb-2 block">Who do you wish to send MoMo to?</Label>
-                            <Select value="external" disabled>
-                              <SelectTrigger className="w-full">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="external">External merchant</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-
-                          <div className="max-h-96 overflow-y-auto space-y-6 pr-2">
+                    <div className="grid gap-4 py-4 max-h-96 overflow-y-auto">
                             {externalCustomers.map((customer, index) => (
-                              <div key={customer.id} className="border rounded-lg p-4 bg-gray-50">
-                                <div className="flex justify-between items-center mb-3">
-                                  <h3 className="font-medium">Customer {index + 1}</h3>
+                        <div key={customer.id} className="border rounded-lg p-4 space-y-3">
+                          <div className="flex justify-between items-center">
+                            <h4 className="font-medium">Recipient {index + 1}</h4>
                                   {externalCustomers.length > 1 && (
                                     <Button
                                       variant="ghost"
-                                      size="icon"
+                                size="sm"
                                       onClick={() => removeExternalCustomer(customer.id)}
-                                      className="text-red-500 hover:text-red-700"
                                     >
                                       <IconTrash className="h-4 w-4" />
                                     </Button>
                                   )}
                                 </div>
                                 
-                                <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-2 gap-3">
                                   <div>
                                     <Label>Name</Label>
                                     <Input
+                                placeholder="Recipient name"
                                       value={customer.name}
                                       onChange={(e) => updateExternalCustomer(customer.id, "name", e.target.value)}
-                                      placeholder="Customer name"
                                     />
                                   </div>
-                                  
-                                  <div>
-                                    <Label>Email</Label>
-                                    <Input
-                                      type="email"
-                                      value={customer.email}
-                                      onChange={(e) => updateExternalCustomer(customer.id, "email", e.target.value)}
-                                      placeholder="Email address"
-                                    />
-                                  </div>
-                                  
                                   <div>
                                     <Label>Mobile Number</Label>
                                     <Input
+                                placeholder="Phone number"
                                       value={customer.mobile}
                                       onChange={(e) => updateExternalCustomer(customer.id, "mobile", e.target.value)}
-                                      placeholder="+233 XX XXX XXXX"
                                     />
                                   </div>
-                                  
                                   <div>
                                     <Label>Amount</Label>
                                     <Input
                                       type="number"
+                                placeholder="0.00"
                                       value={customer.amount}
                                       onChange={(e) => updateExternalCustomer(customer.id, "amount", e.target.value)}
-                                      placeholder="0.00"
                                     />
                                   </div>
-                                  
                                   <div>
-                                    <Label>Narration/Reference</Label>
-                                    <Input
-                                      value={customer.narration}
-                                      onChange={(e) => updateExternalCustomer(customer.id, "narration", e.target.value)}
-                                      placeholder="Payment reference"
-                                    />
-                                  </div>
-                                  
-                                  <div>
-                                    <Label>Receiver&apos;s Mobile Network</Label>
+                              <Label>Network</Label>
                                     <Select
                                       value={customer.network}
                                       onValueChange={(value) => updateExternalCustomer(customer.id, "network", value)}
@@ -674,7 +511,7 @@ export default function MerchantWalletPage() {
                                         <SelectValue placeholder="Select network" />
                                       </SelectTrigger>
                                       <SelectContent>
-                                        {mobileNetworks.map(network => (
+                                  {mobileNetworks.map((network) => (
                                           <SelectItem key={network.id} value={network.id}>
                                             {network.name}
                                           </SelectItem>
@@ -683,358 +520,490 @@ export default function MerchantWalletPage() {
                                     </Select>
                                   </div>
                                 </div>
+                          
+                          <div>
+                            <Label>Narration (Optional)</Label>
+                            <Input
+                              placeholder="Payment description"
+                              value={customer.narration}
+                              onChange={(e) => updateExternalCustomer(customer.id, "narration", e.target.value)}
+                            />
                               </div>
-                            ))}
                           </div>
+                      ))}
 
-                          <div className="flex justify-between mt-6">
                             <Button
                               variant="outline"
                               onClick={addExternalCustomer}
-                              className="bg-blue-500 hover:bg-blue-600 text-white"
+                        className="w-full"
                             >
                               <IconPlus className="h-4 w-4 mr-2" />
-                              Add customer
+                        Add Another Recipient
                             </Button>
-                            
-                            <Button
-                              onClick={proceedToExternalPreview}
-                              className="bg-blue-500 hover:bg-blue-600"
-                            >
-                              Submit
+                    </div>
+                    
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setTransferStep("type")}>
+                        Back
                             </Button>
-                          </div>
-                        </div>
+                      <Button onClick={proceedToExternalPreview}>
+                        Continue
+                      </Button>
+                    </DialogFooter>
                       </>
                     )}
 
-                    {/* Preview Transaction Details */}
                     {transferStep === "preview" && previewData && (
                       <>
                         <DialogHeader>
-                          <DialogTitle className="text-xl">Preview Transaction Details</DialogTitle>
+                      <DialogTitle>Transfer Preview</DialogTitle>
+                      <DialogDescription>
+                        Review your transfer details before proceeding
+                      </DialogDescription>
                         </DialogHeader>
                         
-                        <div className="py-6 space-y-4">
-                          {previewData.type === "bluepay" ? (
-                            <>
-                              <div>
-                                <h3 className="text-lg font-semibold">Merchant Name: {previewData.merchantName}</h3>
+                    <div className="grid gap-4 py-4">
+                      {previewData.type === "bluepay" && (
+                        <div className="space-y-3">
+                          <div className="flex justify-between">
+                            <span>Recipient:</span>
+                            <span className="font-medium">{previewData.merchantName}</span>
                               </div>
-                              
-                              <div>
-                                <span className="text-lg font-semibold">Amount: </span>
-                                <span className="text-lg font-semibold text-green-600">
-                                  {previewData.amount} {previewData.currency}
-                                </span>
+                          <div className="flex justify-between">
+                            <span>Amount:</span>
+                            <span className="font-medium">{previewData.currency} {previewData.amount.toFixed(2)}</span>
                               </div>
-                              
-                              <div>
-                                <span className="text-lg font-semibold">Service Charge: </span>
-                                <span className="text-lg font-semibold text-red-500">
-                                  {previewData.serviceCharge.toFixed(3)} {previewData.currency} (0.5%)
-                                </span>
+                          <div className="flex justify-between">
+                            <span>Service Charge:</span>
+                            <span className="font-medium">{previewData.currency} {previewData.serviceCharge.toFixed(2)}</span>
                               </div>
-                            </>
-                          ) : (
+                          <div className="border-t pt-3">
+                            <div className="flex justify-between text-lg font-semibold">
+                              <span>Total:</span>
+                              <span>{previewData.currency} {(previewData.amount + previewData.serviceCharge).toFixed(2)}</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {previewData.type === "external" && (
                             <div className="space-y-4">
-                              <h3 className="text-lg font-semibold">External Transfer Summary</h3>
-                              {previewData.customers.map((customer: ExternalCustomer, index: number) => (
-                                <div key={index} className="border rounded p-3 bg-gray-50">
-                                  <div className="grid grid-cols-2 gap-2 text-sm">
-                                    <div><strong>Name:</strong> {customer.name}</div>
-                                    <div><strong>Amount:</strong> {customer.amount} {previewData.currency}</div>
-                                    <div><strong>Mobile:</strong> {customer.mobile}</div>
-                                    <div><strong>Network:</strong> {customer.network.toUpperCase()}</div>
+                          {previewData.customers.map((customer, index) => (
+                            <div key={customer.id} className="border rounded-lg p-3">
+                              <h4 className="font-medium mb-2">Recipient {index + 1}</h4>
+                              <div className="space-y-1 text-sm">
+                                <div className="flex justify-between">
+                                  <span>Name:</span>
+                                  <span>{customer.name}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Mobile:</span>
+                                  <span>{customer.mobile}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Amount:</span>
+                                  <span>{previewData.currency} {customer.amount}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Network:</span>
+                                  <span className="capitalize">{customer.network}</span>
+                                </div>
                                   </div>
                                 </div>
                               ))}
-                              <div className="pt-2 border-t">
-                                <span className="text-lg font-semibold">Total Amount: </span>
-                                <span className="text-lg font-semibold text-green-600">
-                                  {previewData.customers.reduce((sum: number, c: ExternalCustomer) => sum + parseFloat(c.amount || "0"), 0).toFixed(2)} {previewData.currency}
+                          <div className="border-t pt-3">
+                            <div className="flex justify-between text-lg font-semibold">
+                              <span>Total Amount:</span>
+                              <span>
+                                {previewData.currency} {previewData.customers.reduce((sum, c) => sum + parseFloat(c.amount), 0).toFixed(2)}
                                 </span>
+                            </div>
                               </div>
                             </div>
                           )}
                         </div>
                         
                         <DialogFooter>
-                          <Button 
-                            variant="outline" 
-                            onClick={() => setTransferStep("form")}
-                            className="bg-red-500 hover:bg-red-600 text-white"
-                          >
-                            Cancel
+                      <Button variant="outline" onClick={() => setTransferStep("form")}>
+                        Back
                           </Button>
-                          <Button 
-                            onClick={proceedToOtp}
-                            className="bg-blue-500 hover:bg-blue-600"
-                          >
-                            Proceed
+                      <Button onClick={proceedToOtp}>
+                        Proceed to OTP
                           </Button>
                         </DialogFooter>
                       </>
                     )}
 
-                    {/* OTP Verification */}
                     {transferStep === "otp" && (
                       <>
                         <DialogHeader>
-                          <DialogTitle className="text-xl text-center">Enter OTP</DialogTitle>
-                          <DialogDescription className="text-center text-gray-600">
-                            An OTP has been sent to you registered mobile number. Please enter it below.
+                      <DialogTitle>Enter OTP</DialogTitle>
+                      <DialogDescription>
+                        We&apos;ve sent a 4-digit code to your registered phone number
                           </DialogDescription>
                         </DialogHeader>
                         
-                        <div className="py-8">
-                          <div className="flex justify-center gap-3 mb-8">
+                    <div className="grid gap-4 py-4">
+                      <div className="flex justify-center gap-2">
                             {otpCode.map((digit, index) => (
                               <Input
                                 key={index}
                                 id={`otp-${index}`}
                                 type="text"
                                 maxLength={1}
-                                className="w-16 h-16 text-center text-xl font-semibold"
+                            className="w-12 h-12 text-center text-lg font-semibold"
                                 value={digit}
                                 onChange={(e) => handleOtpChange(index, e.target.value)}
                               />
                             ))}
                           </div>
                           
-                          <div className="flex justify-center">
+                      <div className="text-center">
+                        <Button variant="link" className="text-sm">
+                          Resend OTP
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setTransferStep("preview")}>
+                        Back
+                      </Button>
                             <Button
                               onClick={verifyOtp}
                               disabled={otpCode.join("").length !== 4}
-                              className="w-full max-w-xs bg-blue-500 hover:bg-blue-600 text-white py-3"
                             >
-                              Verify Account
+                        Verify & Transfer
                             </Button>
-                          </div>
-                        </div>
+                    </DialogFooter>
                       </>
                     )}
                   </DialogContent>
                 </Dialog>
+
+            <Dialog open={fundingMethodModalOpen} onOpenChange={setFundingMethodModalOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="h-20 flex flex-col gap-2">
+                  <IconPlus className="h-6 w-6" />
+                  <span>Fund Wallet</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                  <DialogTitle>Fund Your Wallet</DialogTitle>
+                  <DialogDescription>
+                    Choose a funding method for your wallet
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="fund-amount">Amount to Fund (₦)</Label>
+                    <Input
+                      id="fund-amount"
+                      type="number"
+                      placeholder="0.00"
+                      value={fundAmount}
+                      onChange={(e) => setFundAmount(e.target.value)}
+                    />
               </div>
+                  
+                  <div className="grid grid-cols-1 gap-3">
+                    <Button
+                      variant="outline"
+                      className="h-16 justify-start"
+                      onClick={() => handleFundingMethodSelect("collections")}
+                      disabled={!fundAmount}
+                    >
+                      <div className="flex items-center gap-3">
+                        <IconReceipt className="h-6 w-6" />
+                        <div className="text-left">
+                          <div className="font-medium">Collections</div>
+                          <div className="text-sm text-muted-foreground">
+                            Fund from your pending collections
             </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Common wallet operations</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {/* Statement Download Dialog */}
+                        </div>
+                      </div>
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      className="h-16 justify-start"
+                      onClick={() => handleFundingMethodSelect("momo")}
+                      disabled={!fundAmount}
+                    >
+                      <div className="flex items-center gap-3">
+                        <IconWallet className="h-6 w-6" />
+                        <div className="text-left">
+                          <div className="font-medium">Mobile Money</div>
+                          <div className="text-sm text-muted-foreground">
+                            Fund via mobile money transfer
+                          </div>
+                        </div>
+                      </div>
+                </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+              
               <Dialog open={statementOpen} onOpenChange={setStatementOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start">
-                    <IconReceipt className="h-4 w-4 mr-2" />
-                    Download Statement
+                <Button variant="outline" className="h-20 flex flex-col gap-2">
+                  <IconDownload className="h-6 w-6" />
+                  <span>Download Statement</span>
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
+              <DialogContent className="sm:max-w-[500px]">
                   <DialogHeader>
                     <DialogTitle>Download Statement</DialogTitle>
                     <DialogDescription>
-                      Select a date range for your account statement
+                    Select the date range for your wallet statement
                     </DialogDescription>
                   </DialogHeader>
                   
                   <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
                       <Label>Start Date</Label>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          className={`w-full justify-start text-left font-normal ${!startDate ? 'text-muted-foreground' : ''}`}
-                          type="button"
-                          onClick={() => {
-                            const datePickerElement = document.getElementById('statement-start-date');
-                            if (datePickerElement) {
-                              datePickerElement.click();
-                            }
-                          }}
-                        >
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" className="justify-start text-left font-normal">
                           <IconCalendar className="mr-2 h-4 w-4" />
-                          {startDate ? format(startDate, 'PPP') : "Select start date"}
+                          {startDate ? format(startDate, "PPP") : "Pick a date"}
                         </Button>
-                        <div className="hidden">
+                      </DialogTrigger>
+                      <DialogContent className="w-auto p-0" align="start">
                           <Calendar
-                            id="statement-start-date"
                             mode="single"
                             selected={startDate}
                             onSelect={setStartDate}
                             initialFocus
                           />
-                        </div>
-                      </div>
+                      </DialogContent>
+                    </Dialog>
                     </div>
                     
                     <div className="grid gap-2">
                       <Label>End Date</Label>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          className={`w-full justify-start text-left font-normal ${!endDate ? 'text-muted-foreground' : ''}`}
-                          type="button"
-                          onClick={() => {
-                            const datePickerElement = document.getElementById('statement-end-date');
-                            if (datePickerElement) {
-                              datePickerElement.click();
-                            }
-                          }}
-                        >
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" className="justify-start text-left font-normal">
                           <IconCalendar className="mr-2 h-4 w-4" />
-                          {endDate ? format(endDate, 'PPP') : "Select end date"}
+                          {endDate ? format(endDate, "PPP") : "Pick a date"}
                         </Button>
-                        <div className="hidden">
+                      </DialogTrigger>
+                      <DialogContent className="w-auto p-0" align="start">
                           <Calendar
-                            id="statement-end-date"
                             mode="single"
                             selected={endDate}
                             onSelect={setEndDate}
                             initialFocus
                           />
+                      </DialogContent>
+                    </Dialog>
                         </div>
                       </div>
+                
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setStatementOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={downloadStatement} disabled={!startDate || !endDate}>
+                    Download
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Collections Funding Modal */}
+      <Dialog open={collectionsModalOpen} onOpenChange={setCollectionsModalOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Fund from Collections</DialogTitle>
+            <DialogDescription>
+              Transfer funds from your pending collections to your wallet
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <Alert>
+              <IconAlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Available collections balance: ₦45,670.00
+              </AlertDescription>
+            </Alert>
+            
+            <div className="grid gap-2">
+              <Label>Amount to Transfer (₦)</Label>
+              <Input
+                type="number"
+                placeholder="0.00"
+                value={fundAmount}
+                onChange={(e) => setFundAmount(e.target.value)}
+                max={45670}
+              />
+              <p className="text-sm text-muted-foreground">
+                Maximum available: ₦45,670.00
+              </p>
                     </div>
                   </div>
                   
                   <DialogFooter>
-                    <Button variant="outline" onClick={() => setStatementOpen(false)}>
+            <Button variant="outline" onClick={() => setCollectionsModalOpen(false)}>
                       Cancel
                     </Button>
                     <Button 
-                      onClick={downloadStatement}
-                      disabled={!startDate || !endDate}
+              onClick={handleCollectionsProceed}
+              disabled={!fundAmount || parseFloat(fundAmount) > 45670}
                     >
-                      Download
+              Transfer to Wallet
                     </Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
+              
+      {/* Mobile Money Funding Modal */}
+      <Dialog open={momoModalOpen} onOpenChange={setMomoModalOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Mobile Money Funding</DialogTitle>
+            <DialogDescription>
+              Send money to your wallet via mobile money
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label>Sender Name</Label>
+              <Input
+                placeholder="Full name of sender"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+              />
             </div>
-          </CardContent>
-        </Card>
+            
+            <div className="grid gap-2">
+              <Label>Sender Email</Label>
+              <Input
+                type="email"
+                placeholder="sender@example.com"
+                value={customerEmail}
+                onChange={(e) => setCustomerEmail(e.target.value)}
+              />
       </div>
       
-      <Tabs defaultValue="history" className="w-full">
-        <TabsList className="grid w-full max-w-md grid-cols-3 mb-6">
-          <TabsTrigger value="history" className="flex items-center">
-            <IconHistory className="h-4 w-4 mr-2" />
-            Transactions
-          </TabsTrigger>
-          <TabsTrigger value="pending" className="flex items-center">
-            <IconAlertCircle className="h-4 w-4 mr-2" />
-            Pending
-          </TabsTrigger>
-          <TabsTrigger value="settlement" className="flex items-center">
-            <IconBuildingBank className="h-4 w-4 mr-2" />
-            Settlement
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="history" className="space-y-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-center">
-                <div>
-                  <CardTitle>Transaction History</CardTitle>
-                  <CardDescription>
-                    Recent wallet transactions
-                  </CardDescription>
+            <div className="grid gap-2">
+              <Label>Amount (₦)</Label>
+              <Input
+                type="number"
+                placeholder="0.00"
+                value={fundAmount}
+                onChange={(e) => setFundAmount(e.target.value)}
+                readOnly
+              />
+            </div>
+            
+            <div className="grid gap-2">
+              <Label>Sender Mobile Number</Label>
+              <Input
+                placeholder="+233 XX XXX XXXX"
+                value={customerMobile}
+                onChange={(e) => setCustomerMobile(e.target.value)}
+              />
                 </div>
-                <Button variant="outline" size="sm">
-                  <IconDownload className="h-4 w-4 mr-2" />
-                  Export
-                </Button>
+            
+            <div className="grid gap-2">
+              <Label>Mobile Network</Label>
+              <Select value={senderNetwork} onValueChange={setSenderNetwork}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select network" />
+                </SelectTrigger>
+                <SelectContent>
+                  {mobileNetworks.map((network) => (
+                    <SelectItem key={network.id} value={network.id}>
+                      {network.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setMomoModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleMomoProceed}
+              disabled={!customerName || !customerEmail || !customerMobile || !senderNetwork}
+            >
+              Send Payment Request
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Recent Activity */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Activity</CardTitle>
+          <CardDescription>Your latest wallet transactions</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center justify-between border-b pb-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="bg-green-100 p-2 rounded-full">
-                      <IconDownload className="h-5 w-5 text-green-600" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                  <IconArrowDown className="h-4 w-4 text-green-600" />
                     </div>
                     <div>
-                      <p className="font-medium">Wallet Funding</p>
-                      <p className="text-sm text-muted-foreground">Yesterday, 14:30</p>
+                  <p className="font-medium">Collections Settlement</p>
+                  <p className="text-sm text-muted-foreground">Nov 15, 2023 at 2:30 PM</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-green-600">+GHS 5,000.00</p>
-                    <Badge variant="outline">Completed</Badge>
+                <p className="font-medium text-green-600">+₦25,670.00</p>
+                <Badge variant="outline" className="text-xs">Completed</Badge>
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between border-b pb-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="bg-red-100 p-2 rounded-full">
-                      <IconSend className="h-5 w-5 text-red-600" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <IconSend className="h-4 w-4 text-blue-600" />
                     </div>
                     <div>
-                      <p className="font-medium">Transfer to Bank</p>
-                      <p className="text-sm text-muted-foreground">Oct 15, 2023</p>
+                  <p className="font-medium">Transfer to Kofi Store</p>
+                  <p className="text-sm text-muted-foreground">Nov 14, 2023 at 11:45 AM</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-red-600">-GHS 2,500.00</p>
-                    <Badge variant="outline">Completed</Badge>
+                <p className="font-medium text-red-600">-₦5,000.00</p>
+                <Badge variant="outline" className="text-xs">Completed</Badge>
+                  </div>
+                </div>
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                  <IconWallet className="h-4 w-4 text-green-600" />
+                    </div>
+                    <div>
+                  <p className="font-medium">Mobile Money Funding</p>
+                  <p className="text-sm text-muted-foreground">Nov 13, 2023 at 4:20 PM</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                <p className="font-medium text-green-600">+₦10,000.00</p>
+                <Badge variant="outline" className="text-xs">Completed</Badge>
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-        
-        <TabsContent value="pending" className="space-y-4">
-          <Alert>
-            <IconAlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              You have no pending transactions
-            </AlertDescription>
-          </Alert>
-        </TabsContent>
-        
-        <TabsContent value="settlement" className="space-y-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-center">
-                <div>
-                  <CardTitle>Bank Account</CardTitle>
-                  <CardDescription>
-                    Your settlement bank account information
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between border-b pb-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="bg-blue-100 p-2 rounded-full">
-                      <IconBuildingBank className="h-5 w-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="font-medium">First Bank</p>
-                      <p className="text-sm text-muted-foreground">Primary Settlement Account</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium">••••••••1234</p>
-                    <Badge variant="outline">Active</Badge>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
     </div>
   );
 } 

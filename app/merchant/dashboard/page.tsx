@@ -38,16 +38,16 @@ const chartData = [
 ];
 
 const transactionsData = [
-  { id: '1', reference: 'TR-123456', amount: '₦15,000.00', type: 'Collection', status: 'Successful', date: '2023-05-12' },
-  { id: '2', reference: 'TR-123457', amount: '₦25,000.00', type: 'Payout', status: 'Pending', date: '2023-05-12' },
-  { id: '3', reference: 'TR-123458', amount: '₦5,000.00', type: 'Collection', status: 'Failed', date: '2023-05-11' },
-  { id: '4', reference: 'TR-123459', amount: '₦12,000.00', type: 'Collection', status: 'Successful', date: '2023-05-11' },
-  { id: '5', reference: 'TR-123460', amount: '₦8,000.00', type: 'Payout', status: 'Successful', date: '2023-05-10' },
-  { id: '6', reference: 'TR-123461', amount: '₦9,500.00', type: 'Collection', status: 'Successful', date: '2023-05-10' },
-  { id: '7', reference: 'TR-123462', amount: '₦18,000.00', type: 'Collection', status: 'Failed', date: '2023-05-09' },
-  { id: '8', reference: 'TR-123463', amount: '₦22,000.00', type: 'Payout', status: 'Successful', date: '2023-05-09' },
-  { id: '9', reference: 'TR-123464', amount: '₦7,000.00', type: 'Collection', status: 'Successful', date: '2023-05-08' },
-  { id: '10', reference: 'TR-123465', amount: '₦13,000.00', type: 'Payout', status: 'Pending', date: '2023-05-08' },
+  { id: '1', reference: 'TR-123456', amount: 'GHS15,000.00', type: 'Collection', status: 'Successful', date: '2023-05-12' },
+  { id: '2', reference: 'TR-123457', amount: 'GHS25,000.00', type: 'Payout', status: 'Pending', date: '2023-05-12' },
+  { id: '3', reference: 'TR-123458', amount: 'GHS5,000.00', type: 'Collection', status: 'Failed', date: '2023-05-11' },
+  { id: '4', reference: 'TR-123459', amount: 'GHS12,000.00', type: 'Collection', status: 'Successful', date: '2023-05-11' },
+  { id: '5', reference: 'TR-123460', amount: 'GHS8,000.00', type: 'Payout', status: 'Successful', date: '2023-05-10' },
+  { id: '6', reference: 'TR-123461', amount: 'GHS9,500.00', type: 'Collection', status: 'Successful', date: '2023-05-10' },
+  { id: '7', reference: 'TR-123462', amount: 'GHS18,000.00', type: 'Collection', status: 'Failed', date: '2023-05-09' },
+  { id: '8', reference: 'TR-123463', amount: 'GHS22,000.00', type: 'Payout', status: 'Successful', date: '2023-05-09' },
+  { id: '9', reference: 'TR-123464', amount: 'GHS7,000.00', type: 'Collection', status: 'Successful', date: '2023-05-08' },
+  { id: '10', reference: 'TR-123465', amount: 'GHS13,000.00', type: 'Payout', status: 'Pending', date: '2023-05-08' },
 ];
 
 const submerchants = [
@@ -103,7 +103,7 @@ export default function MerchantDashboardPage() {
             <CardDescription>Total amount collected</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">₦456,890.00</p>
+            <p className="text-3xl font-bold">GHS456,890.00</p>
           </CardContent>
         </Card>
         
@@ -123,7 +123,7 @@ export default function MerchantDashboardPage() {
             <CardDescription>Current available balance</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">₦235,410.00</p>
+            <p className="text-3xl font-bold">GHS235,410.00</p>
           </CardContent>
         </Card>
       </div>

@@ -342,7 +342,7 @@ export default function MerchantDetailPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Balance Limit</p>
-                    <p>₦{merchant.ovaSettings.balanceLimit}</p>
+                    <p>GHS{merchant.ovaSettings.balanceLimit}</p>
                   </div>
                 </div>
               ) : (
@@ -389,7 +389,7 @@ export default function MerchantDetailPage() {
                       <p className="text-sm text-muted-foreground">{transaction.date}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium">₦{transaction.amount}</p>
+                      <p className="font-medium">GHS{transaction.amount}</p>
                       <Badge 
                         variant={
                           transaction.status === "Completed" ? "secondary" :

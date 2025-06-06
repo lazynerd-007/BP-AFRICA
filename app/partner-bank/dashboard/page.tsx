@@ -56,7 +56,7 @@ const settlementTransactions = [
   { 
     id: 'ST-123456', 
     merchantName: 'BluWave Limited', 
-    amount: '₦2,450,000.00', 
+    amount: 'GHS2,450,000.00', 
     date: '2023-10-15',
     transactionCount: 123,
     status: 'Completed'
@@ -64,7 +64,7 @@ const settlementTransactions = [
   { 
     id: 'ST-123457', 
     merchantName: 'Chensha City Ghana Ltd', 
-    amount: '₦1,875,000.00', 
+    amount: 'GHS1,875,000.00', 
     date: '2023-10-15',
     transactionCount: 98,
     status: 'Pending'
@@ -72,7 +72,7 @@ const settlementTransactions = [
   { 
     id: 'ST-123458', 
     merchantName: 'Blu Penguin', 
-    amount: '₦3,125,000.00', 
+    amount: 'GHS3,125,000.00', 
     date: '2023-10-14',
     transactionCount: 156,
     status: 'Completed'
@@ -80,7 +80,7 @@ const settlementTransactions = [
   { 
     id: 'ST-123459', 
     merchantName: 'Timings Ltd', 
-    amount: '₦1,250,000.00', 
+    amount: 'GHS1,250,000.00', 
     date: '2023-10-14',
     transactionCount: 67,
     status: 'Completed'
@@ -88,7 +88,7 @@ const settlementTransactions = [
   { 
     id: 'ST-123460', 
     merchantName: 'QuickServe Ltd', 
-    amount: '₦950,000.00', 
+    amount: 'GHS950,000.00', 
     date: '2023-10-13',
     transactionCount: 45,
     status: 'Failed'
@@ -96,11 +96,11 @@ const settlementTransactions = [
 ];
 
 const topMerchants = [
-  { id: '1', name: 'BluWave Limited', transactionVolume: '₦12,500,000.00', growth: '+12%' },
-  { id: '2', name: 'Blu Penguin', transactionVolume: '₦8,750,000.00', growth: '+8%' },
-  { id: '3', name: 'Chensha City Ghana Ltd', transactionVolume: '₦7,250,000.00', growth: '+5%' },
-  { id: '4', name: 'Timings Ltd', transactionVolume: '₦5,125,000.00', growth: '+3%' },
-  { id: '5', name: 'QuickServe Ltd', transactionVolume: '₦3,850,000.00', growth: '-2%' },
+  { id: '1', name: 'BluWave Limited', transactionVolume: 'GHS12,500,000.00', growth: '+12%' },
+  { id: '2', name: 'Blu Penguin', transactionVolume: 'GHS8,750,000.00', growth: '+8%' },
+  { id: '3', name: 'Chensha City Ghana Ltd', transactionVolume: 'GHS7,250,000.00', growth: '+5%' },
+  { id: '4', name: 'Timings Ltd', transactionVolume: 'GHS5,125,000.00', growth: '+3%' },
+  { id: '5', name: 'QuickServe Ltd', transactionVolume: 'GHS3,850,000.00', growth: '-2%' },
 ];
 
 export default function PartnerBankDashboardPage() {
@@ -154,7 +154,7 @@ export default function PartnerBankDashboardPage() {
             <IconCash className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₦42,350,000.00</div>
+            <div className="text-2xl font-bold">GHS42,350,000.00</div>
             <div className="flex items-center text-xs text-green-500 mt-1">
               <IconArrowUpRight className="h-3 w-3 mr-1" />
               <span>+12.5% from last period</span>
@@ -168,7 +168,7 @@ export default function PartnerBankDashboardPage() {
             <IconReportMoney className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₦1,270,500.00</div>
+            <div className="text-2xl font-bold">GHS1,270,500.00</div>
             <div className="flex items-center text-xs text-green-500 mt-1">
               <IconArrowUpRight className="h-3 w-3 mr-1" />
               <span>+8.3% from last period</span>
@@ -222,7 +222,7 @@ export default function PartnerBankDashboardPage() {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
-                  <Tooltip formatter={(value) => `₦${value.toLocaleString()}`} />
+                  <Tooltip formatter={(value) => `GHS${value.toLocaleString()}`} />
                   <Legend />
                   <Area 
                     type="monotone" 

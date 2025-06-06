@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useAuthStore } from "@/lib/store"
 import { useEffect, useState } from "react"
+import { showLogoutSuccess } from "@/components/success-toast"
 
 // Admin navigation data
 const adminData = {
@@ -174,7 +175,7 @@ const merchantData = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user, logout } = useAuthStore();
+  const { user } = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
   const [currentPathname, setCurrentPathname] = useState("");
   
@@ -255,7 +256,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter>
         <NavUser 
           user={userData} 
-          onSignOut={() => logout()} 
+          onSignOut={async () => {
+            // Show logout success toast
+            await showLogoutSuccess("admin");
+            
+            // Clear user data and redirect
+            setTimeout(() => {
+              window.location.href = "/login/admin";
+            }, 500);
+          }} 
         />
       </SidebarFooter>
     </Sidebar>

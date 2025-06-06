@@ -2,17 +2,17 @@
 
 import { ReactNode } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { 
   IconHome, 
   IconTransfer,
   IconCreditCard, 
   IconUser,
   IconWallet,
-  IconBuilding,
   IconDevices,
   IconLogout
 } from "@tabler/icons-react";
+import { showLogoutSuccess } from "@/components/success-toast";
 
 interface SidebarItemProps {
   href: string;
@@ -40,12 +40,15 @@ function SidebarItem({ href, icon, label, isActive }: SidebarItemProps) {
 
 export default function SubmerchantDashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
   
-  const handleLogout = () => {
-    // In a real app, you would clear auth tokens, cookies, etc.
-    // For now, just redirect to login page
-    router.push("/login/submerchant");
+  const handleLogout = async () => {
+    // Show logout success toast
+    await showLogoutSuccess("submerchant");
+    
+    // Clear user data and redirect
+    setTimeout(() => {
+      window.location.href = "/login/submerchant";
+    }, 500);
   };
   
   const sidebarItems = [
@@ -73,11 +76,6 @@ export default function SubmerchantDashboardLayout({ children }: { children: Rea
       href: "/submerchant/dashboard/terminals",
       icon: <IconDevices className="w-5 h-5" />,
       label: "Terminals",
-    },
-    {
-      href: "/submerchant/dashboard/parent-merchant",
-      icon: <IconBuilding className="w-5 h-5" />,
-      label: "Parent Merchant",
     },
     {
       href: "/submerchant/dashboard/profile",

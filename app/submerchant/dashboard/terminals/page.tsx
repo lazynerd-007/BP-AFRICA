@@ -16,8 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { IconInfoCircle, IconBuilding } from "@tabler/icons-react";
+import { IconBuilding } from "@tabler/icons-react";
 
 // Mock terminals data for submerchant
 const mockTerminals = [
@@ -102,13 +101,7 @@ export default function SubmerchantTerminalsPage() {
         </p>
       </div>
 
-      {/* Info Alert */}
-      <Alert>
-        <IconInfoCircle className="h-4 w-4" />
-        <AlertDescription>
-          Your terminal devices are assigned and managed by your parent merchant. For terminal support or issues, contact your parent merchant directly.
-        </AlertDescription>
-      </Alert>
+
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
@@ -187,7 +180,6 @@ export default function SubmerchantTerminalsPage() {
                 <TableRow>
                   <TableHead>Terminal ID</TableHead>
                   <TableHead>Model</TableHead>
-                  <TableHead>Location</TableHead>
                   <TableHead>Serial Number</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Last Active</TableHead>
@@ -199,7 +191,6 @@ export default function SubmerchantTerminalsPage() {
                   <TableRow key={terminal.id}>
                     <TableCell className="font-medium">{terminal.id}</TableCell>
                     <TableCell>{terminal.model}</TableCell>
-                    <TableCell>{terminal.location}</TableCell>
                     <TableCell className="font-mono text-xs">
                       {terminal.serialNumber}
                     </TableCell>
@@ -217,7 +208,7 @@ export default function SubmerchantTerminalsPage() {
                 
                 {mockTerminals.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={7} className="h-24 text-center">
+                    <TableCell colSpan={6} className="h-24 text-center">
                       No terminals assigned yet. Contact your parent merchant to request terminal assignment.
                     </TableCell>
                   </TableRow>

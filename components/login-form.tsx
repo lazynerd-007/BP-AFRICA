@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { useAuthStore } from "@/lib/store";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import { showLoginSuccess } from "@/components/success-toast";
 
 // Define validation schema with Zod
 const loginSchema = z.object({
@@ -48,7 +49,27 @@ export function LoginForm({
   });
 
   const onSubmit = async (data: LoginFormValues) => {
-    await login(data.email, data.password, userType);
+    const result = await login(data.email, data.password, userType);
+    if (result === true) {
+      // Create user object from form data for toast
+      const userForToast = { email: data.email, name: data.email.split('@')[0] };
+      
+      // Show success toast
+      await showLoginSuccess(userType, userForToast);
+      
+      // Navigate after toast is shown
+      setTimeout(() => {
+        if (userType === "admin") {
+          window.location.href = "/admin/dashboard";
+        } else if (userType === "merchant") {
+          window.location.href = "/merchant/dashboard";
+        } else if (userType === "partner-bank") {
+          window.location.href = "/partner-bank/dashboard";
+        } else if (userType === "submerchant") {
+          window.location.href = "/submerchant/dashboard";
+        }
+      }, 500);
+    }
   };
 
   const getLoginTitle = () => {

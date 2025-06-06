@@ -15,8 +15,10 @@ interface AuthState {
   user: User | null;
   isLoading: boolean;
   error: string | null;
-  login: (email: string, password: string, userType: "admin" | "merchant" | "partner-bank" | "submerchant") => Promise<void>;
+  showLogoutModal: boolean;
+  login: (email: string, password: string, userType: "admin" | "merchant" | "partner-bank" | "submerchant") => Promise<boolean>;
   logout: () => void;
+  setShowLogoutModal: (show: boolean) => void;
   clearError: () => void;
   requestPasswordReset: (email: string, userType: "admin" | "merchant" | "partner-bank" | "submerchant") => Promise<void>;
 }
@@ -92,6 +94,7 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isLoading: false,
       error: null,
+      showLogoutModal: false,
       
       login: async (email, password, userType) => {
         set({ isLoading: true, error: null });
@@ -100,43 +103,39 @@ export const useAuthStore = create<AuthState>()(
           const user = await mockAuthenticate(email, password, userType);
           set({ user, isLoading: false });
           
-          // Wait for authentication to complete
-          await new Promise(resolve => setTimeout(resolve, 100));
-          
-          // Navigate based on user type
-          if (userType === "admin") {
-            // Dynamic import to avoid JSX in store file
-            const { showAdminLoginToast } = await import('@/components/admin/admin-login-toast');
-            await showAdminLoginToast(user);
-            window.location.href = "/admin/dashboard";
-          } else if (userType === "merchant") {
-            window.location.href = "/merchant/dashboard";
-          } else if (userType === "partner-bank") {
-            window.location.href = "/partner-bank/dashboard";
-          } else if (userType === "submerchant") {
-            window.location.href = "/submerchant/dashboard";
-          }
+          // Return success for modal handling
+          return true;
         } catch (error) {
           set({ 
             error: error instanceof Error ? error.message : "An unknown error occurred", 
             isLoading: false 
           });
+          return false;
         }
       },
       
       logout: () => {
-        const userRole = get().user?.role;
-        set({ user: null });
-        
-        // Redirect to the appropriate login page based on the user's role
-        if (userRole === "admin") {
-          window.location.href = "/login/admin";
-        } else if (userRole === "partner-bank") {
-          window.location.href = "/login/partner-bank";
-        } else if (userRole === "submerchant") {
-          window.location.href = "/login/submerchant";
+        set({ showLogoutModal: true });
+      },
+      
+      setShowLogoutModal: (show: boolean) => {
+        if (!show) {
+          // Actually logout when modal is closed
+          const userRole = get().user?.role;
+          set({ user: null, showLogoutModal: false });
+          
+          // Redirect to the appropriate login page based on the user's role
+          if (userRole === "admin") {
+            window.location.href = "/login/admin";
+          } else if (userRole === "partner-bank") {
+            window.location.href = "/login/partner-bank";
+          } else if (userRole === "submerchant") {
+            window.location.href = "/login/submerchant";
+          } else {
+            window.location.href = "/login/merchant";
+          }
         } else {
-          window.location.href = "/login/merchant";
+          set({ showLogoutModal: show });
         }
       },
       

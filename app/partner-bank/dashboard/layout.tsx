@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { 
   IconHome, 
   IconTransfer,
@@ -12,6 +12,7 @@ import {
   IconBuildingBank,
   IconLogout
 } from "@tabler/icons-react";
+import { showLogoutSuccess } from "@/components/success-toast";
 
 interface SidebarItemProps {
   href: string;
@@ -39,12 +40,15 @@ function SidebarItem({ href, icon, label, isActive }: SidebarItemProps) {
 
 export default function PartnerBankDashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
   
-  const handleLogout = () => {
-    // In a real app, you would clear auth tokens, cookies, etc.
-    // For now, just redirect to login page
-    router.push("/login/partner-bank");
+  const handleLogout = async () => {
+    // Show logout success toast
+    await showLogoutSuccess("partner-bank");
+    
+    // Clear user data and redirect
+    setTimeout(() => {
+      window.location.href = "/login/partner-bank";
+    }, 500);
   };
   
   const sidebarItems = [

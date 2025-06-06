@@ -22,14 +22,9 @@ import {
   DialogTitle, 
   DialogTrigger 
 } from "@/components/ui/dialog";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { IconQrcode, IconReceipt, IconPlus, IconCopy, IconDownload, IconEye, IconTrash } from "@tabler/icons-react";
+import { Loader2 } from "lucide-react";
 
 // Type definitions
 interface PaymentLink {
@@ -59,6 +54,12 @@ export default function MerchantPaymentsPage() {
   const [viewLinkModalOpen, setViewLinkModalOpen] = useState(false);
   const [selectedLink, setSelectedLink] = useState<PaymentLink | null>(null);
   
+  // Loading states
+  const [isCreatingLink, setIsCreatingLink] = useState(false);
+  const [isCreatingQr, setIsCreatingQr] = useState(false);
+  const [deletingLinkId, setDeletingLinkId] = useState<string | null>(null);
+  const [deletingQrId, setDeletingQrId] = useState<string | null>(null);
+  
   // State for multiple items
   const [paymentLinks, setPaymentLinks] = useState<PaymentLink[]>([]);
   const [qrCodes, setQrCodes] = useState<QrCode[]>([]);
@@ -74,56 +75,98 @@ export default function MerchantPaymentsPage() {
   const [qrDescription, setQrDescription] = useState("");
   
   // Handle form submissions
-  const handleCreatePaymentLink = () => {
+  const handleCreatePaymentLink = async () => {
     if (!linkTitle || (linkType === "one-time" && !linkAmount)) return;
     
-    const newLink: PaymentLink = {
-      id: `PLK-${Date.now()}`,
-      title: linkTitle,
-      amount: linkType === "one-time" ? parseFloat(linkAmount) : 0,
-      currency: "GHS",
-      description: linkDescription,
-      type: linkType,
-      url: `https://pay.bluepay.com/link/PLK-${Date.now()}`,
-      created: new Date().toISOString()
-    };
-
-    setPaymentLinks([...paymentLinks, newLink]);
-    setPaymentLinkModalOpen(false);
+    setIsCreatingLink(true);
     
-    // Reset form
-    setLinkTitle("");
-    setLinkAmount("");
-    setLinkDescription("");
-    setLinkType("one-time");
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      const newLink: PaymentLink = {
+        id: `PLK-${Date.now()}`,
+        title: linkTitle,
+        amount: linkType === "one-time" ? parseFloat(linkAmount) : 0,
+        currency: "GHS",
+        description: linkDescription,
+        type: linkType,
+        url: `https://pay.bluepay.com/link/PLK-${Date.now()}`,
+        created: new Date().toISOString()
+      };
+
+      setPaymentLinks([...paymentLinks, newLink]);
+      setPaymentLinkModalOpen(false);
+      
+      // Reset form
+      setLinkTitle("");
+      setLinkAmount("");
+      setLinkDescription("");
+      setLinkType("one-time");
+    } catch (error) {
+      console.error("Failed to create payment link:", error);
+    } finally {
+      setIsCreatingLink(false);
+    }
   };
   
-  const handleCreateQrCode = () => {
+  const handleCreateQrCode = async () => {
     if (!qrTitle) return;
     
-    const newQrCode: QrCode = {
-      id: `QRC-${Date.now()}`,
-      title: qrTitle,
-      currency: "GHS",
-      description: qrDescription,
-      qrCodeUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
-      created: new Date().toISOString()
-    };
-
-    setQrCodes([...qrCodes, newQrCode]);
-    setQrCodeModalOpen(false);
+    setIsCreatingQr(true);
     
-    // Reset form
-    setQrTitle("");
-    setQrDescription("");
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      
+      const newQrCode: QrCode = {
+        id: `QRC-${Date.now()}`,
+        title: qrTitle,
+        currency: "GHS",
+        description: qrDescription,
+        qrCodeUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
+        created: new Date().toISOString()
+      };
+
+      setQrCodes([...qrCodes, newQrCode]);
+      setQrCodeModalOpen(false);
+      
+      // Reset form
+      setQrTitle("");
+      setQrDescription("");
+    } catch (error) {
+      console.error("Failed to create QR code:", error);
+    } finally {
+      setIsCreatingQr(false);
+    }
   };
 
-  const handleDeletePaymentLink = (id: string) => {
-    setPaymentLinks(paymentLinks.filter(link => link.id !== id));
+  const handleDeletePaymentLink = async (id: string) => {
+    setDeletingLinkId(id);
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 800));
+      setPaymentLinks(paymentLinks.filter(link => link.id !== id));
+    } catch (error) {
+      console.error("Failed to delete payment link:", error);
+    } finally {
+      setDeletingLinkId(null);
+    }
   };
 
-  const handleDeleteQrCode = (id: string) => {
-    setQrCodes(qrCodes.filter(qr => qr.id !== id));
+  const handleDeleteQrCode = async (id: string) => {
+    setDeletingQrId(id);
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 800));
+      setQrCodes(qrCodes.filter(qr => qr.id !== id));
+    } catch (error) {
+      console.error("Failed to delete QR code:", error);
+    } finally {
+      setDeletingQrId(null);
+    }
   };
 
   const handleViewLink = (link: PaymentLink) => {
@@ -176,9 +219,9 @@ export default function MerchantPaymentsPage() {
                 
                 <div className="grid gap-4 py-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="link-title">Title</Label>
+                    <Label htmlFor="merchant-link-title">Title</Label>
                     <Input
-                      id="link-title"
+                      id="merchant-link-title"
                       placeholder="Enter payment link title"
                       value={linkTitle}
                       onChange={(e) => setLinkTitle(e.target.value)}
@@ -186,35 +229,52 @@ export default function MerchantPaymentsPage() {
                   </div>
                   
                                       <div className="grid gap-2">
-                      <Label htmlFor="link-type">Payment Type</Label>
-                      <Select value={linkType} onValueChange={(value) => setLinkType(value as "one-time" | "recurring")}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select payment type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="one-time">One-time Payment</SelectItem>
-                          <SelectItem value="recurring">Recurring Payment</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Label>Payment Type</Label>
+                      <div className="flex gap-4">
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            id="merchant-one-time"
+                            name="merchant-payment-type"
+                            value="one-time"
+                            checked={linkType === "one-time"}
+                            onChange={(e) => setLinkType(e.target.value as "one-time" | "recurring")}
+                            className="text-primary"
+                          />
+                          <Label htmlFor="merchant-one-time" className="font-normal cursor-pointer">One-time Payment</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            id="merchant-recurring"
+                            name="merchant-payment-type"
+                            value="recurring"
+                            checked={linkType === "recurring"}
+                            onChange={(e) => setLinkType(e.target.value as "one-time" | "recurring")}
+                            className="text-primary"
+                          />
+                          <Label htmlFor="merchant-recurring" className="font-normal cursor-pointer">Recurring Payment</Label>
+                        </div>
+                      </div>
                     </div>
                   
                   {linkType === "one-time" && (
-                    <div className="grid gap-2">
-                      <Label htmlFor="link-amount">Amount (GHS)</Label>
-                      <Input
-                        id="link-amount"
-                        type="number"
-                        placeholder="0.00"
-                        value={linkAmount}
-                        onChange={(e) => setLinkAmount(e.target.value)}
-                      />
-                    </div>
+                                      <div className="grid gap-2">
+                    <Label htmlFor="merchant-link-amount">Amount (GHS)</Label>
+                    <Input
+                      id="merchant-link-amount"
+                      type="number"
+                      placeholder="0.00"
+                      value={linkAmount}
+                      onChange={(e) => setLinkAmount(e.target.value)}
+                    />
+                  </div>
                   )}
                   
                   <div className="grid gap-2">
-                    <Label htmlFor="link-description">Description (Optional)</Label>
+                    <Label htmlFor="merchant-link-description">Description (Optional)</Label>
                     <Textarea
-                      id="link-description"
+                      id="merchant-link-description"
                       placeholder="Enter payment description"
                       value={linkDescription}
                       onChange={(e) => setLinkDescription(e.target.value)}
@@ -223,11 +283,21 @@ export default function MerchantPaymentsPage() {
                 </div>
                 
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setPaymentLinkModalOpen(false)}>
+                  <Button variant="outline" onClick={() => setPaymentLinkModalOpen(false)} disabled={isCreatingLink}>
                     Cancel
                   </Button>
-                  <Button onClick={handleCreatePaymentLink} disabled={!linkTitle || (linkType === "one-time" && !linkAmount)}>
-                    Create Link
+                  <Button 
+                    onClick={handleCreatePaymentLink} 
+                    disabled={!linkTitle || (linkType === "one-time" && !linkAmount) || isCreatingLink}
+                  >
+                    {isCreatingLink ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating...
+                      </>
+                    ) : (
+                      "Create Link"
+                    )}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -293,8 +363,13 @@ export default function MerchantPaymentsPage() {
                           onClick={() => handleDeletePaymentLink(link.id)}
                           className="text-red-500 hover:text-red-600"
                           title="Delete Link"
+                          disabled={deletingLinkId === link.id}
                         >
-                          <IconTrash className="h-4 w-4" />
+                          {deletingLinkId === link.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <IconTrash className="h-4 w-4" />
+                          )}
                         </Button>
                       </div>
                     </div>
@@ -339,9 +414,9 @@ export default function MerchantPaymentsPage() {
                 
                 <div className="grid gap-4 py-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="qr-title">Title</Label>
+                    <Label htmlFor="merchant-qr-title">Title</Label>
                     <Input
-                      id="qr-title"
+                      id="merchant-qr-title"
                       placeholder="Enter QR code title"
                       value={qrTitle}
                       onChange={(e) => setQrTitle(e.target.value)}
@@ -349,9 +424,9 @@ export default function MerchantPaymentsPage() {
                   </div>
                   
                   <div className="grid gap-2">
-                    <Label htmlFor="qr-description">Description (Optional)</Label>
+                    <Label htmlFor="merchant-qr-description">Description (Optional)</Label>
                     <Textarea
-                      id="qr-description"
+                      id="merchant-qr-description"
                       placeholder="Enter QR code description"
                       value={qrDescription}
                       onChange={(e) => setQrDescription(e.target.value)}
@@ -360,11 +435,18 @@ export default function MerchantPaymentsPage() {
                 </div>
                 
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setQrCodeModalOpen(false)}>
+                  <Button variant="outline" onClick={() => setQrCodeModalOpen(false)} disabled={isCreatingQr}>
                     Cancel
                   </Button>
-                  <Button onClick={handleCreateQrCode} disabled={!qrTitle}>
-                    Generate QR Code
+                  <Button onClick={handleCreateQrCode} disabled={!qrTitle || isCreatingQr}>
+                    {isCreatingQr ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      "Generate QR Code"
+                    )}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -415,8 +497,13 @@ export default function MerchantPaymentsPage() {
                           size="sm"
                           onClick={() => handleDeleteQrCode(qr.id)}
                           className="text-red-500 hover:text-red-600"
+                          disabled={deletingQrId === qr.id}
                         >
-                          <IconTrash className="h-4 w-4" />
+                          {deletingQrId === qr.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <IconTrash className="h-4 w-4" />
+                          )}
                         </Button>
                       </div>
                     </div>

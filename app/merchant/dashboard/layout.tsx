@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { 
   IconHome, 
   IconCreditCard, 
@@ -14,6 +14,7 @@ import {
   IconUsers,
   IconLogout
 } from "@tabler/icons-react";
+import { showLogoutSuccess } from "@/components/success-toast";
 
 interface SidebarItemProps {
   href: string;
@@ -41,12 +42,15 @@ function SidebarItem({ href, icon, label, isActive }: SidebarItemProps) {
 
 export default function MerchantDashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
   
-  const handleLogout = () => {
-    // In a real app, you would clear auth tokens, cookies, etc.
-    // For now, just redirect to login page
-    router.push("/login/merchant");
+  const handleLogout = async () => {
+    // Show logout success toast
+    await showLogoutSuccess("merchant");
+    
+    // Clear user data and redirect
+    setTimeout(() => {
+      window.location.href = "/login/merchant";
+    }, 500);
   };
   
   const sidebarItems = [
