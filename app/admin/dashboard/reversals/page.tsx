@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { OTPVerification } from "@/components/ui/otp-verification";
 import { IconSearch, IconEye, IconCheck, IconX, IconAlertTriangle, IconCreditCard } from "@tabler/icons-react";
 import { format } from "date-fns";
 
@@ -103,6 +104,18 @@ const transactionsData = [
   }
 ];
 
+// Create a unified transaction type for lookups
+type TransactionLookup = {
+  id: string;
+  merchantName: string;
+  amount: string;
+  date: string;
+  customerName: string;
+  customerPhone: string;
+  paymentMethod: string;
+  status: string;
+};
+
 interface ReversalForm {
   transactionId: string;
   reason: string;
@@ -116,7 +129,9 @@ export default function ReversalsPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [showTransactionDialog, setShowTransactionDialog] = useState(false);
   const [showApprovalDialog, setShowApprovalDialog] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState<typeof transactionsData[0] | null>(null);
+  const [showOtpDialog, setShowOtpDialog] = useState(false);
+  const [pendingAction, setPendingAction] = useState<{ action: "approve" | "reject"; reversal: typeof reversalsData[0] } | null>(null);
+  const [selectedTransaction, setSelectedTransaction] = useState<TransactionLookup | null>(null);
   const [selectedReversal, setSelectedReversal] = useState<typeof reversalsData[0] | null>(null);
   const [reversalForm, setReversalForm] = useState<ReversalForm>({
     transactionId: "",
@@ -124,7 +139,7 @@ export default function ReversalsPage() {
     amount: "",
     notes: ""
   });
-  const [lookupResult, setLookupResult] = useState<typeof transactionsData[0] | null>(null);
+  const [lookupResult, setLookupResult] = useState<TransactionLookup | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Check if user is super admin (normally from auth context)
@@ -157,8 +172,22 @@ export default function ReversalsPage() {
 
   // Handle transaction lookup
   const handleTransactionLookup = () => {
-    const transaction = [...transactionsData, ...reversalsData.map(r => r.originalTransaction)]
-      .find(t => t.id === reversalForm.transactionId);
+    // First check in transactions data
+    let transaction = transactionsData.find(t => t.id === reversalForm.transactionId);
+    
+    // If not found, check in original transactions from reversals (with default status)
+    if (!transaction) {
+      const originalTransaction = reversalsData
+        .map(r => r.originalTransaction)
+        .find(t => t.id === reversalForm.transactionId);
+      
+      if (originalTransaction) {
+        transaction = {
+          ...originalTransaction,
+          status: "Completed" // Default status for original transactions
+        };
+      }
+    }
     
     if (transaction) {
       setLookupResult(transaction);
@@ -207,16 +236,29 @@ export default function ReversalsPage() {
     }, 2000);
   };
 
-  // Handle approval/rejection
-  const handleApprovalAction = async (action: "approve" | "reject") => {
+  // Handle approval/rejection with OTP
+  const handleApprovalAction = (action: "approve" | "reject") => {
     if (!selectedReversal) return;
+    
+    // Set pending action and show OTP dialog
+    setPendingAction({ action, reversal: selectedReversal });
+    setShowApprovalDialog(false);
+    setShowOtpDialog(true);
+  };
+
+  // Handle OTP verification
+  const handleOtpVerification = async () => {
+    if (!pendingAction) return;
     
     setIsProcessing(true);
     
-    // Simulate API call
-    setTimeout(() => {
+    // Simulate OTP verification and API call
+    try {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const { action, reversal } = pendingAction;
       const updatedStatus = action === "approve" ? "Approved" : "Rejected";
-      const reversalIndex = reversalsData.findIndex(r => r.id === selectedReversal.id);
+      const reversalIndex = reversalsData.findIndex(r => r.id === reversal.id);
       
       if (reversalIndex !== -1) {
         reversalsData[reversalIndex] = {
@@ -227,12 +269,17 @@ export default function ReversalsPage() {
         };
       }
       
-      setIsProcessing(false);
-      setShowApprovalDialog(false);
+      // Close dialogs and reset state
+      setShowOtpDialog(false);
+      setPendingAction(null);
       setSelectedReversal(null);
       
       alert(`Reversal ${action}d successfully!`);
-    }, 1500);
+    } catch {
+      throw new Error("OTP verification failed");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -443,10 +490,13 @@ export default function ReversalsPage() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => {
-                                setSelectedTransaction(reversal.originalTransaction);
-                                setShowTransactionDialog(true);
-                              }}
+                                                          onClick={() => {
+                              setSelectedTransaction({
+                                ...reversal.originalTransaction,
+                                status: "Completed"
+                              });
+                              setShowTransactionDialog(true);
+                            }}
                             >
                               <IconEye className="h-4 w-4" />
                             </Button>
@@ -498,7 +548,10 @@ export default function ReversalsPage() {
                             variant="ghost"
                             size="sm"
                             onClick={() => {
-                              setSelectedTransaction(reversal.originalTransaction);
+                              setSelectedTransaction({
+                                ...reversal.originalTransaction,
+                                status: "Completed"
+                              });
                               setShowTransactionDialog(true);
                             }}
                           >
@@ -620,6 +673,28 @@ export default function ReversalsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* OTP Verification Dialog */}
+      <OTPVerification
+        isOpen={showOtpDialog}
+        onClose={() => {
+          setShowOtpDialog(false);
+          setPendingAction(null);
+          setIsProcessing(false);
+        }}
+        onVerify={handleOtpVerification}
+        title={`${pendingAction?.action === "approve" ? "Approve" : "Reject"} Reversal`}
+        description={`Enter your OTP to ${pendingAction?.action === "approve" ? "approve" : "reject"} this reversal request`}
+        actionLabel={pendingAction?.action === "approve" ? "Approve" : "Reject"}
+        actionDetails={pendingAction ? {
+          reversalId: pendingAction.reversal.id,
+          transactionId: pendingAction.reversal.transactionId,
+          amount: pendingAction.reversal.amount,
+          merchant: pendingAction.reversal.merchantName,
+          reason: pendingAction.reversal.reason
+        } : undefined}
+        isProcessing={isProcessing}
+      />
     </div>
   );
 } 

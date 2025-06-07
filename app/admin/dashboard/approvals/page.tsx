@@ -29,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { OTPVerification } from "@/components/ui/otp-verification";
 import { 
   IconSearch, 
   IconCheck, 
@@ -180,8 +181,11 @@ export default function ApprovalsPage() {
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [showApproveDialog, setShowApproveDialog] = useState(false);
   const [showRejectDialog, setShowRejectDialog] = useState(false);
+  const [showOtpDialog, setShowOtpDialog] = useState(false);
+  const [pendingAction, setPendingAction] = useState<{ action: "approve" | "reject"; approval: typeof approvalRequests[0] } | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
   const [approvalNotes, setApprovalNotes] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Filter approvals based on search and filters
   const filteredApprovals = useMemo(() => {
@@ -199,25 +203,57 @@ export default function ApprovalsPage() {
     });
   }, [searchTerm, statusFilter, typeFilter]);
 
-  // Handle approval
+  // Handle approval with OTP
   const handleApprove = () => {
-    // In a real app, this would make an API call to approve the request
-    alert(`Approval request ${currentApproval?.id} has been approved.`);
+    if (!currentApproval) return;
+    
+    // Set pending action and show OTP dialog
+    setPendingAction({ action: "approve", approval: currentApproval });
     setShowApproveDialog(false);
-    setApprovalNotes("");
+    setShowOtpDialog(true);
   };
 
-  // Handle rejection
+  // Handle rejection with OTP
   const handleReject = () => {
     if (!rejectionReason.trim()) {
       alert("Please provide a reason for rejection.");
       return;
     }
     
-    // In a real app, this would make an API call to reject the request
-    alert(`Approval request ${currentApproval?.id} has been rejected.`);
+    if (!currentApproval) return;
+    
+    // Set pending action and show OTP dialog
+    setPendingAction({ action: "reject", approval: currentApproval });
     setShowRejectDialog(false);
-    setRejectionReason("");
+    setShowOtpDialog(true);
+  };
+
+  // Handle OTP verification
+  const handleOtpVerification = async () => {
+    if (!pendingAction) return;
+    
+    setIsProcessing(true);
+    
+    try {
+      // Simulate OTP verification and API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const { action, approval } = pendingAction;
+      
+      // In a real app, this would make an API call
+      alert(`Approval request ${approval.id} has been ${action}d.`);
+      
+      // Close dialogs and reset state
+      setShowOtpDialog(false);
+      setPendingAction(null);
+      setApprovalNotes("");
+      setRejectionReason("");
+      
+    } catch {
+      throw new Error("OTP verification failed");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   // Status badge variant mapper
@@ -804,6 +840,28 @@ export default function ApprovalsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* OTP Verification Dialog */}
+      <OTPVerification
+        isOpen={showOtpDialog}
+        onClose={() => {
+          setShowOtpDialog(false);
+          setPendingAction(null);
+          setIsProcessing(false);
+        }}
+        onVerify={handleOtpVerification}
+        title={`${pendingAction?.action === "approve" ? "Approve" : "Reject"} Request`}
+        description={`Enter your OTP to ${pendingAction?.action === "approve" ? "approve" : "reject"} this request`}
+        actionLabel={pendingAction?.action === "approve" ? "Approve" : "Reject"}
+        actionDetails={pendingAction ? {
+          requestId: pendingAction.approval.id,
+          type: pendingAction.approval.type,
+          entity: pendingAction.approval.entity,
+          requestedBy: pendingAction.approval.requestedBy,
+          subType: pendingAction.approval.subType
+        } : undefined}
+        isProcessing={isProcessing}
+      />
     </div>
   );
 } 
