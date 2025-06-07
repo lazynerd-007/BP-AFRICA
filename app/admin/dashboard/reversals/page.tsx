@@ -31,6 +31,7 @@ const reversalsData = [
     approvedAt: null,
     originalTransaction: {
       id: "TXN-123456",
+      merchantName: "BluWave Limited",
       amount: "GHS2,500.00",
       date: "2023-10-14T14:30:00",
       customerName: "Alice Johnson",
@@ -51,6 +52,7 @@ const reversalsData = [
     approvedAt: "2023-10-14T10:45:00",
     originalTransaction: {
       id: "TXN-789012",
+      merchantName: "Chensha City Ghana Ltd",
       amount: "GHS1,200.00", 
       date: "2023-10-13T11:20:00",
       customerName: "Michael Smith",
@@ -71,6 +73,7 @@ const reversalsData = [
     approvedAt: "2023-10-13T17:30:00",
     originalTransaction: {
       id: "TXN-345678",
+      merchantName: "Blu Penguin",
       amount: "GHS5,000.00",
       date: "2023-10-12T15:10:00", 
       customerName: "Emma Wilson",
