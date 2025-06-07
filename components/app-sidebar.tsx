@@ -19,7 +19,8 @@ import {
   IconChartPie,
   IconBell,
   IconLoader2,
-  IconClipboardCheck
+  IconClipboardCheck,
+  IconArrowLeftRight
 } from "@tabler/icons-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -75,6 +76,11 @@ const adminData = {
       title: "Approvals",
       url: "/dashboard/approvals",
       icon: IconClipboardCheck,
+    },
+    {
+      title: "Reversals",
+      url: "/dashboard/reversals",
+      icon: IconArrowLeftRight,
     },
     {
       title: "OVA (MTN)",
