@@ -144,18 +144,18 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       <div className="flex flex-col space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Profile</h1>
+        <p className="text-sm text-muted-foreground">
           Manage your bank&apos;s profile and security settings
         </p>
       </div>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:w-auto">
-          <TabsTrigger value="general">General Information</TabsTrigger>
-          <TabsTrigger value="security">Security</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="general" className="text-sm">General Information</TabsTrigger>
+          <TabsTrigger value="security" className="text-sm">Security</TabsTrigger>
         </TabsList>
         
         <TabsContent value="general" className="space-y-6">
@@ -172,9 +172,9 @@ export default function ProfilePage() {
               </div>
             </CardHeader>
             
-            <CardContent className="space-y-6">
-              <div className="flex flex-col md:flex-row gap-6">
-                <div className="md:w-1/3 flex flex-col items-center space-y-4">
+            <CardContent className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                <div className="sm:w-1/3 flex flex-col items-center space-y-4">
                   <Avatar className="h-32 w-32">
                     <AvatarImage 
                       src={uploadedLogo || partnerBankData.logo} 

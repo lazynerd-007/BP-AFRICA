@@ -79,10 +79,10 @@ export default function SubmerchantProfilePage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       <div className="flex flex-col space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Profile</h1>
+        <p className="text-sm text-muted-foreground">
           View your submerchant account information and manage your password
         </p>
       </div>
@@ -95,7 +95,7 @@ export default function SubmerchantProfilePage() {
         </AlertDescription>
       </Alert>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Business Information */}
         <Card>
           <CardHeader>

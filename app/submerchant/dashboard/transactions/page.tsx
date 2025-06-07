@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { 
   Card, 
   CardContent, 
@@ -189,31 +189,35 @@ export default function SubmerchantTransactionsPage() {
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   
   // Filter transactions based on all filters
-  const filteredTransactions = mockTransactions.filter(transaction => {
-    // Search filter
-    const matchesSearch = 
-      transaction.merchantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      transaction.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      transaction.customerNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      transaction.terminalId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      transaction.reference.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    // Transaction type filter
-    const matchesType = !transactionType || transactionType === "all" || 
-      transaction.type === transactionType;
-    
-    // Date range filter
-    const transactionDate = new Date(transaction.date);
-    const afterStartDate = !startDate || transactionDate >= startDate;
-    const beforeEndDate = !endDate || transactionDate <= endDate;
-    
-    return matchesSearch && matchesType && afterStartDate && beforeEndDate;
-  });
+  const filteredTransactions = useMemo(() => {
+    return mockTransactions.filter(transaction => {
+      // Search filter
+      const matchesSearch = 
+        transaction.merchantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        transaction.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        transaction.customerNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        transaction.terminalId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        transaction.reference.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      // Transaction type filter
+      const matchesType = !transactionType || transactionType === "all" || 
+        transaction.type === transactionType;
+      
+      // Date range filter
+      const transactionDate = new Date(transaction.date);
+      const afterStartDate = !startDate || transactionDate >= startDate;
+      const beforeEndDate = !endDate || transactionDate <= endDate;
+      
+      return matchesSearch && matchesType && afterStartDate && beforeEndDate;
+    });
+  }, [searchTerm, transactionType, startDate, endDate]);
   
   // Pagination logic
-  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedTransactions = filteredTransactions.slice(startIndex, startIndex + itemsPerPage);
+  const totalPages = useMemo(() => Math.ceil(filteredTransactions.length / itemsPerPage), [filteredTransactions.length, itemsPerPage]);
+  const paginatedTransactions = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredTransactions.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredTransactions, currentPage, itemsPerPage]);
 
   // View transaction details
   const handleViewTransaction = (transaction: Transaction) => {
@@ -248,13 +252,13 @@ export default function SubmerchantTransactionsPage() {
   };
 
   // Handle export column selection
-  const handleColumnToggle = (columnId: string) => {
+  const handleColumnToggle = useCallback((columnId: string) => {
     setExportColumns(prev => 
       prev.map(col => 
         col.id === columnId ? { ...col, checked: !col.checked } : col
       )
     );
-  };
+  }, []);
   
   // Reset filters
   const resetFilters = () => {
@@ -278,21 +282,21 @@ export default function SubmerchantTransactionsPage() {
   };
   
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       <div className="flex flex-col space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">Transactions</h2>
-        <p className="text-muted-foreground">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Transactions</h2>
+        <p className="text-sm text-muted-foreground">
           View and manage your payment transactions
         </p>
       </div>
       
       {/* Timeframe Filter */}
-      <div className="flex items-center gap-4">
-        <Label htmlFor="timeframe-filter" className="text-sm font-medium">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+        <Label htmlFor="timeframe-filter" className="text-sm font-medium whitespace-nowrap">
           Time Period:
         </Label>
         <Select value={timeframeFilter} onValueChange={setTimeframeFilter}>
-          <SelectTrigger className="w-48">
+          <SelectTrigger className="w-full sm:w-48">
             <SelectValue placeholder="Select timeframe" />
           </SelectTrigger>
           <SelectContent>
@@ -307,7 +311,7 @@ export default function SubmerchantTransactionsPage() {
         </Select>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Total Transactions</CardDescription>
@@ -559,69 +563,126 @@ export default function SubmerchantTransactionsPage() {
         </CardHeader>
         
         <CardContent>
-          <div className="overflow-x-auto">
-            <div className="rounded-md border min-w-full">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="min-w-[120px]">Date</TableHead>
-                    <TableHead className="min-w-[100px]">Terminal ID</TableHead>
-                    <TableHead className="min-w-[120px]">Customer</TableHead>
-                    <TableHead className="min-w-[130px]">Customer Number</TableHead>
-                    <TableHead className="min-w-[100px] text-right">Amount</TableHead>
-                    <TableHead className="min-w-[100px]">Scheme</TableHead>
-                    <TableHead className="min-w-[120px]">Reference</TableHead>
-                    <TableHead className="min-w-[80px]">Status</TableHead>
-                    <TableHead className="w-[80px]">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paginatedTransactions.map((transaction) => (
-                    <TableRow key={transaction.reference}>
-                      <TableCell className="font-medium whitespace-nowrap">{formatDate(transaction.date)}</TableCell>
-                      <TableCell className="whitespace-nowrap">{transaction.terminalId}</TableCell>
-                      <TableCell className="whitespace-nowrap">{transaction.customer}</TableCell>
-                      <TableCell className="font-mono text-xs whitespace-nowrap">{transaction.customerNumber}</TableCell>
-                      <TableCell className="text-right whitespace-nowrap">
-                        {transaction.currency} {transaction.amount.toFixed(2)}
-                      </TableCell>
-                      <TableCell className="whitespace-nowrap">{transaction.scheme}</TableCell>
-                      <TableCell className="font-mono text-xs whitespace-nowrap">{transaction.reference}</TableCell>
-                      <TableCell className="whitespace-nowrap">
-                        <Badge variant={getStatusBadgeVariant(transaction.status) as "secondary" | "destructive" | "default" | "outline"}>
-                          {transaction.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="whitespace-nowrap">
-                        <Button variant="ghost" size="icon" onClick={() => handleViewTransaction(transaction)}>
-                          <IconEye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  
-                  {paginatedTransactions.length === 0 && (
+          {/* Mobile Card View */}
+          <div className="block md:hidden space-y-4">
+            {paginatedTransactions.map((transaction) => (
+              <Card key={transaction.reference} className="p-4">
+                <div className="flex justify-between items-start mb-3">
+                  <div className="text-sm font-medium">{transaction.reference}</div>
+                  <Badge variant={getStatusBadgeVariant(transaction.status) as "secondary" | "destructive" | "default" | "outline"}>
+                    {transaction.status}
+                  </Badge>
+                </div>
+                
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Amount:</span>
+                    <span className="font-medium">{transaction.currency} {transaction.amount.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Customer:</span>
+                    <span>{transaction.customer}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Terminal:</span>
+                    <span>{transaction.terminalId}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Date:</span>
+                    <span>{formatDate(transaction.date)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Scheme:</span>
+                    <span>{transaction.scheme}</span>
+                  </div>
+                </div>
+                
+                <div className="mt-3 pt-3 border-t">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleViewTransaction(transaction)}
+                    className="w-full"
+                  >
+                    <IconEye className="h-4 w-4 mr-2" />
+                    View Details
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden md:block">
+            <div className="overflow-x-auto">
+              <div className="rounded-md border min-w-full">
+                <Table>
+                  <TableHeader>
                     <TableRow>
-                      <TableCell colSpan={9} className="h-24 text-center">
-                        No transactions found matching your criteria.
-                      </TableCell>
+                      <TableHead className="min-w-[120px]">Date</TableHead>
+                      <TableHead className="min-w-[100px]">Terminal ID</TableHead>
+                      <TableHead className="min-w-[120px]">Customer</TableHead>
+                      <TableHead className="min-w-[130px]">Customer Number</TableHead>
+                      <TableHead className="min-w-[100px] text-right">Amount</TableHead>
+                      <TableHead className="min-w-[100px]">Scheme</TableHead>
+                      <TableHead className="min-w-[120px]">Reference</TableHead>
+                      <TableHead className="min-w-[80px]">Status</TableHead>
+                      <TableHead className="w-[80px]">Actions</TableHead>
                     </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedTransactions.map((transaction) => (
+                      <TableRow key={transaction.reference}>
+                        <TableCell className="font-medium whitespace-nowrap">{formatDate(transaction.date)}</TableCell>
+                        <TableCell className="whitespace-nowrap">{transaction.terminalId}</TableCell>
+                        <TableCell className="whitespace-nowrap">{transaction.customer}</TableCell>
+                        <TableCell className="font-mono text-xs whitespace-nowrap">{transaction.customerNumber}</TableCell>
+                        <TableCell className="text-right whitespace-nowrap">
+                          {transaction.currency} {transaction.amount.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">{transaction.scheme}</TableCell>
+                        <TableCell className="font-mono text-xs whitespace-nowrap">{transaction.reference}</TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          <Badge variant={getStatusBadgeVariant(transaction.status) as "secondary" | "destructive" | "default" | "outline"}>
+                            {transaction.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          <Button variant="ghost" size="icon" onClick={() => handleViewTransaction(transaction)}>
+                            <IconEye className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    
+                    {paginatedTransactions.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={9} className="h-24 text-center">
+                          No transactions found matching your criteria.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
           </div>
+
+          {/* Empty state for mobile */}
+          {paginatedTransactions.length === 0 && (
+            <div className="block md:hidden text-center py-8">
+              <p className="text-muted-foreground">No transactions found matching your criteria.</p>
+            </div>
+          )}
           
-          <div className="flex items-center justify-between mt-4">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
               <div className="text-sm text-muted-foreground">
                 Showing {paginatedTransactions.length} of {filteredTransactions.length} transactions
               </div>
-            </div>
-            
-            <div className="flex items-center gap-2">
+              
               <div className="flex items-center gap-2">
-                <Label htmlFor="items-per-page" className="text-sm">
+                <Label htmlFor="items-per-page" className="text-sm whitespace-nowrap">
                   Rows per page:
                 </Label>
                 <select
@@ -639,7 +700,9 @@ export default function SubmerchantTransactionsPage() {
                   <option value={50}>50</option>
                 </select>
               </div>
-              
+            </div>
+            
+            <div className="flex items-center justify-center sm:justify-end">
               <div className="flex items-center gap-1">
                 <Button
                   variant="outline"

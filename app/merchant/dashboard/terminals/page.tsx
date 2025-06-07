@@ -74,15 +74,15 @@ export default function MerchantTerminalsPage() {
   };
   
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       <div className="flex flex-col space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight">Terminal Devices</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Terminal Devices</h1>
+        <p className="text-sm text-muted-foreground">
           Manage your payment terminals and devices
         </p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Total Terminals</CardDescription>
@@ -126,16 +126,14 @@ export default function MerchantTerminalsPage() {
       
       <Card>
         <CardHeader>
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <CardTitle>Your Terminals</CardTitle>
-              <CardDescription>Manage your terminal devices</CardDescription>
-            </div>
+          <div className="flex flex-col space-y-2">
+            <CardTitle className="text-lg sm:text-xl">Your Terminals</CardTitle>
+            <CardDescription className="text-sm">Manage your terminal devices</CardDescription>
           </div>
         </CardHeader>
         
         <CardContent>
-          <div className="rounded-md border">
+          <div className="rounded-md border overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>

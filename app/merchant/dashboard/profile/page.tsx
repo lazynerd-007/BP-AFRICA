@@ -63,24 +63,24 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       <div className="flex flex-col space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Profile</h1>
+        <p className="text-sm text-muted-foreground">
           Manage your account security settings
         </p>
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Avatar className="h-20 w-20">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+        <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+          <Avatar className="h-16 w-16 sm:h-20 sm:w-20 mx-auto sm:mx-0">
             <AvatarImage src="/images/placeholder-avatar.png" alt="Profile" />
-            <AvatarFallback className="text-2xl">JD</AvatarFallback>
+            <AvatarFallback className="text-lg sm:text-2xl">JD</AvatarFallback>
           </Avatar>
-          <div>
-            <h2 className="text-xl font-semibold">{userData.firstName} {userData.lastName}</h2>
-            <p className="text-muted-foreground">{userData.businessName}</p>
-            <p className="text-sm text-muted-foreground">{userData.email}</p>
+          <div className="text-center sm:text-left">
+            <h2 className="text-lg sm:text-xl font-semibold">{userData.firstName} {userData.lastName}</h2>
+            <p className="text-sm text-muted-foreground">{userData.businessName}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground">{userData.email}</p>
           </div>
         </div>
       </div>
@@ -97,7 +97,7 @@ export default function ProfilePage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div className="space-y-2">
               <Label htmlFor="businessName">Business Name</Label>
               <Input 
@@ -152,7 +152,7 @@ export default function ProfilePage() {
                 className="bg-muted"
               />
             </div>
-            <div className="space-y-2 md:col-span-2">
+            <div className="space-y-2 sm:col-span-2">
               <Label htmlFor="address">Business Address</Label>
               <Input 
                 id="address" 
@@ -161,7 +161,7 @@ export default function ProfilePage() {
                 className="bg-muted"
               />
             </div>
-            <div className="space-y-2 md:col-span-2">
+            <div className="space-y-2 sm:col-span-2">
               <Label htmlFor="website">Website</Label>
               <Input 
                 id="website" 

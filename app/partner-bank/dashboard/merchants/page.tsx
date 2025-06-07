@@ -214,20 +214,20 @@ export default function MerchantsPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       <div className="flex flex-col space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight">Connected Merchants</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Connected Merchants</h1>
+        <p className="text-sm text-muted-foreground">
           View and monitor all merchants connected to your bank
         </p>
       </div>
       
       <Card>
         <CardHeader>
-          <div className="flex flex-col md:flex-row justify-between gap-4">
+          <div className="flex flex-col space-y-4 sm:flex-row sm:justify-between sm:space-y-0">
             <div>
-              <CardTitle>Merchant List</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-lg sm:text-xl">Merchant List</CardTitle>
+              <CardDescription className="text-sm">
                 All merchants that process payments through your bank
               </CardDescription>
             </div>
@@ -244,7 +244,7 @@ export default function MerchantsPage() {
                 />
               </div>
               
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full sm:w-auto">
                 <Button
                   variant="outline"
                   size="icon"
@@ -254,9 +254,10 @@ export default function MerchantsPage() {
                   <IconFilter className="h-4 w-4" />
                 </Button>
                 
-                <Button variant="outline" className="flex items-center gap-1">
+                <Button variant="outline" className="flex items-center gap-1 flex-1 sm:flex-none">
                   <IconDownload className="h-4 w-4" />
                   <span className="hidden sm:inline">Export</span>
+                  <span className="sm:hidden">Export</span>
                 </Button>
               </div>
             </div>
@@ -314,60 +315,112 @@ export default function MerchantsPage() {
         </CardHeader>
         
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Merchant ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Business Type</TableHead>
-                <TableHead>Transaction Volume</TableHead>
-                <TableHead>Commission Rate</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredMerchants.length > 0 ? (
-                filteredMerchants.map((merchant) => (
-                  <TableRow key={merchant.id}>
-                    <TableCell className="font-medium">{merchant.id}</TableCell>
-                    <TableCell>{merchant.name}</TableCell>
-                    <TableCell>{merchant.businessType}</TableCell>
-                    <TableCell>{merchant.transactionVolume}</TableCell>
-                    <TableCell>{merchant.commissionRate}</TableCell>
-                    <TableCell>
-                      <Badge 
-                        variant={getStatusVariant(merchant.status)}
-                        className={getStatusClasses(merchant.status)}
-                      >
-                        {merchant.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
+          {/* Desktop Table View */}
+          <div className="hidden sm:block">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Merchant ID</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Business Type</TableHead>
+                    <TableHead>Transaction Volume</TableHead>
+                    <TableHead>Commission Rate</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredMerchants.length > 0 ? (
+                    filteredMerchants.map((merchant) => (
+                      <TableRow key={merchant.id}>
+                        <TableCell className="font-medium">{merchant.id}</TableCell>
+                        <TableCell>{merchant.name}</TableCell>
+                        <TableCell>{merchant.businessType}</TableCell>
+                        <TableCell>{merchant.transactionVolume}</TableCell>
+                        <TableCell>{merchant.commissionRate}</TableCell>
+                        <TableCell>
+                          <Badge 
+                            variant={getStatusVariant(merchant.status)}
+                            className={getStatusClasses(merchant.status)}
+                          >
+                            {merchant.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              setSelectedMerchant(merchant);
+                              setShowDetailsDialog(true);
+                              setActiveTab("overview");
+                            }}
+                            title="View Details"
+                          >
+                            <IconEye className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={7} className="h-24 text-center">
+                        No merchants found.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="sm:hidden space-y-3">
+            {filteredMerchants.length > 0 ? (
+              filteredMerchants.map((merchant) => (
+                <Card key={merchant.id} className="p-4">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <p className="font-medium text-sm">{merchant.id}</p>
+                      <p className="text-xs text-muted-foreground">{merchant.businessType}</p>
+                    </div>
+                    <Badge 
+                      variant={getStatusVariant(merchant.status)}
+                      className={getStatusClasses(merchant.status)}
+                    >
+                      {merchant.status}
+                    </Badge>
+                  </div>
+                  <div className="space-y-2">
+                    <div>
+                      <p className="font-semibold">{merchant.name}</p>
+                      <p className="text-sm text-muted-foreground">{merchant.transactionVolume}</p>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <p className="text-xs text-muted-foreground">Commission: {merchant.commissionRate}</p>
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="sm"
                         onClick={() => {
                           setSelectedMerchant(merchant);
                           setShowDetailsDialog(true);
                           setActiveTab("overview");
                         }}
-                        title="View Details"
+                        className="h-8 w-8 p-0"
                       >
                         <IconEye className="h-4 w-4" />
                       </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={7} className="h-24 text-center">
-                    No merchants found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                    </div>
+                  </div>
+                </Card>
+              ))
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">No merchants found.</p>
+              </div>
+            )}
+          </div>
         </CardContent>
         
         <CardFooter className="flex items-center justify-between border-t p-4">
@@ -392,23 +445,23 @@ export default function MerchantsPage() {
       {/* Merchant Details Dialog */}
       {selectedMerchant && (
         <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
-          <DialogContent className="max-w-4xl">
+          <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <div className="flex flex-col space-y-1">
                 <div className="flex items-center gap-2">
                   <IconBuildingStore className="h-5 w-5 text-primary" />
-                  <DialogTitle className="text-xl">{selectedMerchant.name}</DialogTitle>
+                  <DialogTitle className="text-lg sm:text-xl">{selectedMerchant.name}</DialogTitle>
                 </div>
-                <DialogDescription>
+                <DialogDescription className="text-sm">
                   {selectedMerchant.id} • {selectedMerchant.businessType}
                 </DialogDescription>
               </div>
             </DialogHeader>
             
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid grid-cols-2 mb-4">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="contact">Contact Details</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="overview" className="text-sm">Overview</TabsTrigger>
+                <TabsTrigger value="contact" className="text-sm">Contact Details</TabsTrigger>
               </TabsList>
               
               <TabsContent value="overview" className="space-y-4">

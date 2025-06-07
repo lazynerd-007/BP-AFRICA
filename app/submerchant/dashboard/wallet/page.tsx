@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -109,20 +109,20 @@ export default function SubmerchantWalletPage() {
   const [previewData, setPreviewData] = useState<TransferData | null>(null);
 
   // Mock BluPay merchants
-  const bluepayMerchants = [
+  const bluepayMerchants = useMemo(() => [
     { id: "STA1000", name: "De Naas - STA1000" },
     { id: "STA1001", name: "Kofi Store - STA1001" },
     { id: "STA1002", name: "Ama Shop - STA1002" },
     { id: "STA1003", name: "John Business - STA1003" },
-  ];
+  ], []);
 
   // Mobile networks
-  const mobileNetworks = [
+  const mobileNetworks = useMemo(() => [
     { id: "mtn", name: "MTN" },
     { id: "vodafone", name: "Vodafone" },
     { id: "airtel", name: "AirtelTigo" },
     { id: "telecel", name: "Telecel" },
-  ];
+  ], []);
 
   const downloadStatement = () => {
     // In a real application, this would trigger the download
@@ -248,49 +248,56 @@ export default function SubmerchantWalletPage() {
     }
   };
 
-  const addExternalCustomer = () => {
-    const newId = Math.max(...externalCustomers.map(c => c.id)) + 1;
-    setExternalCustomers([
-      ...externalCustomers,
-      {
-        id: newId,
-        name: "",
-        email: "",
-        mobile: "",
-        amount: "",
-        narration: "",
-        network: ""
+  const addExternalCustomer = useCallback(() => {
+    setExternalCustomers(prev => {
+      const newId = Math.max(...prev.map(c => c.id)) + 1;
+      return [
+        ...prev,
+        {
+          id: newId,
+          name: "",
+          email: "",
+          mobile: "",
+          amount: "",
+          narration: "",
+          network: ""
+        }
+      ];
+    });
+  }, []);
+
+  const removeExternalCustomer = useCallback((id: number) => {
+    setExternalCustomers(prev => {
+      if (prev.length > 1) {
+        return prev.filter(c => c.id !== id);
       }
-    ]);
-  };
+      return prev;
+    });
+  }, []);
 
-  const removeExternalCustomer = (id: number) => {
-    if (externalCustomers.length > 1) {
-      setExternalCustomers(externalCustomers.filter(c => c.id !== id));
-    }
-  };
-
-  const updateExternalCustomer = (id: number, field: string, value: string) => {
-    setExternalCustomers(externalCustomers.map(c => 
+  const updateExternalCustomer = useCallback((id: number, field: string, value: string) => {
+    setExternalCustomers(prev => prev.map(c => 
       c.id === id ? { ...c, [field]: value } : c
     ));
-  };
+  }, []);
 
-  const filteredMerchants = bluepayMerchants.filter(merchant =>
-    merchant.name.toLowerCase().includes(bluepayMerchantSearch.toLowerCase())
-  );
+  const filteredMerchants = useMemo(() => {
+    return bluepayMerchants.filter(merchant =>
+      merchant.name.toLowerCase().includes(bluepayMerchantSearch.toLowerCase())
+    );
+  }, [bluepayMerchantSearch, bluepayMerchants]);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       <div className="flex flex-col space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight">Wallet</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Wallet</h1>
+        <p className="text-sm text-muted-foreground">
           Manage your account balance and transfers
         </p>
       </div>
 
       {/* Balance Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Available Balance</CardTitle>
@@ -338,14 +345,14 @@ export default function SubmerchantWalletPage() {
           <CardDescription>Common wallet operations</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <Dialog open={transferModalOpen} onOpenChange={(open) => {
               setTransferModalOpen(open);
               if (!open) resetTransferModal();
             }}>
                   <DialogTrigger asChild>
-                <Button className="h-20 flex flex-col gap-2">
-                  <IconSend className="h-6 w-6" />
+                <Button className="h-16 sm:h-20 flex flex-col gap-2 text-sm sm:text-base">
+                  <IconSend className="h-5 w-5 sm:h-6 sm:w-6" />
                   <span>Transfer Money</span>
                     </Button>
                   </DialogTrigger>
@@ -475,7 +482,7 @@ export default function SubmerchantWalletPage() {
                             )}
                       </div>
                       
-                          <div className="grid grid-cols-2 gap-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                               <Label>Name</Label>
                               <Input
@@ -683,8 +690,8 @@ export default function SubmerchantWalletPage() {
                 
             <Dialog open={fundingMethodModalOpen} onOpenChange={setFundingMethodModalOpen}>
                   <DialogTrigger asChild>
-                <Button variant="outline" className="h-20 flex flex-col gap-2">
-                  <IconPlus className="h-6 w-6" />
+                <Button variant="outline" className="h-16 sm:h-20 flex flex-col gap-2 text-sm sm:text-base">
+                  <IconPlus className="h-5 w-5 sm:h-6 sm:w-6" />
                   <span>Fund Wallet</span>
                 </Button>
               </DialogTrigger>
@@ -749,8 +756,8 @@ export default function SubmerchantWalletPage() {
 
             <Dialog open={statementOpen} onOpenChange={setStatementOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" className="h-20 flex flex-col gap-2">
-                  <IconDownload className="h-6 w-6" />
+                <Button variant="outline" className="h-16 sm:h-20 flex flex-col gap-2 text-sm sm:text-base">
+                  <IconDownload className="h-5 w-5 sm:h-6 sm:w-6" />
                   <span>Download Statement</span>
                     </Button>
                   </DialogTrigger>

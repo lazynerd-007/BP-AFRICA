@@ -246,11 +246,11 @@ export default function UsersPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+      <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
         <div>
-          <h1 className="text-2xl font-bold">User Management</h1>
-          <p className="text-muted-foreground">Manage user accounts and permissions</p>
+          <h1 className="text-xl sm:text-2xl font-bold">User Management</h1>
+          <p className="text-sm text-muted-foreground">Manage user accounts and permissions</p>
         </div>
         
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
@@ -331,7 +331,7 @@ export default function UsersPage() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
@@ -388,14 +388,14 @@ export default function UsersPage() {
       {/* Filters and Search */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Users</CardTitle>
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+            <CardTitle className="text-lg sm:text-xl">Users</CardTitle>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
               <div className="relative">
                 <IconSearch className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search users..."
-                  className="pl-8 w-80"
+                  className="pl-8 w-full sm:w-80"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -404,6 +404,7 @@ export default function UsersPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setShowFilters(!showFilters)}
+                className="w-full sm:w-auto"
               >
                 <IconFilter className="w-4 h-4 mr-2" />
                 Filters

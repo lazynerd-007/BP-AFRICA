@@ -262,20 +262,20 @@ export default function TransactionsPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       <div className="flex flex-col space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight">Transactions</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Transactions</h1>
+        <p className="text-sm text-muted-foreground">
           Monitor and track all merchant transactions processed through your bank
         </p>
       </div>
       
       <Card>
         <CardHeader>
-          <div className="flex flex-col md:flex-row justify-between gap-4">
+          <div className="flex flex-col space-y-4 sm:flex-row sm:justify-between sm:space-y-0">
             <div>
-              <CardTitle>Transaction History</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-lg sm:text-xl">Transaction History</CardTitle>
+              <CardDescription className="text-sm">
                 View all transactions processed through your bank
               </CardDescription>
             </div>
@@ -292,7 +292,7 @@ export default function TransactionsPage() {
                 />
               </div>
               
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full sm:w-auto">
                 <Button
                   variant="outline"
                   size="icon"
@@ -302,9 +302,10 @@ export default function TransactionsPage() {
                   <IconFilter className="h-4 w-4" />
                 </Button>
                 
-                <Button variant="outline" className="flex items-center gap-1">
+                <Button variant="outline" className="flex items-center gap-1 flex-1 sm:flex-none">
                   <IconDownload className="h-4 w-4" />
                   <span className="hidden sm:inline">Export</span>
+                  <span className="sm:hidden">Export</span>
                 </Button>
               </div>
             </div>

@@ -278,21 +278,21 @@ export default function MerchantTransactionsPage() {
   };
   
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       <div className="flex flex-col space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">Transactions</h2>
-        <p className="text-muted-foreground">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Transactions</h2>
+        <p className="text-sm text-muted-foreground">
           View and manage your payment transactions
         </p>
       </div>
       
       {/* Timeframe Filter */}
-      <div className="flex items-center gap-4">
-        <Label htmlFor="timeframe-filter" className="text-sm font-medium">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+        <Label htmlFor="timeframe-filter" className="text-sm font-medium whitespace-nowrap">
           Time Period:
         </Label>
         <Select value={timeframeFilter} onValueChange={setTimeframeFilter}>
-          <SelectTrigger className="w-48">
+          <SelectTrigger className="w-full sm:w-48">
             <SelectValue placeholder="Select timeframe" />
           </SelectTrigger>
           <SelectContent>
@@ -307,7 +307,7 @@ export default function MerchantTransactionsPage() {
         </Select>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Total Transactions</CardDescription>
@@ -362,10 +362,10 @@ export default function MerchantTransactionsPage() {
       
       <Card>
         <CardHeader>
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
             <div>
-              <CardTitle>Transaction History</CardTitle>
-              <CardDescription>View your recent transactions</CardDescription>
+              <CardTitle className="text-lg sm:text-xl">Transaction History</CardTitle>
+              <CardDescription className="text-sm">View your recent transactions</CardDescription>
             </div>
             
             <div className="flex flex-col sm:flex-row gap-2">
@@ -380,7 +380,7 @@ export default function MerchantTransactionsPage() {
                 />
               </div>
               
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full sm:w-auto">
                 {/* Filter Dialog */}
                 <Dialog open={filterOpen} onOpenChange={setFilterOpen}>
                   <DialogTrigger asChild>

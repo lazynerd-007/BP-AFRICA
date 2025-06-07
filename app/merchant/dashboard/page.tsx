@@ -69,17 +69,24 @@ export default function MerchantDashboardPage() {
   }).slice(0, 10); // Show max 10 transactions
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Merchant Dashboard</h1>
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+      {/* Header */}
+      <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Merchant Dashboard</h1>
+          <p className="text-sm text-muted-foreground">
+            Overview of your merchant activities and performance
+          </p>
+        </div>
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="flex items-center gap-2">
-              {selectedSubmerchant} <ChevronDown size={16} />
+            <Button variant="outline" className="flex items-center gap-2 w-full sm:w-auto">
+              <span className="truncate">{selectedSubmerchant}</span>
+              <ChevronDown size={16} className="flex-shrink-0" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
+          <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuItem onClick={() => setSelectedSubmerchant("All Submerchants")}>
               All Submerchants
             </DropdownMenuItem>
@@ -96,71 +103,85 @@ export default function MerchantDashboardPage() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <Card>
-          <CardHeader>
-            <CardTitle>Collections</CardTitle>
-            <CardDescription>Total amount collected</CardDescription>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Collections</CardTitle>
+            <CardDescription className="text-xs">Total amount collected</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">GHS456,890.00</p>
+            <p className="text-2xl sm:text-3xl font-bold">GHS456,890.00</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              +12% from last month
+            </p>
           </CardContent>
         </Card>
         
         <Card>
-          <CardHeader>
-            <CardTitle>Failed Transactions</CardTitle>
-            <CardDescription>Number of failed transactions</CardDescription>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Failed Transactions</CardTitle>
+            <CardDescription className="text-xs">Number of failed transactions</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">12</p>
+            <p className="text-2xl sm:text-3xl font-bold">12</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              -3% from last month
+            </p>
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Wallet Balance</CardTitle>
-            <CardDescription>Current available balance</CardDescription>
+        <Card className="sm:col-span-2 lg:col-span-1">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Wallet Balance</CardTitle>
+            <CardDescription className="text-xs">Current available balance</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">GHS235,410.00</p>
+            <p className="text-2xl sm:text-3xl font-bold">GHS235,410.00</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Available for withdrawal
+            </p>
           </CardContent>
         </Card>
       </div>
 
       {/* Chart Section */}
       <Card>
-        <CardHeader className="flex-row items-center justify-between">
-          <div>
-            <CardTitle>Collections & Payouts</CardTitle>
-            <CardDescription>Overview of your financial activity</CardDescription>
-          </div>
-          <div className="flex gap-2">
-            <Button 
-              variant={timeFilter === "today" ? "default" : "outline"} 
-              size="sm"
-              onClick={() => setTimeFilter("today")}
-            >
-              Today
-            </Button>
-            <Button 
-              variant={timeFilter === "7days" ? "default" : "outline"} 
-              size="sm"
-              onClick={() => setTimeFilter("7days")}
-            >
-              7 Days
-            </Button>
-            <Button 
-              variant={timeFilter === "monthly" ? "default" : "outline"} 
-              size="sm"
-              onClick={() => setTimeFilter("monthly")}
-            >
-              Monthly
-            </Button>
+        <CardHeader className="space-y-4">
+          <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+            <div>
+              <CardTitle className="text-lg sm:text-xl">Collections & Payouts</CardTitle>
+              <CardDescription className="text-sm">Overview of your financial activity</CardDescription>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button 
+                variant={timeFilter === "today" ? "default" : "outline"} 
+                size="sm"
+                onClick={() => setTimeFilter("today")}
+                className="text-xs px-3"
+              >
+                Today
+              </Button>
+              <Button 
+                variant={timeFilter === "7days" ? "default" : "outline"} 
+                size="sm"
+                onClick={() => setTimeFilter("7days")}
+                className="text-xs px-3"
+              >
+                7 Days
+              </Button>
+              <Button 
+                variant={timeFilter === "monthly" ? "default" : "outline"} 
+                size="sm"
+                onClick={() => setTimeFilter("monthly")}
+                className="text-xs px-3"
+              >
+                Monthly
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="h-80">
+          <div className="h-60 sm:h-80">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={chartData}
@@ -180,73 +201,111 @@ export default function MerchantDashboardPage() {
 
       {/* Transactions Table */}
       <Card>
-        <CardHeader className="flex-row items-center justify-between">
-          <div>
-            <CardTitle>Recent Transactions</CardTitle>
-            <CardDescription>Your latest transaction activities</CardDescription>
-          </div>
-          <div className="flex gap-2">
-            <Button 
-              variant={transactionFilter === "all" ? "default" : "outline"} 
-              size="sm"
-              onClick={() => setTransactionFilter("all")}
-            >
-              All
-            </Button>
-            <Button 
-              variant={transactionFilter === "successful" ? "default" : "outline"} 
-              size="sm"
-              onClick={() => setTransactionFilter("successful")}
-            >
-              Successful
-            </Button>
-            <Button 
-              variant={transactionFilter === "pending" ? "default" : "outline"} 
-              size="sm"
-              onClick={() => setTransactionFilter("pending")}
-            >
-              Pending
-            </Button>
-            <Button 
-              variant={transactionFilter === "failed" ? "default" : "outline"} 
-              size="sm"
-              onClick={() => setTransactionFilter("failed")}
-            >
-              Failed
-            </Button>
+        <CardHeader className="space-y-4">
+          <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+            <div>
+              <CardTitle className="text-lg sm:text-xl">Recent Transactions</CardTitle>
+              <CardDescription className="text-sm">Your latest transaction activities</CardDescription>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button 
+                variant={transactionFilter === "all" ? "default" : "outline"} 
+                size="sm"
+                onClick={() => setTransactionFilter("all")}
+                className="text-xs px-3"
+              >
+                All
+              </Button>
+              <Button 
+                variant={transactionFilter === "successful" ? "default" : "outline"} 
+                size="sm"
+                onClick={() => setTransactionFilter("successful")}
+                className="text-xs px-3"
+              >
+                Successful
+              </Button>
+              <Button 
+                variant={transactionFilter === "pending" ? "default" : "outline"} 
+                size="sm"
+                onClick={() => setTransactionFilter("pending")}
+                className="text-xs px-3"
+              >
+                Pending
+              </Button>
+              <Button 
+                variant={transactionFilter === "failed" ? "default" : "outline"} 
+                size="sm"
+                onClick={() => setTransactionFilter("failed")}
+                className="text-xs px-3"
+              >
+                Failed
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Reference</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Date</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredTransactions.map((transaction) => (
-                <TableRow key={transaction.id}>
-                  <TableCell>{transaction.reference}</TableCell>
-                  <TableCell>{transaction.amount}</TableCell>
-                  <TableCell>{transaction.type}</TableCell>
-                  <TableCell>
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      transaction.status === 'Successful' ? 'bg-green-100 text-green-800' :
-                      transaction.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {transaction.status}
-                    </span>
-                  </TableCell>
-                  <TableCell>{transaction.date}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          {/* Desktop Table View */}
+          <div className="hidden sm:block">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Reference</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Date</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredTransactions.map((transaction) => (
+                    <TableRow key={transaction.id}>
+                      <TableCell className="font-medium">{transaction.reference}</TableCell>
+                      <TableCell>{transaction.amount}</TableCell>
+                      <TableCell>{transaction.type}</TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          transaction.status === 'Successful' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                          transaction.status === 'Pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                          'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                        }`}>
+                          {transaction.status}
+                        </span>
+                      </TableCell>
+                      <TableCell>{transaction.date}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="sm:hidden space-y-3">
+            {filteredTransactions.map((transaction) => (
+              <Card key={transaction.id} className="p-4">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <p className="font-medium text-sm">{transaction.reference}</p>
+                    <p className="text-xs text-muted-foreground">{transaction.date}</p>
+                  </div>
+                  <span className={`px-2 py-1 rounded-full text-xs whitespace-nowrap ${
+                    transaction.status === 'Successful' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                    transaction.status === 'Pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                    'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                  }`}>
+                    {transaction.status}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="flex flex-col">
+                    <p className="font-semibold">{transaction.amount}</p>
+                    <p className="text-xs text-muted-foreground">{transaction.type}</p>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
         </CardContent>
       </Card>
     </div>
