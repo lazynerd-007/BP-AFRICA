@@ -26,6 +26,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
 import { IconArrowLeft, IconEdit, IconBan, IconPlayerPause, IconPlayerPlay } from "@tabler/icons-react";
 
@@ -52,9 +55,8 @@ const merchantData = {
     hasGlobalSurcharge: true,
     globalSurchargeValue: "2.5%",
     cardSchemes: [
-      { name: "VISA", surcharge: "2.5%" },
-      { name: "Mastercard", surcharge: "2.5%" },
-      { name: "Amex", surcharge: "3.0%" }
+      { name: "CARD", surcharge: "2.5%" },
+      { name: "MOMO", surcharge: "1.5%" }
     ]
   },
   ovaSettings: {
@@ -85,12 +87,51 @@ export default function MerchantDetailPage() {
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [statusAction, setStatusAction] = useState<'suspend' | 'deactivate' | 'activate' | null>(null);
   const [actionReason, setActionReason] = useState('');
+  const [editMerchantOpen, setEditMerchantOpen] = useState(false);
+  const [addUserOpen, setAddUserOpen] = useState(false);
+  const [editMerchantData, setEditMerchantData] = useState({
+    email: '',
+    phone: '',
+    address: '',
+    bankName: '',
+    accountNumber: '',
+    accountName: '',
+    swiftCode: '',
+    surchargeValue: '',
+    surchargeTotal: '',
+    surchargeMerchant: '',
+    surchargeCustomer: '',
+    surchargeCap: ''
+  });
+  const [newUser, setNewUser] = useState({
+    name: '',
+    email: '',
+    role: 'User'
+  });
   
   useEffect(() => {
     // In a real app, fetch merchant data based on ID
     // For now using mock data
     setMerchant(merchantData);
     setLoading(false);
+    
+    // Initialize edit form data
+    if (merchantData) {
+      setEditMerchantData({
+        email: merchantData.email,
+        phone: merchantData.phone,
+        address: merchantData.address,
+        bankName: merchantData.bankDetails.bankName,
+        accountNumber: merchantData.bankDetails.accountNumber,
+        accountName: merchantData.bankDetails.accountName,
+        swiftCode: merchantData.bankDetails.swiftCode,
+        surchargeValue: merchantData.surchargeDetails.globalSurchargeValue.replace('%', ''),
+        surchargeTotal: '3.5',
+        surchargeMerchant: '1.5',
+        surchargeCustomer: '2.0', 
+        surchargeCap: '100'
+      });
+    }
   }, [params.id]);
   
   const handleStatusChange = (action: 'suspend' | 'deactivate' | 'activate') => {
@@ -138,6 +179,76 @@ export default function MerchantDetailPage() {
       default:
         return 'outline';
     }
+  };
+  
+  const handleOpenEditMerchant = () => {
+    setEditMerchantOpen(true);
+  };
+  
+  const handleSaveEditMerchant = () => {
+    // Here you would call the API to update the merchant
+    
+    // Update local state for demo purposes
+    setMerchant(prev => ({
+      ...prev,
+      email: editMerchantData.email,
+      phone: editMerchantData.phone,
+      address: editMerchantData.address,
+      bankDetails: {
+        bankName: editMerchantData.bankName,
+        accountNumber: editMerchantData.accountNumber,
+        accountName: editMerchantData.accountName,
+        swiftCode: editMerchantData.swiftCode
+      },
+      surchargeDetails: {
+        ...prev.surchargeDetails,
+        globalSurchargeValue: `${editMerchantData.surchargeValue}%`
+      }
+    }));
+    
+    setEditMerchantOpen(false);
+  };
+  
+  const handleEditMerchantChange = (field: string, value: string) => {
+    setEditMerchantData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+  
+  const handleAddUser = () => {
+    // Here you would call the API to add a new user
+    
+    // Update local state for demo purposes
+    const newUserId = merchant.users.length + 1;
+    
+    setMerchant(prev => ({
+      ...prev,
+      users: [
+        ...prev.users,
+        {
+          id: newUserId,
+          name: newUser.name,
+          email: newUser.email,
+          role: newUser.role
+        }
+      ]
+    }));
+    
+    // Reset form and close modal
+    setNewUser({
+      name: '',
+      email: '',
+      role: 'User'
+    });
+    setAddUserOpen(false);
+  };
+  
+  const handleNewUserChange = (field: string, value: string) => {
+    setNewUser(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
   
   if (loading) {
@@ -192,7 +303,11 @@ export default function MerchantDetailPage() {
             </Button>
           )}
           
-          <Button variant="outline" className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            className="flex items-center gap-2"
+            onClick={handleOpenEditMerchant}
+          >
             <IconEdit className="h-4 w-4" />
             Edit Merchant
           </Button>
@@ -221,10 +336,9 @@ export default function MerchantDetailPage() {
       </div>
       
       <Tabs defaultValue="details" className="w-full">
-        <TabsList className="grid w-full md:w-auto md:inline-grid grid-cols-4 md:grid-cols-5 h-auto">
+        <TabsList className="grid w-full md:w-auto md:inline-grid grid-cols-4 md:grid-cols-4 h-auto">
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="surcharge">Surcharge</TabsTrigger>
-          <TabsTrigger value="ova">OVA Settings</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
           <TabsTrigger value="transactions">Transactions</TabsTrigger>
         </TabsList>
@@ -306,8 +420,8 @@ export default function MerchantDetailPage() {
               <CardTitle>Surcharge Configuration</CardTitle>
               <CardDescription>
                 {merchant.surchargeDetails.hasGlobalSurcharge 
-                  ? `Global surcharge of ${merchant.surchargeDetails.globalSurchargeValue} applied` 
-                  : "Custom surcharge per card scheme"}
+                  ? `Total surcharge of ${merchant.surchargeDetails.globalSurchargeValue} applied` 
+                  : "Custom surcharge per payment method"}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -323,40 +437,11 @@ export default function MerchantDetailPage() {
           </Card>
         </TabsContent>
         
-        <TabsContent value="ova" className="space-y-4 mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>OVA Settings</CardTitle>
-              <CardDescription>
-                {merchant.ovaSettings.enabled 
-                  ? "Online Virtual Account is enabled" 
-                  : "Online Virtual Account is disabled"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {merchant.ovaSettings.enabled ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Account Number</p>
-                    <p>{merchant.ovaSettings.accountNumber}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Balance Limit</p>
-                    <p>GHS{merchant.ovaSettings.balanceLimit}</p>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-muted-foreground">OVA is not enabled for this merchant</p>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
         <TabsContent value="users" className="space-y-4 mt-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>User Accounts</CardTitle>
-              <Button size="sm">Add User</Button>
+              <Button size="sm" onClick={() => setAddUserOpen(true)}>Add User</Button>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -451,6 +536,207 @@ export default function MerchantDetailPage() {
               {statusAction === 'suspend' && 'Suspend'}
               {statusAction === 'deactivate' && 'Deactivate'}
               {statusAction === 'activate' && 'Activate'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Edit Merchant Dialog */}
+      <Dialog open={editMerchantOpen} onOpenChange={setEditMerchantOpen}>
+        <DialogContent className="sm:max-w-[450px] max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Merchant</DialogTitle>
+            <DialogDescription>
+              Update merchant information and banking details
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-6 py-4">
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium">Contact Information</h3>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email Address</Label>
+                  <Input 
+                    id="email" 
+                    value={editMerchantData.email} 
+                    onChange={(e) => handleEditMerchantChange('email', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <Input 
+                    id="phone" 
+                    value={editMerchantData.phone} 
+                    onChange={(e) => handleEditMerchantChange('phone', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="address">Address</Label>
+                  <Textarea 
+                    id="address" 
+                    value={editMerchantData.address} 
+                    onChange={(e) => handleEditMerchantChange('address', e.target.value)}
+                    rows={2}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <Separator />
+            
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium">Bank Details</h3>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="bankName">Bank Name</Label>
+                  <Input 
+                    id="bankName" 
+                    value={editMerchantData.bankName} 
+                    onChange={(e) => handleEditMerchantChange('bankName', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="accountNumber">Account Number</Label>
+                  <Input 
+                    id="accountNumber" 
+                    value={editMerchantData.accountNumber} 
+                    onChange={(e) => handleEditMerchantChange('accountNumber', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="accountName">Account Name</Label>
+                  <Input 
+                    id="accountName" 
+                    value={editMerchantData.accountName} 
+                    onChange={(e) => handleEditMerchantChange('accountName', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="swiftCode">Swift Code</Label>
+                  <Input 
+                    id="swiftCode" 
+                    value={editMerchantData.swiftCode} 
+                    onChange={(e) => handleEditMerchantChange('swiftCode', e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <Separator />
+            
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium">Surcharge Configuration</h3>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="surchargeTotal">Total Surcharge (%)</Label>
+                  <Input 
+                    id="surchargeTotal" 
+                    type="number" 
+                    min="0" 
+                    step="0.1" 
+                    value={editMerchantData.surchargeTotal} 
+                    onChange={(e) => handleEditMerchantChange('surchargeTotal', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="surchargeMerchant">Merchant Surcharge (%)</Label>
+                  <Input 
+                    id="surchargeMerchant" 
+                    type="number" 
+                    min="0" 
+                    step="0.1" 
+                    value={editMerchantData.surchargeMerchant} 
+                    onChange={(e) => handleEditMerchantChange('surchargeMerchant', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="surchargeCustomer">Customer Surcharge (%)</Label>
+                  <Input 
+                    id="surchargeCustomer" 
+                    type="number" 
+                    min="0" 
+                    step="0.1" 
+                    value={editMerchantData.surchargeCustomer} 
+                    onChange={(e) => handleEditMerchantChange('surchargeCustomer', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="surchargeCap">Surcharge Cap (GHS)</Label>
+                  <Input 
+                    id="surchargeCap" 
+                    type="number" 
+                    min="0" 
+                    value={editMerchantData.surchargeCap} 
+                    onChange={(e) => handleEditMerchantChange('surchargeCap', e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditMerchantOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveEditMerchant}>
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Add User Dialog */}
+      <Dialog open={addUserOpen} onOpenChange={setAddUserOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Add User</DialogTitle>
+            <DialogDescription>
+              Create a new user account for this merchant
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Full Name</Label>
+              <Input 
+                id="name" 
+                value={newUser.name} 
+                onChange={(e) => handleNewUserChange('name', e.target.value)}
+                placeholder="John Doe"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="userEmail">Email Address</Label>
+              <Input 
+                id="userEmail" 
+                type="email" 
+                value={newUser.email} 
+                onChange={(e) => handleNewUserChange('email', e.target.value)}
+                placeholder="john@example.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="userRole">Role</Label>
+              <select 
+                id="userRole" 
+                className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={newUser.role} 
+                onChange={(e) => handleNewUserChange('role', e.target.value)}
+              >
+                <option value="User">User</option>
+                <option value="Admin">Admin</option>
+                <option value="Manager">Manager</option>
+                <option value="Accountant">Accountant</option>
+              </select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAddUserOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleAddUser}
+              disabled={!newUser.name || !newUser.email}
+            >
+              Create User
             </Button>
           </DialogFooter>
         </DialogContent>
