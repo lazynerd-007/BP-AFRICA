@@ -54,6 +54,7 @@ const financialData = [
     partnerShare: "152.30",
     merchantShare: "76.15",
     systemShare: "76.15",
+    telcoShare: "38.08",
     transactionCount: 42,
     status: "Settled"
   },
@@ -68,6 +69,7 @@ const financialData = [
     partnerShare: "87.50",
     merchantShare: "43.75",
     systemShare: "43.75",
+    telcoShare: "21.88",
     transactionCount: 23,
     status: "Settled"
   },
@@ -82,6 +84,7 @@ const financialData = [
     partnerShare: "224.50",
     merchantShare: "112.25",
     systemShare: "112.25",
+    telcoShare: "56.13",
     transactionCount: 56,
     status: "Pending"
   },
@@ -96,6 +99,7 @@ const financialData = [
     partnerShare: "56.00",
     merchantShare: "28.00",
     systemShare: "28.00",
+    telcoShare: "14.00",
     transactionCount: 18,
     status: "Settled"
   },
@@ -110,6 +114,7 @@ const financialData = [
     partnerShare: "123.50",
     merchantShare: "61.75",
     systemShare: "61.75",
+    telcoShare: "30.88",
     transactionCount: 35,
     status: "Pending"
   },
@@ -124,6 +129,7 @@ const financialData = [
     partnerShare: "189.20",
     merchantShare: "94.60",
     systemShare: "94.60",
+    telcoShare: "47.30",
     transactionCount: 47,
     status: "Settled"
   },
@@ -138,6 +144,7 @@ const financialData = [
     partnerShare: "94.80",
     merchantShare: "47.40",
     systemShare: "47.40",
+    telcoShare: "23.70",
     transactionCount: 28,
     status: "Settled"
   },
@@ -152,6 +159,7 @@ const financialData = [
     partnerShare: "78.50",
     merchantShare: "39.25",
     systemShare: "39.25",
+    telcoShare: "19.63",
     transactionCount: 22,
     status: "Pending"
   }
@@ -349,6 +357,7 @@ export default function FinancialReportsPage() {
     const totalPartnerShare = filteredData.reduce((sum: number, item: typeof financialData[number]) => sum + parseFloat(item.partnerShare.replace(/,/g, '')), 0);
     const totalMerchantShare = filteredData.reduce((sum: number, item: typeof financialData[number]) => sum + parseFloat(item.merchantShare.replace(/,/g, '')), 0);
     const totalSystemShare = filteredData.reduce((sum: number, item: typeof financialData[number]) => sum + parseFloat(item.systemShare.replace(/,/g, '')), 0);
+    const totalTelcoShare = filteredData.reduce((sum: number, item: typeof financialData[number]) => sum + parseFloat(item.telcoShare.replace(/,/g, '')), 0);
     
     return {
       totalTransactions,
@@ -357,6 +366,7 @@ export default function FinancialReportsPage() {
       totalPartnerShare: totalPartnerShare.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
       totalMerchantShare: totalMerchantShare.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
       totalSystemShare: totalSystemShare.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+      totalTelcoShare: totalTelcoShare.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
     };
   }, [filteredData]);
   
@@ -1030,7 +1040,7 @@ export default function FinancialReportsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm">Total Partner Share</CardTitle>
@@ -1047,6 +1057,14 @@ export default function FinancialReportsPage() {
                     <div className="text-2xl font-bold">{currency} {summaryStats.totalSystemShare}</div>
                   </CardContent>
                 </Card>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">Total Telco Share</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{currency} {summaryStats.totalTelcoShare}</div>
+                  </CardContent>
+                </Card>
               </div>
               
               <Table>
@@ -1059,6 +1077,7 @@ export default function FinancialReportsPage() {
                     <TableHead className="text-right">Commission</TableHead>
                     <TableHead className="text-right">Partner Share</TableHead>
                     <TableHead className="text-right">BP Share</TableHead>
+                    <TableHead className="text-right">Telco Share</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -1071,6 +1090,7 @@ export default function FinancialReportsPage() {
                       <TableCell className="text-right">{currency} {item.commission}</TableCell>
                       <TableCell className="text-right">{currency} {item.partnerShare}</TableCell>
                       <TableCell className="text-right">{currency} {item.systemShare}</TableCell>
+                      <TableCell className="text-right">{currency} {item.telcoShare}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -1311,7 +1331,6 @@ export default function FinancialReportsPage() {
                             <SelectItem value="all">All Transactions</SelectItem>
                             <SelectItem value="collections">Collections Only</SelectItem>
                             <SelectItem value="payouts">Payouts Only</SelectItem>
-                            <SelectItem value="settlements">Settlements Only</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -1353,7 +1372,6 @@ export default function FinancialReportsPage() {
                       <SelectItem value="all">All Transactions</SelectItem>
                       <SelectItem value="collections">Collections Only</SelectItem>
                       <SelectItem value="payouts">Payouts Only</SelectItem>
-                      <SelectItem value="settlements">Settlements Only</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
