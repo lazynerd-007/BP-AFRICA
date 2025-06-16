@@ -498,7 +498,7 @@ export default function FinancialReportsPage() {
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Transaction Type</label>
                   <Select value={transactionType} onValueChange={setTransactionType}>
-                    <SelectTrigger className="w-full min-w-[200px]">
+                    <SelectTrigger className="w-full min-w-[150px]">
                       <SelectValue placeholder="-- All --" />
                     </SelectTrigger>
                     <SelectContent>
