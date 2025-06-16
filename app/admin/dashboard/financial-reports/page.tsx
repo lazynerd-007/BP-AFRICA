@@ -1317,33 +1317,13 @@ export default function FinancialReportsPage() {
                       </div>
                       
                       <div className="space-y-2">
-                        <Label>Date Range</Label>
-                        <div className="flex gap-2">
-                          <Input
-                            type="date"
-                            placeholder="Start date"
-                            className="w-1/2"
-                          />
-                          <Input
-                            type="date"
-                            placeholder="End date"
-                            className="w-1/2"
-                          />
-                        </div>
+                        <Label>Date From</Label>
+                        <Input type="date" />
                       </div>
                       
                       <div className="space-y-2">
-                        <Label>Format</Label>
-                        <Select defaultValue="excel">
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select format" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="excel">Excel</SelectItem>
-                            <SelectItem value="csv">CSV</SelectItem>
-                            <SelectItem value="pdf">PDF</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <Label>Date To</Label>
+                        <Input type="date" />
                       </div>
                     </div>
                     
@@ -1362,23 +1342,7 @@ export default function FinancialReportsPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Report Period</label>
-                  <Select defaultValue="monthly">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select period" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="daily">Daily</SelectItem>
-                      <SelectItem value="weekly">Weekly</SelectItem>
-                      <SelectItem value="monthly">Monthly</SelectItem>
-                      <SelectItem value="quarterly">Quarterly</SelectItem>
-                      <SelectItem value="yearly">Yearly</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Report Type</label>
                   <Select defaultValue="all">
