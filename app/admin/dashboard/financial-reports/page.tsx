@@ -531,21 +531,6 @@ export default function FinancialReportsPage() {
                         
                         <div className="grid gap-4 py-4">
                           <div className="space-y-2">
-                            <Label>Statement Type</Label>
-                            <Select defaultValue="summary">
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select statement type" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="summary">Summary Statement</SelectItem>
-                                <SelectItem value="detailed">Detailed Statement</SelectItem>
-                                <SelectItem value="commission">Commission Statement</SelectItem>
-                                <SelectItem value="settlement">Settlement Statement</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          
-                          <div className="space-y-2">
                             <Label>Date Range</Label>
                             <div className="flex gap-2">
                               <Input
@@ -1284,22 +1269,6 @@ export default function FinancialReportsPage() {
                     
                     <div className="grid gap-4 py-4">
                       <div className="space-y-2">
-                        <Label>Report Period</Label>
-                        <Select defaultValue="monthly">
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select period" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="daily">Daily</SelectItem>
-                            <SelectItem value="weekly">Weekly</SelectItem>
-                            <SelectItem value="monthly">Monthly</SelectItem>
-                            <SelectItem value="quarterly">Quarterly</SelectItem>
-                            <SelectItem value="yearly">Yearly</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="space-y-2">
                         <Label>Report Type</Label>
                         <Select defaultValue="all">
                           <SelectTrigger>
@@ -1340,19 +1309,6 @@ export default function FinancialReportsPage() {
                             <SelectItem value="excel">Excel</SelectItem>
                             <SelectItem value="csv">CSV</SelectItem>
                             <SelectItem value="pdf">PDF</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label>Include Compliance Details</Label>
-                        <Select defaultValue="yes">
-                          <SelectTrigger>
-                            <SelectValue placeholder="Include compliance" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="yes">Yes</SelectItem>
-                            <SelectItem value="no">No</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
