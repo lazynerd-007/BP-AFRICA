@@ -49,7 +49,7 @@ const mockTransactions = [
     customer: "John Doe",
     customerNumber: "+233 24 123 4567",
     reference: "REF-12345",
-    scheme: "Visa"
+    scheme: "MTN Mobile Money"
   },
   {
     date: "2023-11-15T09:18:43",
@@ -63,7 +63,7 @@ const mockTransactions = [
     customer: "Sarah Johnson",
     customerNumber: "+233 24 987 6543",
     reference: "REF-12346",
-    scheme: "Mastercard"
+    scheme: "AirtelTigo Money"
   },
   {
     date: "2023-11-14T16:45:22",
@@ -77,7 +77,7 @@ const mockTransactions = [
     customer: "Michael Brown",
     customerNumber: "+233 20 555 1234",
     reference: "REF-12347",
-    scheme: "Visa"
+    scheme: "Telecel"
   },
   {
     date: "2023-11-14T14:20:11",
@@ -105,7 +105,7 @@ const mockTransactions = [
     customer: "David Lee",
     customerNumber: "+233 24 999 0000",
     reference: "REF-12349",
-    scheme: "Mastercard"
+    scheme: "MTN Mobile Money"
   }
 ];
 

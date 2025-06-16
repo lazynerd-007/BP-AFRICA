@@ -374,23 +374,26 @@ const getColumns = (currentTab: string, tableType: string = "transaction"): Colu
       cell: ({ row }) => {
         const status = row.original.status;
         let badgeVariant: "default" | "outline" | "secondary" | "destructive" = "default";
+        let statusClassName = "px-1.5";
         
-        if (status === "Completed") {
+        // Apply green scheme for successful/completed statuses
+        if (status === "Completed" || status === "completed" || status === "SUCCESS" || status === "Successful") {
           badgeVariant = "secondary";
-        } else if (status === "Pending") {
+          statusClassName = "px-1.5 bg-green-100 text-green-800 hover:bg-green-100/80 dark:bg-green-800/20 dark:text-green-400";
+        } else if (status === "Pending" || status === "pending") {
           badgeVariant = "outline";
-        } else if (status === "Failed") {
+        } else if (status === "Failed" || status === "failed" || status === "FAILED") {
           badgeVariant = "destructive";
         }
         
         return (
           <Badge 
             variant={badgeVariant}
-            className="px-1.5"
+            className={statusClassName}
           >
-            {status === "Completed" ? (
+            {(status === "Completed" || status === "completed" || status === "SUCCESS" || status === "Successful") ? (
               <IconCircleCheckFilled className="size-3 mr-1" />
-            ) : status === "Pending" ? (
+            ) : (status === "Pending" || status === "pending") ? (
               <IconLoader className="size-3 mr-1" />
             ) : (
               <IconDotsVertical className="size-3 mr-1" />
