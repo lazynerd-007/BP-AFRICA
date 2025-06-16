@@ -1126,28 +1126,8 @@ export default function FinancialReportsPage() {
                 </Card>
               </div>
               
-              <div className="flex justify-between items-center mb-4">
+              <div className="mb-4">
                 <h3 className="text-lg font-medium">Settlement Transactions</h3>
-                <div className="flex space-x-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex items-center gap-1"
-                    onClick={() => handleExportTransactionType("collection")}
-                  >
-                    <IconDownload className="h-4 w-4" />
-                    <span>Export Collections</span>
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex items-center gap-1"
-                    onClick={() => handleExportTransactionType("payout")}
-                  >
-                    <IconDownload className="h-4 w-4" />
-                    <span>Export Payouts</span>
-                  </Button>
-                </div>
               </div>
               
               <Table>
