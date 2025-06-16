@@ -32,21 +32,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { 
   IconDownload, 
   IconCash, 
   IconReportMoney, 
   IconTrendingUp, 
-  IconFileSpreadsheet,
-  IconSquareCheck,
   IconSearch
 } from "@tabler/icons-react";
 import { useCurrency } from "@/lib/currency-context";
@@ -190,15 +180,7 @@ const merchants = [
   { id: "payexpress", name: "PayExpress Ghana", parent: false, parentId: "blupenguin" },
 ];
 
-// Report Types
-const reportTypes = [
-  { id: "daily", name: "Daily Summary" },
-  { id: "weekly", name: "Weekly Summary" },
-  { id: "monthly", name: "Monthly Summary" },
-  { id: "quarterly", name: "Quarterly Summary" },
-  { id: "yearly", name: "Yearly Summary" },
-  { id: "custom", name: "Custom Period" },
-];
+
 
 // Available columns for export customization
 const availableColumns = [
@@ -222,7 +204,7 @@ const availableColumns = [
 
 export default function FinancialReportsPage() {
   const { currency } = useCurrency();
-  const [reportType, setReportType] = useState("daily");
+
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [selectedBank, setSelectedBank] = useState("all");
