@@ -218,6 +218,8 @@ export default function FinancialReportsPage() {
   const [exportType, setExportType] = useState<"collection" | "payout" | "all">("all");
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [showSettlementDialog, setShowSettlementDialog] = useState(false);
+  const [showBogReportDialog, setShowBogReportDialog] = useState(false);
+  const [showDownloadStatementDialog, setShowDownloadStatementDialog] = useState(false);
   
   // For merchant report pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -512,10 +514,96 @@ export default function FinancialReportsPage() {
 
                 <div className="space-y-2 lg:col-span-5 flex justify-end">
                   <div className="flex space-x-2">
-                    <Button variant="outline" className="flex items-center gap-1">
-                      <IconDownload className="h-4 w-4" />
-                      <span>Download Statement</span>
-                    </Button>
+                    <Dialog open={showDownloadStatementDialog} onOpenChange={setShowDownloadStatementDialog}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" className="flex items-center gap-1">
+                          <IconDownload className="h-4 w-4" />
+                          <span>Download Statement</span>
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Download Statement</DialogTitle>
+                          <DialogDescription>
+                            Configure and download your financial statement
+                          </DialogDescription>
+                        </DialogHeader>
+                        
+                        <div className="grid gap-4 py-4">
+                          <div className="space-y-2">
+                            <Label>Statement Type</Label>
+                            <Select defaultValue="summary">
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select statement type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="summary">Summary Statement</SelectItem>
+                                <SelectItem value="detailed">Detailed Statement</SelectItem>
+                                <SelectItem value="commission">Commission Statement</SelectItem>
+                                <SelectItem value="settlement">Settlement Statement</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label>Date Range</Label>
+                            <div className="flex gap-2">
+                              <Input
+                                type="date"
+                                placeholder="Start date"
+                                className="w-1/2"
+                              />
+                              <Input
+                                type="date"
+                                placeholder="End date"
+                                className="w-1/2"
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label>Partner Bank</Label>
+                            <Select defaultValue="all">
+                              <SelectTrigger>
+                                <SelectValue placeholder="-- All --" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {ghanaBanks.map((bank) => (
+                                  <SelectItem key={bank.id} value={bank.id}>
+                                    {bank.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label>Format</Label>
+                            <Select defaultValue="pdf">
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select format" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="pdf">PDF</SelectItem>
+                                <SelectItem value="excel">Excel</SelectItem>
+                                <SelectItem value="csv">CSV</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        
+                        <DialogFooter>
+                          <Button variant="outline" onClick={() => setShowDownloadStatementDialog(false)}>Cancel</Button>
+                          <Button onClick={() => {
+                            console.log('Downloading statement...');
+                            alert('Statement download initiated');
+                            setShowDownloadStatementDialog(false);
+                          }}>
+                            Download Statement
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
                     <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
                       <DialogTrigger asChild>
                         <Button variant="outline" className="flex items-center gap-1">
@@ -1179,10 +1267,109 @@ export default function FinancialReportsPage() {
                     Regulatory reporting for Bank of Ghana compliance
                   </CardDescription>
                 </div>
-                <Button variant="outline" className="flex items-center gap-1">
-                  <IconDownload className="h-4 w-4" />
-                  <span>Generate BOG Report</span>
-                </Button>
+                <Dialog open={showBogReportDialog} onOpenChange={setShowBogReportDialog}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="flex items-center gap-1">
+                      <IconDownload className="h-4 w-4" />
+                      <span>Generate BOG Report</span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Generate BOG Report</DialogTitle>
+                      <DialogDescription>
+                        Configure and generate Bank of Ghana regulatory report
+                      </DialogDescription>
+                    </DialogHeader>
+                    
+                    <div className="grid gap-4 py-4">
+                      <div className="space-y-2">
+                        <Label>Report Period</Label>
+                        <Select defaultValue="monthly">
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select period" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="daily">Daily</SelectItem>
+                            <SelectItem value="weekly">Weekly</SelectItem>
+                            <SelectItem value="monthly">Monthly</SelectItem>
+                            <SelectItem value="quarterly">Quarterly</SelectItem>
+                            <SelectItem value="yearly">Yearly</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label>Report Type</Label>
+                        <Select defaultValue="all">
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Transactions</SelectItem>
+                            <SelectItem value="collections">Collections Only</SelectItem>
+                            <SelectItem value="payouts">Payouts Only</SelectItem>
+                            <SelectItem value="settlements">Settlements Only</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label>Date Range</Label>
+                        <div className="flex gap-2">
+                          <Input
+                            type="date"
+                            placeholder="Start date"
+                            className="w-1/2"
+                          />
+                          <Input
+                            type="date"
+                            placeholder="End date"
+                            className="w-1/2"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label>Format</Label>
+                        <Select defaultValue="excel">
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select format" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="excel">Excel</SelectItem>
+                            <SelectItem value="csv">CSV</SelectItem>
+                            <SelectItem value="pdf">PDF</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label>Include Compliance Details</Label>
+                        <Select defaultValue="yes">
+                          <SelectTrigger>
+                            <SelectValue placeholder="Include compliance" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="yes">Yes</SelectItem>
+                            <SelectItem value="no">No</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setShowBogReportDialog(false)}>Cancel</Button>
+                      <Button onClick={() => {
+                        console.log('Generating BOG report...');
+                        alert('BOG Report generation initiated');
+                        setShowBogReportDialog(false);
+                      }}>
+                        Generate Report
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
             </CardHeader>
             <CardContent>
@@ -1283,7 +1470,6 @@ export default function FinancialReportsPage() {
                     <TableHead>Merchant Category</TableHead>
                     <TableHead className="text-right">Volume ({currency})</TableHead>
                     <TableHead className="text-center">Count</TableHead>
-                    <TableHead>Compliance Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -1294,11 +1480,6 @@ export default function FinancialReportsPage() {
                     <TableCell>E-commerce</TableCell>
                     <TableCell className="text-right">485,230.00</TableCell>
                     <TableCell className="text-center">1,247</TableCell>
-                    <TableCell>
-                      <Badge variant="default" className="bg-green-100 text-green-800">
-                        Compliant
-                      </Badge>
-                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>2025-05-19</TableCell>
@@ -1307,11 +1488,6 @@ export default function FinancialReportsPage() {
                     <TableCell>Financial Services</TableCell>
                     <TableCell className="text-right">328,750.00</TableCell>
                     <TableCell className="text-center">892</TableCell>
-                    <TableCell>
-                      <Badge variant="default" className="bg-green-100 text-green-800">
-                        Compliant
-                      </Badge>
-                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>2025-05-18</TableCell>
@@ -1320,11 +1496,6 @@ export default function FinancialReportsPage() {
                     <TableCell>Retail</TableCell>
                     <TableCell className="text-right">672,450.00</TableCell>
                     <TableCell className="text-center">1,856</TableCell>
-                    <TableCell>
-                      <Badge variant="default" className="bg-green-100 text-green-800">
-                        Compliant
-                      </Badge>
-                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>2025-05-17</TableCell>
@@ -1333,11 +1504,6 @@ export default function FinancialReportsPage() {
                     <TableCell>Utilities</TableCell>
                     <TableCell className="text-right">156,800.00</TableCell>
                     <TableCell className="text-center">423</TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="bg-yellow-100 text-yellow-800">
-                        Under Review
-                      </Badge>
-                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>2025-05-16</TableCell>
@@ -1346,11 +1512,6 @@ export default function FinancialReportsPage() {
                     <TableCell>Healthcare</TableCell>
                     <TableCell className="text-right">423,650.00</TableCell>
                     <TableCell className="text-center">1,156</TableCell>
-                    <TableCell>
-                      <Badge variant="default" className="bg-green-100 text-green-800">
-                        Compliant
-                      </Badge>
-                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
