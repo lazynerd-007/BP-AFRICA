@@ -247,7 +247,7 @@ export default function ApprovalsPage() {
       setShowOtpDialog(false);
       setPendingAction(null);
       setApprovalNotes("");
-      setRejectionReason("");
+    setRejectionReason("");
       
     } catch {
       throw new Error("OTP verification failed");

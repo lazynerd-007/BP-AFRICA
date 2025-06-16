@@ -318,60 +318,60 @@ export default function MerchantsPage() {
           {/* Desktop Table View */}
           <div className="hidden sm:block">
             <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Merchant ID</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Business Type</TableHead>
-                    <TableHead>Transaction Volume</TableHead>
-                    <TableHead>Commission Rate</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Merchant ID</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Business Type</TableHead>
+                <TableHead>Transaction Volume</TableHead>
+                <TableHead>Commission Rate</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredMerchants.length > 0 ? (
+                filteredMerchants.map((merchant) => (
+                  <TableRow key={merchant.id}>
+                    <TableCell className="font-medium">{merchant.id}</TableCell>
+                    <TableCell>{merchant.name}</TableCell>
+                    <TableCell>{merchant.businessType}</TableCell>
+                    <TableCell>{merchant.transactionVolume}</TableCell>
+                    <TableCell>{merchant.commissionRate}</TableCell>
+                    <TableCell>
+                      <Badge 
+                        variant={getStatusVariant(merchant.status)}
+                        className={getStatusClasses(merchant.status)}
+                      >
+                        {merchant.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setSelectedMerchant(merchant);
+                          setShowDetailsDialog(true);
+                          setActiveTab("overview");
+                        }}
+                        title="View Details"
+                      >
+                        <IconEye className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredMerchants.length > 0 ? (
-                    filteredMerchants.map((merchant) => (
-                      <TableRow key={merchant.id}>
-                        <TableCell className="font-medium">{merchant.id}</TableCell>
-                        <TableCell>{merchant.name}</TableCell>
-                        <TableCell>{merchant.businessType}</TableCell>
-                        <TableCell>{merchant.transactionVolume}</TableCell>
-                        <TableCell>{merchant.commissionRate}</TableCell>
-                        <TableCell>
-                          <Badge 
-                            variant={getStatusVariant(merchant.status)}
-                            className={getStatusClasses(merchant.status)}
-                          >
-                            {merchant.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => {
-                              setSelectedMerchant(merchant);
-                              setShowDetailsDialog(true);
-                              setActiveTab("overview");
-                            }}
-                            title="View Details"
-                          >
-                            <IconEye className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={7} className="h-24 text-center">
-                        No merchants found.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={7} className="h-24 text-center">
+                    No merchants found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
             </div>
           </div>
 

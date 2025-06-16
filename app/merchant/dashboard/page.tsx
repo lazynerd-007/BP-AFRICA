@@ -148,35 +148,35 @@ export default function MerchantDashboardPage() {
       <Card>
         <CardHeader className="space-y-4">
           <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
-            <div>
+          <div>
               <CardTitle className="text-lg sm:text-xl">Collections & Payouts</CardTitle>
               <CardDescription className="text-sm">Overview of your financial activity</CardDescription>
-            </div>
+          </div>
             <div className="flex flex-wrap gap-2">
-              <Button 
-                variant={timeFilter === "today" ? "default" : "outline"} 
-                size="sm"
-                onClick={() => setTimeFilter("today")}
+            <Button 
+              variant={timeFilter === "today" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setTimeFilter("today")}
                 className="text-xs px-3"
-              >
-                Today
-              </Button>
-              <Button 
-                variant={timeFilter === "7days" ? "default" : "outline"} 
-                size="sm"
-                onClick={() => setTimeFilter("7days")}
+            >
+              Today
+            </Button>
+            <Button 
+              variant={timeFilter === "7days" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setTimeFilter("7days")}
                 className="text-xs px-3"
-              >
-                7 Days
-              </Button>
-              <Button 
-                variant={timeFilter === "monthly" ? "default" : "outline"} 
-                size="sm"
-                onClick={() => setTimeFilter("monthly")}
+            >
+              7 Days
+            </Button>
+            <Button 
+              variant={timeFilter === "monthly" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setTimeFilter("monthly")}
                 className="text-xs px-3"
-              >
-                Monthly
-              </Button>
+            >
+              Monthly
+            </Button>
             </div>
           </div>
         </CardHeader>
@@ -203,43 +203,43 @@ export default function MerchantDashboardPage() {
       <Card>
         <CardHeader className="space-y-4">
           <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
-            <div>
+          <div>
               <CardTitle className="text-lg sm:text-xl">Recent Transactions</CardTitle>
               <CardDescription className="text-sm">Your latest transaction activities</CardDescription>
-            </div>
+          </div>
             <div className="flex flex-wrap gap-2">
-              <Button 
-                variant={transactionFilter === "all" ? "default" : "outline"} 
-                size="sm"
-                onClick={() => setTransactionFilter("all")}
+            <Button 
+              variant={transactionFilter === "all" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setTransactionFilter("all")}
                 className="text-xs px-3"
-              >
-                All
-              </Button>
-              <Button 
-                variant={transactionFilter === "successful" ? "default" : "outline"} 
-                size="sm"
-                onClick={() => setTransactionFilter("successful")}
+            >
+              All
+            </Button>
+            <Button 
+              variant={transactionFilter === "successful" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setTransactionFilter("successful")}
                 className="text-xs px-3"
-              >
-                Successful
-              </Button>
-              <Button 
-                variant={transactionFilter === "pending" ? "default" : "outline"} 
-                size="sm"
-                onClick={() => setTransactionFilter("pending")}
+            >
+              Successful
+            </Button>
+            <Button 
+              variant={transactionFilter === "pending" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setTransactionFilter("pending")}
                 className="text-xs px-3"
-              >
-                Pending
-              </Button>
-              <Button 
-                variant={transactionFilter === "failed" ? "default" : "outline"} 
-                size="sm"
-                onClick={() => setTransactionFilter("failed")}
+            >
+              Pending
+            </Button>
+            <Button 
+              variant={transactionFilter === "failed" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setTransactionFilter("failed")}
                 className="text-xs px-3"
-              >
-                Failed
-              </Button>
+            >
+              Failed
+            </Button>
             </div>
           </div>
         </CardHeader>
@@ -247,36 +247,36 @@ export default function MerchantDashboardPage() {
           {/* Desktop Table View */}
           <div className="hidden sm:block">
             <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Reference</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Date</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredTransactions.map((transaction) => (
-                    <TableRow key={transaction.id}>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Reference</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Date</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredTransactions.map((transaction) => (
+                <TableRow key={transaction.id}>
                       <TableCell className="font-medium">{transaction.reference}</TableCell>
-                      <TableCell>{transaction.amount}</TableCell>
-                      <TableCell>{transaction.type}</TableCell>
-                      <TableCell>
-                        <span className={`px-2 py-1 rounded-full text-xs ${
+                  <TableCell>{transaction.amount}</TableCell>
+                  <TableCell>{transaction.type}</TableCell>
+                  <TableCell>
+                    <span className={`px-2 py-1 rounded-full text-xs ${
                           transaction.status === 'Successful' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
                           transaction.status === 'Pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
                           'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                        }`}>
-                          {transaction.status}
-                        </span>
-                      </TableCell>
-                      <TableCell>{transaction.date}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                    }`}>
+                      {transaction.status}
+                    </span>
+                  </TableCell>
+                  <TableCell>{transaction.date}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
             </div>
           </div>
 

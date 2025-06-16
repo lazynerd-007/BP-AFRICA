@@ -244,36 +244,36 @@ export default function SubmerchantDashboardPage() {
           {/* Desktop Table View */}
           <div className="hidden sm:block">
             <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
+          <Table>
+            <TableHeader>
+              <TableRow>
                     <TableHead className="min-w-[120px]">Reference</TableHead>
                     <TableHead className="min-w-[100px]">Amount</TableHead>
                     <TableHead className="min-w-[80px]">Type</TableHead>
                     <TableHead className="min-w-[100px]">Status</TableHead>
                     <TableHead className="min-w-[100px]">Date</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredTransactions.map((transaction) => (
-                    <TableRow key={transaction.id}>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredTransactions.map((transaction) => (
+                <TableRow key={transaction.id}>
                       <TableCell className="font-medium">{transaction.reference}</TableCell>
-                      <TableCell>{transaction.amount}</TableCell>
-                      <TableCell>{transaction.type}</TableCell>
-                      <TableCell>
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          transaction.status === 'Successful' ? 'bg-green-100 text-green-800' :
-                          transaction.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
-                          {transaction.status}
-                        </span>
-                      </TableCell>
-                      <TableCell>{transaction.date}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  <TableCell>{transaction.amount}</TableCell>
+                  <TableCell>{transaction.type}</TableCell>
+                  <TableCell>
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      transaction.status === 'Successful' ? 'bg-green-100 text-green-800' :
+                      transaction.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      {transaction.status}
+                    </span>
+                  </TableCell>
+                  <TableCell>{transaction.date}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
             </div>
           </div>
 

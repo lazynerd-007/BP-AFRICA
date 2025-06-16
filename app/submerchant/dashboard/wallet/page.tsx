@@ -253,15 +253,15 @@ export default function SubmerchantWalletPage() {
       const newId = Math.max(...prev.map(c => c.id)) + 1;
       return [
         ...prev,
-        {
-          id: newId,
-          name: "",
-          email: "",
-          mobile: "",
-          amount: "",
-          narration: "",
-          network: ""
-        }
+      {
+        id: newId,
+        name: "",
+        email: "",
+        mobile: "",
+        amount: "",
+        narration: "",
+        network: ""
+      }
       ];
     });
   }, []);
@@ -270,7 +270,7 @@ export default function SubmerchantWalletPage() {
     setExternalCustomers(prev => {
       if (prev.length > 1) {
         return prev.filter(c => c.id !== id);
-      }
+    }
       return prev;
     });
   }, []);
@@ -283,8 +283,8 @@ export default function SubmerchantWalletPage() {
 
   const filteredMerchants = useMemo(() => {
     return bluepayMerchants.filter(merchant =>
-      merchant.name.toLowerCase().includes(bluepayMerchantSearch.toLowerCase())
-    );
+    merchant.name.toLowerCase().includes(bluepayMerchantSearch.toLowerCase())
+  );
   }, [bluepayMerchantSearch, bluepayMerchants]);
 
   return (

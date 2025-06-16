@@ -416,11 +416,11 @@ export default function FinancialReportsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Partner Bank</label>
                   <Select value={selectedBank} onValueChange={setSelectedBank}>
-                    <SelectTrigger className="h-11">
+                    <SelectTrigger className="w-full min-w-[200px]">
                       <SelectValue placeholder="-- All --" />
                     </SelectTrigger>
                     <SelectContent>
@@ -436,7 +436,7 @@ export default function FinancialReportsPage() {
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Merchant</label>
                   <Select value={selectedMerchant} onValueChange={setSelectedMerchant}>
-                    <SelectTrigger className="h-11">
+                    <SelectTrigger className="w-full min-w-[200px]">
                       <SelectValue placeholder="-- All --" />
                     </SelectTrigger>
                     <SelectContent>
@@ -463,7 +463,7 @@ export default function FinancialReportsPage() {
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Sub Merchant</label>
                   <Select value={selectedSubMerchant} onValueChange={setSelectedSubMerchant}>
-                    <SelectTrigger className="h-11">
+                    <SelectTrigger>
                       <SelectValue placeholder="-- All --" />
                     </SelectTrigger>
                     <SelectContent>
@@ -477,20 +477,20 @@ export default function FinancialReportsPage() {
                   </Select>
                 </div>
                 
-                <div className="space-y-2 md:col-span-1 lg:col-span-1">
+                <div className="space-y-2">
                   <label className="text-sm font-medium">Date Range</label>
-                  <div className="flex gap-3">
+                  <div className="flex gap-2 min-w-[200px]">
                     <Input
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="w-1/2 h-11"
+                      className="w-1/2 min-w-[90px]"
                     />
                     <Input
                       type="date"
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
-                      className="w-1/2 h-11"
+                      className="w-1/2 min-w-[90px]"
                     />
                   </div>
                 </div>
@@ -498,7 +498,7 @@ export default function FinancialReportsPage() {
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Transaction Type</label>
                   <Select value={transactionType} onValueChange={setTransactionType}>
-                    <SelectTrigger className="h-11">
+                    <SelectTrigger className="w-full min-w-[200px]">
                       <SelectValue placeholder="-- All --" />
                     </SelectTrigger>
                     <SelectContent>
@@ -509,7 +509,7 @@ export default function FinancialReportsPage() {
                   </Select>
                 </div>
 
-                <div className="space-y-2 md:col-span-2 lg:col-span-3 flex justify-end">
+                <div className="space-y-2 lg:col-span-5 flex justify-end">
                   <div className="flex space-x-2">
                     <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
                       <DialogTrigger asChild>
