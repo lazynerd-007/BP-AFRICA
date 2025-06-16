@@ -484,13 +484,13 @@ export default function FinancialReportsPage() {
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="w-1/2 min-w-[120px]"
+                      className="w-1/2 min-w-[100px]"
                     />
                     <Input
                       type="date"
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
-                      className="w-1/2 min-w-[120px]"
+                      className="w-1/2 min-w-[100px]"
                     />
                   </div>
                 </div>
