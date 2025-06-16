@@ -405,6 +405,7 @@ export default function FinancialReportsPage() {
           <TabsTrigger value="merchant">Merchant Reports</TabsTrigger>
           <TabsTrigger value="commission">Commission Reports</TabsTrigger>
           <TabsTrigger value="settlement">Settlement Reports</TabsTrigger>
+          <TabsTrigger value="bog">BOG Report</TabsTrigger>
         </TabsList>
         
         <TabsContent value="summary" className="space-y-4">
@@ -511,6 +512,10 @@ export default function FinancialReportsPage() {
 
                 <div className="space-y-2 lg:col-span-5 flex justify-end">
                   <div className="flex space-x-2">
+                    <Button variant="outline" className="flex items-center gap-1">
+                      <IconDownload className="h-4 w-4" />
+                      <span>Download Statement</span>
+                    </Button>
                     <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
                       <DialogTrigger asChild>
                         <Button variant="outline" className="flex items-center gap-1">
@@ -1158,6 +1163,195 @@ export default function FinancialReportsPage() {
                       </TableCell>
                     </TableRow>
                   ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="bog" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Bank of Ghana (BOG) Report</CardTitle>
+                  <CardDescription>
+                    Regulatory reporting for Bank of Ghana compliance
+                  </CardDescription>
+                </div>
+                <Button variant="outline" className="flex items-center gap-1">
+                  <IconDownload className="h-4 w-4" />
+                  <span>Generate BOG Report</span>
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Report Period</label>
+                  <Select defaultValue="monthly">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select period" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="daily">Daily</SelectItem>
+                      <SelectItem value="weekly">Weekly</SelectItem>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                      <SelectItem value="quarterly">Quarterly</SelectItem>
+                      <SelectItem value="yearly">Yearly</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Report Type</label>
+                  <Select defaultValue="all">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Transactions</SelectItem>
+                      <SelectItem value="collections">Collections Only</SelectItem>
+                      <SelectItem value="payouts">Payouts Only</SelectItem>
+                      <SelectItem value="settlements">Settlements Only</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Date From</label>
+                  <Input type="date" />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Date To</label>
+                  <Input type="date" />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">Total Transaction Volume</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{currency} 2,847,650.00</div>
+                    <p className="text-xs text-muted-foreground">
+                      +12.5% from previous period
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">Transaction Count</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">15,847</div>
+                    <p className="text-xs text-muted-foreground">
+                      +8.3% from previous period
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">Active Merchants</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">247</div>
+                    <p className="text-xs text-muted-foreground">
+                      +5.1% from previous period
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <div className="mb-4">
+                <h3 className="text-lg font-medium">BOG Compliance Summary</h3>
+                <p className="text-sm text-muted-foreground">
+                  Summary of transactions and compliance metrics for regulatory reporting
+                </p>
+              </div>
+              
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Transaction Type</TableHead>
+                    <TableHead>Partner Bank</TableHead>
+                    <TableHead>Merchant Category</TableHead>
+                    <TableHead className="text-right">Volume ({currency})</TableHead>
+                    <TableHead className="text-center">Count</TableHead>
+                    <TableHead>Compliance Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>2025-05-20</TableCell>
+                    <TableCell>Collection</TableCell>
+                    <TableCell>Ghana Commercial Bank</TableCell>
+                    <TableCell>E-commerce</TableCell>
+                    <TableCell className="text-right">485,230.00</TableCell>
+                    <TableCell className="text-center">1,247</TableCell>
+                    <TableCell>
+                      <Badge variant="default" className="bg-green-100 text-green-800">
+                        Compliant
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>2025-05-19</TableCell>
+                    <TableCell>Payout</TableCell>
+                    <TableCell>Ecobank Ghana</TableCell>
+                    <TableCell>Financial Services</TableCell>
+                    <TableCell className="text-right">328,750.00</TableCell>
+                    <TableCell className="text-center">892</TableCell>
+                    <TableCell>
+                      <Badge variant="default" className="bg-green-100 text-green-800">
+                        Compliant
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>2025-05-18</TableCell>
+                    <TableCell>Collection</TableCell>
+                    <TableCell>Stanbic Bank Ghana</TableCell>
+                    <TableCell>Retail</TableCell>
+                    <TableCell className="text-right">672,450.00</TableCell>
+                    <TableCell className="text-center">1,856</TableCell>
+                    <TableCell>
+                      <Badge variant="default" className="bg-green-100 text-green-800">
+                        Compliant
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>2025-05-17</TableCell>
+                    <TableCell>Settlement</TableCell>
+                    <TableCell>Zenith Bank Ghana</TableCell>
+                    <TableCell>Utilities</TableCell>
+                    <TableCell className="text-right">156,800.00</TableCell>
+                    <TableCell className="text-center">423</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="bg-yellow-100 text-yellow-800">
+                        Under Review
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>2025-05-16</TableCell>
+                    <TableCell>Collection</TableCell>
+                    <TableCell>Standard Chartered Bank Ghana</TableCell>
+                    <TableCell>Healthcare</TableCell>
+                    <TableCell className="text-right">423,650.00</TableCell>
+                    <TableCell className="text-center">1,156</TableCell>
+                    <TableCell>
+                      <Badge variant="default" className="bg-green-100 text-green-800">
+                        Compliant
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             </CardContent>
