@@ -416,7 +416,7 @@ export default function FinancialReportsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Partner Bank</label>
                   <Select value={selectedBank} onValueChange={setSelectedBank}>
