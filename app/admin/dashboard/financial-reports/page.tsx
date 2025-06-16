@@ -220,6 +220,8 @@ export default function FinancialReportsPage() {
   const [showSettlementDialog, setShowSettlementDialog] = useState(false);
   const [showBogReportDialog, setShowBogReportDialog] = useState(false);
   const [showDownloadStatementDialog, setShowDownloadStatementDialog] = useState(false);
+  const [downloadStatementMerchantSearch, setDownloadStatementMerchantSearch] = useState("");
+  const [selectedDownloadStatementMerchant, setSelectedDownloadStatementMerchant] = useState("all");
   
   // For merchant report pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -558,6 +560,37 @@ export default function FinancialReportsPage() {
                                     {bank.name}
                                   </SelectItem>
                                 ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label>Merchant</Label>
+                            <Select value={selectedDownloadStatementMerchant} onValueChange={setSelectedDownloadStatementMerchant}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="-- All --" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <div className="p-2">
+                                  <Input
+                                    placeholder="Search merchants..."
+                                    value={downloadStatementMerchantSearch}
+                                    onChange={(e) => setDownloadStatementMerchantSearch(e.target.value)}
+                                    className="mb-2"
+                                  />
+                                </div>
+                                <SelectItem value="all">-- All --</SelectItem>
+                                {merchants
+                                  .filter(merchant => 
+                                    downloadStatementMerchantSearch === "" || 
+                                    merchant.name.toLowerCase().includes(downloadStatementMerchantSearch.toLowerCase())
+                                  )
+                                  .filter(m => m.parent)
+                                  .map((merchant) => (
+                                    <SelectItem key={merchant.id} value={merchant.id}>
+                                      {merchant.name}
+                                    </SelectItem>
+                                  ))}
                               </SelectContent>
                             </Select>
                           </div>
