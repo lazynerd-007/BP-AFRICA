@@ -434,23 +434,7 @@ export default function FinancialReportsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Report Type</label>
-                  <Select value={reportType} onValueChange={setReportType}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Report Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {reportTypes.map((type) => (
-                        <SelectItem key={type.id} value={type.id}>
-                          {type.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Partner Bank</label>
                   <Select value={selectedBank} onValueChange={setSelectedBank}>
@@ -543,7 +527,7 @@ export default function FinancialReportsPage() {
                   </Select>
                 </div>
 
-                <div className="space-y-2 lg:col-span-6 flex justify-end">
+                <div className="space-y-2 lg:col-span-5 flex justify-end">
                   <div className="flex space-x-2">
                     <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
                       <DialogTrigger asChild>
@@ -635,36 +619,6 @@ export default function FinancialReportsPage() {
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
-
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="flex items-center gap-1">
-                          <IconFileSpreadsheet className="h-4 w-4" />
-                          <span>Quick Export</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Export Options</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => handleExportTransactionType("collection")}>
-                          <IconDownload className="h-4 w-4 mr-2" />
-                          Export Collections
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleExportTransactionType("payout")}>
-                          <IconDownload className="h-4 w-4 mr-2" />
-                          Export Payouts
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => setExportFormat("csv")}>
-                          <IconSquareCheck className={`h-4 w-4 mr-2 ${exportFormat === "csv" ? "opacity-100" : "opacity-0"}`} />
-                          CSV Format
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setExportFormat("excel")}>
-                          <IconSquareCheck className={`h-4 w-4 mr-2 ${exportFormat === "excel" ? "opacity-100" : "opacity-0"}`} />
-                          Excel Format
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                   </div>
                 </div>
               </div>
@@ -983,7 +937,7 @@ export default function FinancialReportsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm">Total Partner Share</CardTitle>
@@ -994,15 +948,7 @@ export default function FinancialReportsPage() {
                 </Card>
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Total Merchant Share</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{currency} {summaryStats.totalMerchantShare}</div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Total System Share</CardTitle>
+                    <CardTitle className="text-sm">Total BP Share</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">{currency} {summaryStats.totalSystemShare}</div>
@@ -1019,8 +965,7 @@ export default function FinancialReportsPage() {
                     <TableHead className="text-right">Total Amount</TableHead>
                     <TableHead className="text-right">Commission</TableHead>
                     <TableHead className="text-right">Partner Share</TableHead>
-                    <TableHead className="text-right">Merchant Share</TableHead>
-                    <TableHead className="text-right">System Share</TableHead>
+                    <TableHead className="text-right">BP Share</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -1032,7 +977,6 @@ export default function FinancialReportsPage() {
                       <TableCell className="text-right">{currency} {item.totalAmount}</TableCell>
                       <TableCell className="text-right">{currency} {item.commission}</TableCell>
                       <TableCell className="text-right">{currency} {item.partnerShare}</TableCell>
-                      <TableCell className="text-right">{currency} {item.merchantShare}</TableCell>
                       <TableCell className="text-right">{currency} {item.systemShare}</TableCell>
                     </TableRow>
                   ))}
@@ -1146,15 +1090,15 @@ export default function FinancialReportsPage() {
                       </div>
                       
                       <div className="space-y-2">
-                        <Label>Settlement Status</Label>
+                        <Label>File Type</Label>
                         <Select defaultValue="all">
                           <SelectTrigger>
                             <SelectValue placeholder="-- All --" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="all">-- All --</SelectItem>
-                            <SelectItem value="settled">Settled</SelectItem>
-                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="dr">DR</SelectItem>
+                            <SelectItem value="cr">CR</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
