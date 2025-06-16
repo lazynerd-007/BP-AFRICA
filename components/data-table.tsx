@@ -332,11 +332,36 @@ const getColumns = (currentTab: string, tableType: string = "transaction"): Colu
     {
       accessorKey: "scheme",
       header: "Scheme",
-      cell: ({ row }) => (
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
-          {row.original.scheme}
-        </Badge>
-      ),
+      cell: ({ row }) => {
+        const scheme = row.original.scheme;
+        let schemeColor = "";
+        let textColor = "";
+        
+        // Apply individual colors for each network
+        if (scheme === "MTN Mobile Money" || scheme === "MTN") {
+          schemeColor = "#fc0"; // MTN Yellow
+          textColor = "#000"; // Black text for better contrast
+        } else if (scheme === "AirtelTigo Money" || scheme === "AirtelTigo") {
+          schemeColor = "#01377a"; // AirtelTigo Blue
+          textColor = "#fff"; // White text for better contrast
+        } else if (scheme === "Telecel" || scheme === "Vodafone Cash") {
+          schemeColor = "#e32526"; // Telecel Red
+          textColor = "#fff"; // White text for better contrast
+        }
+        
+        return (
+          <Badge 
+            variant="outline" 
+            className="px-1.5 border-none font-medium"
+            style={{
+              backgroundColor: schemeColor || "#f3f4f6",
+              color: textColor || "#6b7280"
+            }}
+          >
+            {scheme}
+          </Badge>
+        );
+      },
     },
     {
       accessorKey: "amount",
