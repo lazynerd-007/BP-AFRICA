@@ -38,6 +38,7 @@ import {
   IconEye, 
   IconBuildingBank,
   IconBuildingStore,
+  IconSend,
 } from "@tabler/icons-react";
 import { format } from "date-fns";
 
@@ -170,6 +171,92 @@ const approvalRequests = [
       notes: "Merchant requested account deactivation due to business closure.",
       approvalNotes: "Confirmed with merchant via phone. All pending transactions have been settled."
     }
+  },
+  {
+    id: "REM-001",
+    type: "Remittance",
+    subType: "Cash Deposit",
+    entity: "John Doe",
+    requestedBy: "John Doe",
+    requestedOn: "2023-10-15T16:45:00",
+    status: "Pending",
+    details: {
+      changes: [
+        { field: "Sender Name", from: "", to: "John Doe" },
+        { field: "Sender Phone", from: "", to: "+233 24 123 4567" },
+        { field: "Sender Email", from: "", to: "john.doe@email.com" },
+        { field: "Amount", from: "", to: "GHS 500.00" },
+        { field: "Purpose", from: "", to: "Family Support" },
+        { field: "Reference Number", from: "", to: "REM20231015001" }
+      ],
+      notes: "Cash remittance request for wallet funding. Customer provided all required documentation."
+    }
+  },
+  {
+    id: "REM-002",
+    type: "Remittance",
+    subType: "Cash Deposit",
+    entity: "Sarah Johnson",
+    requestedBy: "Sarah Johnson",
+    requestedOn: "2023-10-14T14:20:00",
+    status: "Pending",
+    details: {
+      changes: [
+        { field: "Sender Name", from: "", to: "Sarah Johnson" },
+        { field: "Sender Phone", from: "", to: "+233 55 987 6543" },
+        { field: "Sender Email", from: "", to: "sarah.johnson@email.com" },
+        { field: "Amount", from: "", to: "GHS 1,200.00" },
+        { field: "Purpose", from: "", to: "Business Investment" },
+        { field: "Reference Number", from: "", to: "REM20231014002" }
+      ],
+      notes: "Remittance request for business wallet funding. All verification documents submitted."
+    }
+  },
+  {
+    id: "REM-003",
+    type: "Remittance",
+    subType: "Cash Deposit",
+    entity: "Michael Addo",
+    requestedBy: "Michael Addo",
+    requestedOn: "2023-10-13T11:30:00",
+    status: "Approved",
+    approvedBy: "Janet Kwakye",
+    approvedOn: "2023-10-13T15:45:00",
+    details: {
+      changes: [
+        { field: "Sender Name", from: "", to: "Michael Addo" },
+        { field: "Sender Phone", from: "", to: "+233 20 456 7890" },
+        { field: "Sender Email", from: "", to: "michael.addo@email.com" },
+        { field: "Amount", from: "", to: "GHS 800.00" },
+        { field: "Purpose", from: "", to: "Personal Transfer" },
+        { field: "Reference Number", from: "", to: "REM20231013003" }
+      ],
+      notes: "Cash remittance processed successfully. Amount credited to merchant wallet.",
+      approvalNotes: "Verified sender identity and processed remittance. Funds transferred to wallet."
+    }
+  },
+  {
+    id: "REM-004",
+    type: "Remittance",
+    subType: "Cash Deposit",
+    entity: "Emma Osei",
+    requestedBy: "Emma Osei",
+    requestedOn: "2023-10-12T09:15:00",
+    status: "Rejected",
+    rejectedBy: "Janet Kwakye",
+    rejectedOn: "2023-10-12T12:30:00",
+    details: {
+      changes: [
+        { field: "Sender Name", from: "", to: "Emma Osei" },
+        { field: "Sender Phone", from: "", to: "+233 26 111 2222" },
+        { field: "Sender Email", from: "", to: "emma.osei@email.com" },
+        { field: "Amount", from: "", to: "GHS 2,500.00" },
+        { field: "Purpose", from: "", to: "Investment" },
+        { field: "Reference Number", from: "", to: "REM20231012004" }
+      ],
+      notes: "Large amount remittance request requires additional verification.",
+      rejectionReason: "Insufficient documentation for large amount transfer. Please provide additional verification documents and source of funds documentation."
+    }
   }
 ];
 
@@ -182,6 +269,8 @@ export default function ApprovalsPage() {
   const [showApproveDialog, setShowApproveDialog] = useState(false);
   const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [showOtpDialog, setShowOtpDialog] = useState(false);
+  const [showApprovedModal, setShowApprovedModal] = useState(false);
+  const [showRejectedModal, setShowRejectedModal] = useState(false);
   const [pendingAction, setPendingAction] = useState<{ action: "approve" | "reject"; approval: typeof approvalRequests[0] } | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
   const [approvalNotes, setApprovalNotes] = useState("");
@@ -238,16 +327,19 @@ export default function ApprovalsPage() {
       // Simulate OTP verification and API call
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      const { action, approval } = pendingAction;
+      const { action } = pendingAction;
       
-      // In a real app, this would make an API call
-      alert(`Approval request ${approval.id} has been ${action}d.`);
-      
-      // Close dialogs and reset state
+      // Close OTP dialog and show appropriate success modal
       setShowOtpDialog(false);
       setPendingAction(null);
       setApprovalNotes("");
-    setRejectionReason("");
+      setRejectionReason("");
+      
+      if (action === "approve") {
+        setShowApprovedModal(true);
+      } else {
+        setShowRejectedModal(true);
+      }
       
     } catch {
       throw new Error("OTP verification failed");
@@ -277,12 +369,16 @@ export default function ApprovalsPage() {
 
   // Get entity icon based on type
   const getEntityIcon = (type: string) => {
-    if (type === "Merchant") {
-      return <IconBuildingStore className="h-4 w-4" />;
-    } else if (type === "Partner Bank") {
-      return <IconBuildingBank className="h-4 w-4" />;
+    switch (type) {
+      case "Merchant":
+        return <IconBuildingStore className="h-4 w-4" />;
+      case "Partner Bank":
+        return <IconBuildingBank className="h-4 w-4" />;
+      case "Remittance":
+        return <IconSend className="h-4 w-4" />;
+      default:
+        return null;
     }
-    return null;
   };
 
   // Format date string
@@ -298,6 +394,7 @@ export default function ApprovalsPage() {
           <TabsTrigger value="all">All Requests</TabsTrigger>
           <TabsTrigger value="merchant">Merchant Changes</TabsTrigger>
           <TabsTrigger value="bank">Partner Bank Changes</TabsTrigger>
+          <TabsTrigger value="remittance">Remittance Approvals</TabsTrigger>
         </TabsList>
         
         <TabsContent value="all" className="space-y-4">
@@ -341,6 +438,7 @@ export default function ApprovalsPage() {
                         <SelectItem value="all">All Types</SelectItem>
                         <SelectItem value="merchant">Merchant</SelectItem>
                         <SelectItem value="partner bank">Partner Bank</SelectItem>
+                        <SelectItem value="remittance">Remittance</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -619,6 +717,101 @@ export default function ApprovalsPage() {
             </CardContent>
           </Card>
         </TabsContent>
+        
+        <TabsContent value="remittance" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Remittance Approvals</CardTitle>
+              <CardDescription>
+                Review and approve remittance requests
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Request ID</TableHead>
+                    <TableHead>Sender</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Purpose</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredApprovals
+                    .filter(request => request.type === "Remittance")
+                    .map((request) => {
+                      const amountField = request.details.changes.find(change => change.field === "Amount");
+                      const purposeField = request.details.changes.find(change => change.field === "Purpose");
+                      
+                      return (
+                        <TableRow key={request.id}>
+                          <TableCell className="font-medium">{request.id}</TableCell>
+                          <TableCell>{request.entity}</TableCell>
+                          <TableCell className="font-medium">{amountField?.to || "-"}</TableCell>
+                          <TableCell>{purposeField?.to || "-"}</TableCell>
+                          <TableCell>{formatDate(request.requestedOn)}</TableCell>
+                          <TableCell>
+                            <Badge 
+                              variant={getStatusVariant(request.status)}
+                              className={getStatusClasses(request.status)}
+                            >
+                              {request.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => {
+                                  setCurrentApproval(request);
+                                  setShowDetailsDialog(true);
+                                }}
+                                title="View Details"
+                              >
+                                <IconEye className="h-4 w-4" />
+                              </Button>
+                              {request.status === "Pending" && (
+                                <>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="text-green-500 hover:text-green-600 hover:bg-green-50"
+                                    onClick={() => {
+                                      setCurrentApproval(request);
+                                      setShowApproveDialog(true);
+                                    }}
+                                    title="Approve"
+                                  >
+                                    <IconCheck className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                                    onClick={() => {
+                                      setCurrentApproval(request);
+                                      setShowRejectDialog(true);
+                                    }}
+                                    title="Reject"
+                                  >
+                                    <IconX className="h-4 w-4" />
+                                  </Button>
+                                </>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
       
       {/* Request Details Dialog */}
@@ -643,10 +836,6 @@ export default function ApprovalsPage() {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Change Type</p>
                 <p>{currentApproval?.subType}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Requested By</p>
-                <p>{currentApproval?.requestedBy}</p>
               </div>
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Requested On</p>
@@ -676,32 +865,43 @@ export default function ApprovalsPage() {
             </div>
             
             <div className="mt-2">
-              <p className="text-sm font-medium text-muted-foreground mb-2">Changes</p>
-              <div className="border rounded-md">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Field</TableHead>
-                      <TableHead>From</TableHead>
-                      <TableHead>To</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
+              {currentApproval?.type === "Remittance" ? (
+                <>
+                  <p className="text-sm font-medium text-muted-foreground mb-2">Remittance Form Details</p>
+                  <div className="border rounded-md p-4 space-y-3">
                     {currentApproval?.details.changes.map((change, index) => (
-                      <TableRow key={index}>
-                        <TableCell className="font-medium">{change.field}</TableCell>
-                        <TableCell>{change.from || "-"}</TableCell>
-                        <TableCell>{change.to}</TableCell>
-                      </TableRow>
+                      <div key={index} className="flex justify-between items-center py-2 border-b last:border-b-0">
+                        <span className="text-sm font-medium text-muted-foreground">{change.field}:</span>
+                        <span className="text-sm font-medium">{change.to}</span>
+                      </div>
                     ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-            
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Notes</p>
-              <p className="text-sm">{currentApproval?.details.notes}</p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-medium text-muted-foreground mb-2">Changes</p>
+                  <div className="border rounded-md">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Field</TableHead>
+                          <TableHead>From</TableHead>
+                          <TableHead>To</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {currentApproval?.details.changes.map((change, index) => (
+                          <TableRow key={index}>
+                            <TableCell className="font-medium">{change.field}</TableCell>
+                            <TableCell>{change.from || "-"}</TableCell>
+                            <TableCell>{change.to}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </>
+              )}
             </div>
             
             {currentApproval?.status === "Approved" && currentApproval.details.approvalNotes && (
@@ -862,6 +1062,66 @@ export default function ApprovalsPage() {
         } : undefined}
         isProcessing={isProcessing}
       />
+
+      {/* Approved Success Modal */}
+      <Dialog open={showApprovedModal} onOpenChange={setShowApprovedModal}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Request Approved</DialogTitle>
+            <DialogDescription>
+              The approval request has been processed successfully
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4 text-center">
+            <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+              <IconCheck className="h-6 w-6 text-green-600" />
+            </div>
+            <div className="space-y-2">
+              <p className="font-medium">Request Approved Successfully</p>
+              <p className="text-sm text-muted-foreground">
+                The request has been approved and the changes will be implemented shortly.
+              </p>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button onClick={() => setShowApprovedModal(false)} className="w-full">
+              Continue
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Rejected Success Modal */}
+      <Dialog open={showRejectedModal} onOpenChange={setShowRejectedModal}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Request Rejected</DialogTitle>
+            <DialogDescription>
+              The approval request has been rejected
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4 text-center">
+            <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+              <IconX className="h-6 w-6 text-red-600" />
+            </div>
+            <div className="space-y-2">
+              <p className="font-medium">Request Rejected</p>
+              <p className="text-sm text-muted-foreground">
+                The request has been rejected. The requester will be notified with the reason provided.
+              </p>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button onClick={() => setShowRejectedModal(false)} className="w-full">
+              Continue
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 } 

@@ -39,6 +39,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
 
+
 // Type definitions
 interface ExternalCustomer {
   id: number;
@@ -78,6 +79,10 @@ export default function SubmerchantWalletPage() {
   const [senderNetwork, setSenderNetwork] = useState("");
   const [momoModalOpen, setMomoModalOpen] = useState(false);
   const [collectionsModalOpen, setCollectionsModalOpen] = useState(false);
+  const [remittanceModalOpen, setRemittanceModalOpen] = useState(false);
+  const [bankDepositModalOpen, setBankDepositModalOpen] = useState(false);
+  const [pendingPaymentModalOpen, setPendingPaymentModalOpen] = useState(false);
+  const [remittanceSubmittedModalOpen, setRemittanceSubmittedModalOpen] = useState(false);
 
   // Transfer modal states
   const [transferModalOpen, setTransferModalOpen] = useState(false);
@@ -108,6 +113,15 @@ export default function SubmerchantWalletPage() {
   // Transaction preview states
   const [previewData, setPreviewData] = useState<TransferData | null>(null);
 
+  // Remittance form states
+  const [remittanceData, setRemittanceData] = useState({
+    senderName: "",
+    senderPhone: "",
+    senderEmail: "",
+    purpose: "",
+    referenceNumber: "",
+  });
+
   // Mock BluPay merchants
   const bluepayMerchants = useMemo(() => [
     { id: "STA1000", name: "De Naas - STA1000" },
@@ -137,6 +151,10 @@ export default function SubmerchantWalletPage() {
       setCollectionsModalOpen(true);
     } else if (method === "momo") {
       setMomoModalOpen(true);
+    } else if (method === "remittance") {
+      setRemittanceModalOpen(true);
+    } else if (method === "bank-deposit") {
+      setBankDepositModalOpen(true);
     }
   };
 
@@ -153,6 +171,28 @@ export default function SubmerchantWalletPage() {
     console.log("Mobile:", customerMobile);
     console.log("Network:", senderNetwork);
     setMomoModalOpen(false);
+  };
+
+  const handleRemittanceProceed = () => {
+    console.log("Proceeding with Remittance funding");
+    console.log("Remittance data:", remittanceData);
+    console.log("Amount:", fundAmount);
+    setRemittanceModalOpen(false);
+    setRemittanceSubmittedModalOpen(true);
+    // Reset form data
+    setRemittanceData({
+      senderName: "",
+      senderPhone: "",
+      senderEmail: "",
+      purpose: "",
+      referenceNumber: "",
+    });
+  };
+
+  const handleBankDepositProceed = () => {
+    console.log("Bank deposit details displayed");
+    setBankDepositModalOpen(false);
+    setPendingPaymentModalOpen(true);
   };
 
   // Transfer handlers
@@ -279,6 +319,13 @@ export default function SubmerchantWalletPage() {
     setExternalCustomers(prev => prev.map(c => 
       c.id === id ? { ...c, [field]: value } : c
     ));
+  }, []);
+
+  const updateRemittanceData = useCallback((field: string, value: string) => {
+    setRemittanceData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   }, []);
 
   const filteredMerchants = useMemo(() => {
@@ -749,6 +796,40 @@ export default function SubmerchantWalletPage() {
                         </div>
                       </div>
                     </Button>
+                    
+                    <Button
+                      variant="outline"
+                      className="h-16 justify-start"
+                      onClick={() => handleFundingMethodSelect("remittance")}
+                      disabled={!fundAmount}
+                    >
+                      <div className="flex items-center gap-3">
+                        <IconSend className="h-6 w-6" />
+                        <div className="text-left">
+                          <div className="font-medium">Remittance</div>
+                          <div className="text-sm text-muted-foreground">
+                            Fund via cash remittance transfer
+                          </div>
+                        </div>
+                      </div>
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      className="h-16 justify-start" 
+                      onClick={() => handleFundingMethodSelect("bank-deposit")}
+                      disabled={!fundAmount}
+                    >
+                      <div className="flex items-center gap-3">
+                        <IconBuildingBank className="h-6 w-6" />
+                        <div className="text-left">
+                          <div className="font-medium">Bank Deposit</div>
+                          <div className="text-sm text-muted-foreground">
+                            Fund via bank account deposit
+                          </div>
+                        </div>
+                      </div>
+                    </Button>
                   </div>
                 </div>
               </DialogContent>
@@ -952,6 +1033,207 @@ export default function SubmerchantWalletPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Remittance Funding Modal */}
+      <Dialog open={remittanceModalOpen} onOpenChange={setRemittanceModalOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Remittance Funding</DialogTitle>
+            <DialogDescription>
+              Send money to your wallet via remittance
+            </DialogDescription>
+          </DialogHeader>
+          
+                     <div className="grid gap-4 py-4 max-h-96 overflow-y-auto">
+             <div className="grid gap-2">
+               <Label>Sender Name</Label>
+               <Input
+                 placeholder="Full name of sender"
+                 value={remittanceData.senderName}
+                 onChange={(e) => updateRemittanceData("senderName", e.target.value)}
+               />
+             </div>
+             
+             <div className="grid gap-2">
+               <Label>Sender Phone</Label>
+               <Input
+                 placeholder="+233 XX XXX XXXX"
+                 value={remittanceData.senderPhone}
+                 onChange={(e) => updateRemittanceData("senderPhone", e.target.value)}
+               />
+             </div>
+             
+             <div className="grid gap-2">
+               <Label>Sender Email</Label>
+               <Input
+                 type="email"
+                 placeholder="sender@example.com"
+                 value={remittanceData.senderEmail}
+                 onChange={(e) => updateRemittanceData("senderEmail", e.target.value)}
+               />
+             </div>
+             
+             <div className="grid gap-2">
+               <Label>Purpose</Label>
+               <Input
+                 placeholder="Purpose of transfer"
+                 value={remittanceData.purpose}
+                 onChange={(e) => updateRemittanceData("purpose", e.target.value)}
+               />
+             </div>
+             
+             <div className="grid gap-2">
+               <Label>Reference Number</Label>
+               <Input
+                 placeholder="Reference number"
+                 value={remittanceData.referenceNumber}
+                 onChange={(e) => updateRemittanceData("referenceNumber", e.target.value)}
+               />
+             </div>
+           </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRemittanceModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleRemittanceProceed}
+              disabled={!remittanceData.senderName || !remittanceData.senderPhone || !remittanceData.senderEmail || !remittanceData.purpose || !remittanceData.referenceNumber}
+            >
+              Send Payment Request
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+             {/* Bank Deposit Funding Modal */}
+       <Dialog open={bankDepositModalOpen} onOpenChange={setBankDepositModalOpen}>
+         <DialogContent className="sm:max-w-[500px]">
+           <DialogHeader>
+             <DialogTitle>Bank Deposit Details</DialogTitle>
+             <DialogDescription>
+               Use the bank details below to deposit {fundAmount ? `GHS${fundAmount}` : 'money'} into your wallet
+             </DialogDescription>
+           </DialogHeader>
+           
+           <div className="grid gap-4 py-4">
+             <Alert>
+               <IconBuildingBank className="h-4 w-4" />
+               <AlertDescription>
+                 Please deposit the exact amount to avoid processing delays.
+               </AlertDescription>
+             </Alert>
+             
+             <div className="space-y-4 border rounded-lg p-4 bg-muted/50">
+               <div className="text-center">
+                 <h3 className="font-semibold text-lg">BluPay Africa Limited</h3>
+                 <p className="text-sm text-muted-foreground">Official Bank Account Details</p>
+               </div>
+               
+               <div className="grid gap-3">
+                 <div className="flex justify-between">
+                   <span className="font-medium">Bank Name:</span>
+                   <span>Access Bank Ghana</span>
+                 </div>
+                 <div className="flex justify-between">
+                   <span className="font-medium">Account Name:</span>
+                   <span>BluPay Africa Limited</span>
+                 </div>
+                 <div className="flex justify-between">
+                   <span className="font-medium">Account Number:</span>
+                   <span className="font-mono">1234567890</span>
+                 </div>
+                                    <div className="flex justify-between">
+                     <span className="font-medium">Branch:</span>
+                     <span>Accra Main Branch</span>
+                   </div>
+                   {fundAmount && (
+                     <div className="flex justify-between border-t pt-3">
+                       <span className="font-medium">Amount to Deposit:</span>
+                       <span className="font-semibold text-lg">GHS{fundAmount}</span>
+                     </div>
+                   )}
+               </div>
+             </div>
+             
+             <Alert>
+               <IconAlertCircle className="h-4 w-4" />
+               <AlertDescription>
+                 After making the deposit, please keep your deposit slip and contact support with the transaction reference for faster processing.
+               </AlertDescription>
+             </Alert>
+           </div>
+           
+           <DialogFooter>
+             <Button variant="outline" onClick={() => setBankDepositModalOpen(false)}>
+               Close
+             </Button>
+             <Button onClick={handleBankDepositProceed}>
+               I&apos;ve Made the Deposit
+             </Button>
+           </DialogFooter>
+         </DialogContent>
+       </Dialog>
+
+             {/* Pending Payment Modal */}
+       <Dialog open={pendingPaymentModalOpen} onOpenChange={setPendingPaymentModalOpen}>
+         <DialogContent className="sm:max-w-[400px]">
+           <DialogHeader>
+             <DialogTitle>Payment Pending</DialogTitle>
+             <DialogDescription>
+               Your deposit is being processed
+             </DialogDescription>
+           </DialogHeader>
+           
+           <div className="grid gap-4 py-4 text-center">
+             <div className="mx-auto w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+               <IconAlertCircle className="h-6 w-6 text-yellow-600" />
+             </div>
+             <div className="space-y-2">
+               <p className="font-medium">We&apos;re checking your payment</p>
+               <p className="text-sm text-muted-foreground">
+                 Once the payment has been confirmed, the money will be credited to your wallet. This usually takes 5-10 minutes.
+               </p>
+             </div>
+           </div>
+           
+           <DialogFooter>
+             <Button onClick={() => setPendingPaymentModalOpen(false)} className="w-full">
+               Got it
+             </Button>
+           </DialogFooter>
+         </DialogContent>
+       </Dialog>
+
+       {/* Remittance Submitted Modal */}
+       <Dialog open={remittanceSubmittedModalOpen} onOpenChange={setRemittanceSubmittedModalOpen}>
+         <DialogContent className="sm:max-w-[400px]">
+           <DialogHeader>
+             <DialogTitle>Remittance Request Submitted</DialogTitle>
+             <DialogDescription>
+               Your remittance request has been sent successfully
+             </DialogDescription>
+           </DialogHeader>
+           
+           <div className="grid gap-4 py-4 text-center">
+             <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+               <IconSend className="h-6 w-6 text-green-600" />
+             </div>
+             <div className="space-y-2">
+               <p className="font-medium">Request Submitted Successfully</p>
+               <p className="text-sm text-muted-foreground">
+                 Your remittance request has been submitted. We&apos;ll process it and notify you once it&apos;s ready for collection or delivery.
+               </p>
+             </div>
+           </div>
+           
+           <DialogFooter>
+             <Button onClick={() => setRemittanceSubmittedModalOpen(false)} className="w-full">
+               Continue
+             </Button>
+           </DialogFooter>
+         </DialogContent>
+       </Dialog>
 
       {/* Recent Activity */}
       <Card>
