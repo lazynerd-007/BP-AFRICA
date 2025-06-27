@@ -15,7 +15,7 @@ export interface WorkflowRequest {
   updatedAt: Date
   dueDate?: Date
   steps: ApprovalStep[]
-  metadata: Record<string, any>
+  metadata: Record<string, unknown>
   tags?: string[]
 }
 
@@ -94,7 +94,7 @@ export interface WorkflowStepConfig {
   required: boolean
   parallel: boolean
   timeLimit?: number // hours
-  conditions?: Record<string, any>
+  conditions?: Record<string, unknown>
 }
 
 export interface EscalationRule {
