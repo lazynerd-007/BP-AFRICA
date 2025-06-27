@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback, useMemo } from "react"
-import { SortingState, ColumnFiltersState, VisibilityState } from "@tanstack/react-table"
+import { SortingState, ColumnFiltersState, VisibilityState, Updater } from "@tanstack/react-table"
 import { TableState, TableConfig } from "../types"
 
 interface UseTableStateProps {
@@ -37,24 +37,24 @@ export function useTableState({
   }), [sorting, columnFilters, columnVisibility, rowSelection, globalFilter, pagination])
 
   // State update handlers
-  const handleSortingChange = useCallback((updater: (old: SortingState) => SortingState) => {
+  const handleSortingChange = useCallback((updater: Updater<SortingState>) => {
     setSorting(updater)
-    onStateChange?.({ sorting: updater })
+    onStateChange?.({ sorting: typeof updater === 'function' ? updater : () => updater })
   }, [onStateChange])
 
-  const handleColumnFiltersChange = useCallback((updater: (old: ColumnFiltersState) => ColumnFiltersState) => {
+  const handleColumnFiltersChange = useCallback((updater: Updater<ColumnFiltersState>) => {
     setColumnFilters(updater)
-    onStateChange?.({ columnFilters: updater })
+    onStateChange?.({ columnFilters: typeof updater === 'function' ? updater : () => updater })
   }, [onStateChange])
 
-  const handleColumnVisibilityChange = useCallback((updater: (old: VisibilityState) => VisibilityState) => {
+  const handleColumnVisibilityChange = useCallback((updater: Updater<VisibilityState>) => {
     setColumnVisibility(updater)
-    onStateChange?.({ columnVisibility: updater })
+    onStateChange?.({ columnVisibility: typeof updater === 'function' ? updater : () => updater })
   }, [onStateChange])
 
-  const handleRowSelectionChange = useCallback((updater: (old: Record<string, boolean>) => Record<string, boolean>) => {
+  const handleRowSelectionChange = useCallback((updater: Updater<Record<string, boolean>>) => {
     setRowSelection(updater)
-    onStateChange?.({ rowSelection: updater })
+    onStateChange?.({ rowSelection: typeof updater === 'function' ? updater : () => updater })
   }, [onStateChange])
 
   const handleGlobalFilterChange = useCallback((value: string) => {
@@ -63,9 +63,9 @@ export function useTableState({
     setPagination(prev => ({ ...prev, pageIndex: 0 }))
   }, [onStateChange])
 
-  const handlePaginationChange = useCallback((updater: (old: { pageIndex: number; pageSize: number }) => { pageIndex: number; pageSize: number }) => {
+  const handlePaginationChange = useCallback((updater: Updater<{ pageIndex: number; pageSize: number }>) => {
     setPagination(updater)
-    onStateChange?.({ pagination: updater })
+    onStateChange?.({ pagination: typeof updater === 'function' ? updater : () => updater })
   }, [onStateChange])
 
   // Reset functions
