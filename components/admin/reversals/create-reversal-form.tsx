@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { IconCreditCard, IconAlertTriangle } from "@tabler/icons-react"
 import { format } from "date-fns"
-import { ReversalForm, TransactionLookup, REVERSAL_REASONS } from "./types"
+import { ReversalForm, TransactionLookup, ReversalData, REVERSAL_REASONS } from "./types"
 
 interface CreateReversalFormProps {
   onReversalCreated: () => void
