@@ -7,6 +7,7 @@ import { IconRefresh } from "@tabler/icons-react"
 import { ColumnDef } from "@tanstack/react-table"
 import {
   SafeEnhancedDataTable,
+  ExtendedColumnDef,
   TableConfig,
   TableAction,
   PaginationInfo,
@@ -155,7 +156,7 @@ export default function DemoTablePage() {
       {/* Enhanced DataTable */}
       <SafeEnhancedDataTable
         data={paginatedData}
-        columns={columns as any}
+        columns={columns as ExtendedColumnDef<Transaction>[]}
         config={config}
         enableSearch={true}
         searchConfig={{
