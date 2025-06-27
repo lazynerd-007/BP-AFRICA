@@ -123,32 +123,21 @@ export function ReversalDialogs({
       </Dialog>
 
       {/* OTP Verification Dialog */}
-      <Dialog open={showOtpDialog} onOpenChange={setShowOtpDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Verify Action</DialogTitle>
-            <DialogDescription>
-              Enter your OTP to confirm this {pendingAction?.action} action.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <OTPVerification
-              onComplete={onOtpVerification}
-              length={6}
-              loading={isProcessing}
-            />
-          </div>
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => setShowOtpDialog(false)}
-              disabled={isProcessing}
-            >
-              Cancel
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <OTPVerification
+        isOpen={showOtpDialog}
+        onClose={() => setShowOtpDialog(false)}
+        onVerify={onOtpVerification}
+        title="Verify Action"
+        description={`Enter your OTP to confirm this ${pendingAction?.action || 'reversal'} action.`}
+        actionLabel={`Confirm ${pendingAction?.action || 'Action'}`}
+        actionDetails={pendingAction ? {
+          action: pendingAction.action,
+          amount: pendingAction.amount,
+          reference: pendingAction.reference
+        } : undefined}
+        isProcessing={isProcessing}
+        otpLength={6}
+      />
     </>
   )
 } 
