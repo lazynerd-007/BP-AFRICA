@@ -4,11 +4,9 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuthStore } from "@/lib/store";
-import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { showLoginSuccess } from "@/components/success-toast";
 import { useErrorHandler } from "@/hooks/use-error-handler";
@@ -38,7 +36,7 @@ export function LoginForm({
   ...props
 }: LoginFormProps) {
   const { login, isLoading } = useAuthStore();
-  const { showError, showSuccess } = useErrorHandler();
+  const { showError } = useErrorHandler();
   
   const { 
     register, 

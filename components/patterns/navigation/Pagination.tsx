@@ -4,9 +4,6 @@ import * as React from "react"
 import {
   IconChevronLeft,
   IconChevronRight,
-  IconChevronsLeft,
-  IconChevronsRight,
-  IconDots,
 } from "@tabler/icons-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -16,7 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 
 export interface PaginationInfo {
@@ -47,7 +43,6 @@ export function Pagination({
   itemsPerPageOptions = [10, 20, 50, 100],
   showItemsPerPage = true,
   showPageInfo = true,
-  maxVisiblePages = 7,
   className,
   disabled = false,
 }: PaginationProps) {

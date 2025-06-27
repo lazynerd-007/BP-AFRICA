@@ -1,12 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { cn } from "@/lib/utils"
-import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Switch } from "@/components/ui/switch"
 import {
   Select,
   SelectContent,
@@ -14,16 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Calendar } from "@/components/ui/calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { IconCalendar, IconEye, IconEyeOff, IconX } from "@tabler/icons-react"
-import { format } from "date-fns"
+import { cn } from "@/lib/utils"
 import { FormFieldProps } from "./types"
 
 export function FormField({
@@ -35,84 +24,58 @@ export function FormField({
   onBlur,
   disabled = false,
 }: FormFieldProps) {
-  const [showPassword, setShowPassword] = React.useState(false)
-  const [isCalendarOpen, setIsCalendarOpen] = React.useState(false)
-  
   const hasError = error && error.length > 0 && touched
-  const fieldId = `field-${config.name}`
 
-  // Handle multi-select
-  const handleMultiSelectChange = (selectedValue: string) => {
-    const currentValues = Array.isArray(value) ? value : []
-    const newValues = currentValues.includes(selectedValue)
-      ? currentValues.filter(v => v !== selectedValue)
-      : [...currentValues, selectedValue]
-    onChange(newValues)
-  }
-
-  // Render field based on type
   const renderField = () => {
     switch (config.type) {
       case 'text':
       case 'email':
-      case 'url':
+      case 'password':
+      case 'number':
       case 'tel':
+      case 'url':
       case 'search':
         return (
           <Input
-            id={fieldId}
             type={config.type}
-            value={value || ''}
+            value={value as string || ''}
             onChange={(e) => onChange(e.target.value)}
             onBlur={onBlur}
             placeholder={config.placeholder}
             disabled={disabled || config.disabled}
             readOnly={config.readOnly}
+            min={config.min}
+            max={config.max}
+            step={config.step}
+            minLength={config.minLength}
+            maxLength={config.maxLength}
+            pattern={config.pattern}
             className={cn(hasError && "border-destructive")}
           />
-        )
-
-      case 'password':
-        return (
-          <div className="relative">
-            <Input
-              id={fieldId}
-              type={showPassword ? 'text' : 'password'}
-              value={value || ''}
-              onChange={(e) => onChange(e.target.value)}
-              onBlur={onBlur}
-              placeholder={config.placeholder}
-              disabled={disabled || config.disabled}
-              className={cn(hasError && "border-destructive", "pr-10")}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? <IconEyeOff className="h-4 w-4" /> : <IconEye className="h-4 w-4" />}
-            </Button>
-          </div>
         )
 
       case 'textarea':
         return (
           <Textarea
-            id={fieldId}
-            value={value || ''}
+            value={value as string || ''}
             onChange={(e) => onChange(e.target.value)}
             onBlur={onBlur}
             placeholder={config.placeholder}
             disabled={disabled || config.disabled}
+            readOnly={config.readOnly}
+            minLength={config.minLength}
+            maxLength={config.maxLength}
             className={cn(hasError && "border-destructive")}
           />
         )
 
       case 'select':
         return (
-          <Select value={value || ''} onValueChange={onChange}>
+          <Select
+            value={value as string || ''}
+            onValueChange={onChange}
+            disabled={disabled || config.disabled}
+          >
             <SelectTrigger className={cn(hasError && "border-destructive")}>
               <SelectValue placeholder={config.placeholder} />
             </SelectTrigger>
@@ -130,42 +93,130 @@ export function FormField({
         return (
           <div className="flex items-center space-x-2">
             <Checkbox
-              id={fieldId}
-              checked={value || false}
+              checked={value as boolean || false}
               onCheckedChange={onChange}
               disabled={disabled || config.disabled}
+              className={cn(hasError && "border-destructive")}
             />
-            <Label htmlFor={fieldId}>{config.label}</Label>
+            <Label className="text-sm font-normal">
+              {config.label}
+            </Label>
           </div>
         )
 
+      case 'radio':
+        return (
+          <div className="space-y-2">
+            {config.options?.map((option) => (
+              <div key={option.value} className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name={config.name}
+                  value={option.value}
+                  checked={value === option.value}
+                  onChange={(e) => onChange(e.target.value)}
+                  disabled={disabled || config.disabled || option.disabled}
+                  className="h-4 w-4 text-primary focus:ring-primary border-gray-300"
+                />
+                <Label className="text-sm font-normal">
+                  {option.label}
+                </Label>
+              </div>
+            ))}
+          </div>
+        )
+
+      case 'file':
+        return (
+          <Input
+            type="file"
+            onChange={(e) => onChange(e.target.files)}
+            onBlur={onBlur}
+            disabled={disabled || config.disabled}
+            accept={config.accept}
+            className={cn(hasError && "border-destructive")}
+          />
+        )
+
+      case 'hidden':
+        return (
+          <input
+            type="hidden"
+            name={config.name}
+            value={value as string || ''}
+          />
+        )
+
+      case 'custom':
+        if (config.component) {
+          const CustomComponent = config.component
+          return (
+            <CustomComponent
+              config={config}
+              value={value}
+              error={error}
+              touched={touched}
+              onChange={onChange}
+              onBlur={onBlur}
+              disabled={disabled}
+              {...config.componentProps}
+            />
+          )
+        }
+        return null
+
       default:
-        return <Input value={value || ''} onChange={(e) => onChange(e.target.value)} />
+        return (
+          <div className="text-sm text-muted-foreground">
+            Unsupported field type: {config.type}
+          </div>
+        )
     }
   }
 
-  const showLabel = !['checkbox', 'switch', 'hidden'].includes(config.type)
+  // For checkbox, the label is rendered inline
+  if (config.type === 'checkbox') {
+    return (
+      <div className={cn("space-y-2", config.className)}>
+        {renderField()}
+        {config.description && (
+          <p className="text-sm text-muted-foreground">
+            {config.description}
+          </p>
+        )}
+        {hasError && (
+          <div className="text-sm text-destructive">
+            {error?.join(', ')}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // For hidden fields, don't render any wrapper
+  if (config.type === 'hidden') {
+    return renderField()
+  }
 
   return (
     <div className={cn("space-y-2", config.className)}>
-      {showLabel && (
-        <Label htmlFor={fieldId} className={cn(hasError && "text-destructive")}>
-          {config.label}
-          {config.required && <span className="text-destructive ml-1">*</span>}
-        </Label>
-      )}
-      
+      <Label 
+        htmlFor={config.name}
+        className={cn(
+          config.required && "after:content-['*'] after:ml-0.5 after:text-destructive"
+        )}
+      >
+        {config.label}
+      </Label>
       {renderField()}
-      
       {config.description && (
-        <p className="text-sm text-muted-foreground">{config.description}</p>
+        <p className="text-sm text-muted-foreground">
+          {config.description}
+        </p>
       )}
-      
       {hasError && (
         <div className="text-sm text-destructive">
-          {error.map((err, index) => (
-            <div key={index}>{err}</div>
-          ))}
+          {error?.join(', ')}
         </div>
       )}
     </div>

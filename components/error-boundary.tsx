@@ -252,7 +252,7 @@ export function FormErrorFallback({ error, resetErrorBoundary }: ErrorFallbackPr
 
 // Hook for using error boundary imperatively
 export function useErrorHandler() {
-  return React.useCallback((error: Error, errorInfo?: React.ErrorInfo) => {
+  return React.useCallback((error: Error) => {
     throw error
   }, [])
 }

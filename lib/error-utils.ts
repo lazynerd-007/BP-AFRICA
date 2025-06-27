@@ -26,7 +26,7 @@ export interface StandardError {
   severity: ErrorSeverity
   message: string
   code?: string | number
-  context?: Record<string, any>
+  context?: Record<string, unknown>
   originalError?: Error
   timestamp?: Date
   userId?: string
@@ -123,7 +123,7 @@ export function createError(
   options?: {
     severity?: ErrorSeverity
     code?: string | number
-    context?: Record<string, any>
+    context?: Record<string, unknown>
     originalError?: Error
   }
 ): StandardError {
@@ -320,7 +320,7 @@ export function handleAsync<T>(
 }
 
 // Form validation helper
-export function validateField(value: any, rules: string[]): StandardError[] {
+export function validateField(value: unknown, rules: string[]): StandardError[] {
   const errors: StandardError[] = []
   
   for (const rule of rules) {

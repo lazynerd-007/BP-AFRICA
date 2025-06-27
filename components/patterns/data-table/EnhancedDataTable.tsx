@@ -1,12 +1,12 @@
 "use client"
 
 import * as React from "react"
-import { ErrorBoundary } from "@/components/error-boundary"
 import { LoadingOverlay } from "@/components/ui/loading-states"
 import { DataTable } from "./core/DataTable"
 import { TableSearch } from "./components/TableSearch"
 import { TablePagination } from "./components/TablePagination"
 import { TableActions } from "./components/TableActions"
+import { DataTableErrorBoundary } from "./components/DataTableErrorBoundary"
 import { useTableState } from "./hooks/useTableState"
 import {
   TableConfig,
@@ -15,14 +15,16 @@ import {
   SearchConfig,
   TableLoadingState,
   PaginationInfo,
+  BaseData,
+  TableState,
 } from "./types"
 import { cn } from "@/lib/utils"
 
-interface EnhancedDataTableProps<TData> {
+interface EnhancedDataTableProps<TData extends BaseData = BaseData> {
   // Core props
   data: TData[]
   columns: ExtendedColumnDef<TData>[]
-  config?: TableConfig<TData>
+  config?: TableConfig
   
   // Loading and error states
   loadingState?: TableLoadingState
@@ -41,7 +43,7 @@ interface EnhancedDataTableProps<TData> {
   
   // Event handlers
   onRowClick?: (row: TData) => void
-  onStateChange?: (state: any) => void
+  onStateChange?: (state: Partial<TableState>) => void
   
   // Styling
   className?: string
@@ -56,7 +58,7 @@ interface EnhancedDataTableProps<TData> {
   emptyStateDescription?: string
 }
 
-export function EnhancedDataTable<TData>({
+export function EnhancedDataTable<TData extends BaseData = BaseData>({
   data,
   columns,
   config = {},
@@ -220,27 +222,10 @@ export function EnhancedDataTable<TData>({
 }
 
 // Wrap with error boundary
-export function SafeEnhancedDataTable<TData>(props: EnhancedDataTableProps<TData>) {
+export function SafeEnhancedDataTable<TData extends BaseData = BaseData>(props: EnhancedDataTableProps<TData>) {
   return (
-    <ErrorBoundary
-      fallback={({ error, retry }) => (
-        <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-6">
-          <h3 className="font-semibold text-destructive mb-2">
-            Failed to load table
-          </h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            {error?.message || "An unexpected error occurred while loading the data table."}
-          </p>
-          <button
-            onClick={retry}
-            className="text-sm text-primary hover:underline"
-          >
-            Try again
-          </button>
-        </div>
-      )}
-    >
+    <DataTableErrorBoundary>
       <EnhancedDataTable {...props} />
-    </ErrorBoundary>
+    </DataTableErrorBoundary>
   )
 } 

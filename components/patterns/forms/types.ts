@@ -1,5 +1,4 @@
 import { z } from "zod"
-import { ReactNode } from "react"
 
 // Base field configuration
 export interface BaseFieldConfig {
@@ -43,10 +42,13 @@ export interface FieldOption {
   description?: string
 }
 
+// Field value types
+export type FieldValue = string | number | boolean | Date | File | FileList | string[] | number[]
+
 // Field configuration with type-specific options
 export interface FieldConfig extends BaseFieldConfig {
   type: FieldType
-  defaultValue?: any
+  defaultValue?: FieldValue
   validation?: z.ZodSchema
   
   // For select/radio/checkbox
@@ -68,18 +70,18 @@ export interface FieldConfig extends BaseFieldConfig {
   maxSize?: number
   
   // For custom fields
-  component?: React.ComponentType<any>
-  componentProps?: Record<string, any>
+  component?: React.ComponentType<FormFieldProps>
+  componentProps?: Record<string, unknown>
   
   // Conditional rendering
-  condition?: (values: Record<string, any>) => boolean
+  condition?: (values: Record<string, FieldValue>) => boolean
   
   // Field dependencies
   dependsOn?: string[]
   
   // Formatting
-  format?: (value: any) => string
-  parse?: (value: string) => any
+  format?: (value: FieldValue) => string
+  parse?: (value: string) => FieldValue
 }
 
 // Form section configuration
@@ -90,7 +92,7 @@ export interface FormSection {
   fields: FieldConfig[]
   collapsible?: boolean
   defaultExpanded?: boolean
-  condition?: (values: Record<string, any>) => boolean
+  condition?: (values: Record<string, FieldValue>) => boolean
   className?: string
 }
 
@@ -101,7 +103,7 @@ export interface FormStep {
   description?: string
   sections: FormSection[]
   validation?: z.ZodSchema
-  condition?: (values: Record<string, any>) => boolean
+  condition?: (values: Record<string, FieldValue>) => boolean
   optional?: boolean
 }
 
@@ -127,7 +129,7 @@ export interface FormConfig {
 
 // Form state
 export interface FormState {
-  values: Record<string, any>
+  values: Record<string, FieldValue>
   errors: Record<string, string[]>
   touched: Record<string, boolean>
   isSubmitting: boolean
@@ -140,8 +142,8 @@ export interface FormState {
 
 // Form actions
 export interface FormActions {
-  setValue: (name: string, value: any) => void
-  setValues: (values: Record<string, any>) => void
+  setValue: (name: string, value: FieldValue) => void
+  setValues: (values: Record<string, FieldValue>) => void
   setError: (name: string, error: string | string[]) => void
   setErrors: (errors: Record<string, string[]>) => void
   clearError: (name: string) => void
@@ -161,11 +163,11 @@ export interface FormActions {
 
 // Form event handlers
 export interface FormEventHandlers {
-  onSubmit?: (values: Record<string, any>) => Promise<void> | void
+  onSubmit?: (values: Record<string, FieldValue>) => Promise<void> | void
   onCancel?: () => void
   onReset?: () => void
-  onChange?: (values: Record<string, any>) => void
-  onFieldChange?: (name: string, value: any) => void
+  onChange?: (values: Record<string, FieldValue>) => void
+  onFieldChange?: (name: string, value: FieldValue) => void
   onValidationError?: (errors: Record<string, string[]>) => void
   onStepChange?: (step: number) => void
 }
@@ -181,10 +183,10 @@ export interface FormContextType {
 // Form field props
 export interface FormFieldProps {
   config: FieldConfig
-  value: any
+  value: FieldValue
   error?: string[]
   touched?: boolean
-  onChange: (value: any) => void
+  onChange: (value: FieldValue) => void
   onBlur: () => void
   disabled?: boolean
 }
@@ -200,6 +202,6 @@ export interface AutoSaveConfig {
   enabled: boolean
   delay: number
   key: string
-  onSave?: (values: Record<string, any>) => Promise<void>
-  onRestore?: () => Promise<Record<string, any>>
+  onSave?: (values: Record<string, FieldValue>) => Promise<void>
+  onRestore?: () => Promise<Record<string, FieldValue>>
 } 

@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { IconDownload, IconRefresh, IconTrash, IconEye } from "@tabler/icons-react"
+import { IconRefresh } from "@tabler/icons-react"
 import {
   SafeEnhancedDataTable,
   ExtendedColumnDef,
@@ -25,7 +25,7 @@ interface Transaction {
   currency: string
 }
 
-// Mock data
+// Mock data generator
 const generateMockData = (count: number): Transaction[] => {
   const merchants = ['BluPay Store', 'Tech Solutions', 'Fashion Hub', 'Food Corner', 'Book World']
   const statuses: Transaction['status'][] = ['completed', 'pending', 'failed']
@@ -44,43 +44,20 @@ const generateMockData = (count: number): Transaction[] => {
 }
 
 export default function DemoTablePage() {
-  const { showSuccess, showError } = useErrorHandler()
+  const { showSuccess } = useErrorHandler()
   const [data, setData] = React.useState<Transaction[]>(() => generateMockData(50))
   const [currentPage, setCurrentPage] = React.useState(1)
   const [pageSize, setPageSize] = React.useState(10)
-  const [isLoading, setIsLoading] = React.useState(false)
+  const [isLoading] = React.useState(false)
 
   // Column definitions
   const columns: ExtendedColumnDef<Transaction>[] = [
-    {
-      id: 'select',
-      header: ({ table }) => (
-        <input
-          type="checkbox"
-          checked={table.getIsAllPageRowsSelected()}
-          onChange={(e) => table.toggleAllPageRowsSelected(e.target.checked)}
-          className="rounded border-gray-300"
-        />
-      ),
-      cell: ({ row }) => (
-        <input
-          type="checkbox"
-          checked={row.getIsSelected()}
-          onChange={(e) => row.toggleSelected(e.target.checked)}
-          className="rounded border-gray-300"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-      width: 50,
-    },
     {
       accessorKey: 'id',
       header: 'Transaction ID',
       cell: ({ row }) => (
         <div className="font-mono text-sm">{row.original.id}</div>
       ),
-      width: 120,
     },
     {
       accessorKey: 'merchant',
@@ -97,21 +74,6 @@ export default function DemoTablePage() {
           {row.original.currency} {row.original.amount.toFixed(2)}
         </div>
       ),
-      width: 120,
-    },
-    {
-      accessorKey: 'type',
-      header: 'Type',
-      cell: ({ row }) => {
-        const type = row.original.type
-        const variant = type === 'payment' ? 'default' : type === 'refund' ? 'destructive' : 'secondary'
-        return (
-          <Badge variant={variant} className="capitalize">
-            {type}
-          </Badge>
-        )
-      },
-      width: 100,
     },
     {
       accessorKey: 'status',
@@ -125,45 +87,24 @@ export default function DemoTablePage() {
           </Badge>
         )
       },
-      width: 100,
     },
     {
       accessorKey: 'date',
       header: 'Date',
       cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground">
+        <div className="text-sm">
           {new Date(row.original.date).toLocaleDateString()}
         </div>
       ),
-      width: 100,
-    },
-    {
-      id: 'actions',
-      header: 'Actions',
-      cell: ({ row }) => (
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => showSuccess('VIEW', 'default', `Viewing transaction ${row.original.id}`)}
-          >
-            <IconEye className="h-4 w-4" />
-          </Button>
-        </div>
-      ),
-      enableSorting: false,
-      width: 80,
     },
   ]
 
   // Table configuration
-  const config: TableConfig<Transaction> = {
+  const config: TableConfig = {
     enableSorting: true,
     enableFiltering: true,
     enableRowSelection: true,
     enablePagination: true,
-    enableColumnVisibility: true,
-    stickyHeader: true,
     pageSize,
     pageSizeOptions: [5, 10, 20, 50],
   }
@@ -177,37 +118,16 @@ export default function DemoTablePage() {
       setData(prev => prev.filter(item => !rows.some(row => row.id === item.id)))
       showSuccess('DELETE', 'default', `Deleted ${rows.length} transactions`)
     }),
-    {
-      label: 'Process Refunds',
-      icon: IconRefresh,
-      onClick: (rows) => {
-        const refundableRows = rows.filter(row => row.status === 'completed' && row.type === 'payment')
-        showSuccess('PROCESS', 'default', `Processing ${refundableRows.length} refunds`)
-      },
-      variant: 'outline',
-      requiresSelection: true,
-      disabled: (rows) => !rows.some(row => row.status === 'completed' && row.type === 'payment'),
-    },
   ]
 
   // Pagination info
   const paginationInfo: PaginationInfo = {
     total: data.length,
     pageCount: Math.ceil(data.length / pageSize),
-    currentPage: currentPage - 1, // Zero-based for the component
+    currentPage: currentPage - 1,
     pageSize,
     hasNextPage: currentPage < Math.ceil(data.length / pageSize),
     hasPreviousPage: currentPage > 1,
-  }
-
-  // Handle refresh
-  const handleRefresh = () => {
-    setIsLoading(true)
-    setTimeout(() => {
-      setData(generateMockData(50))
-      setIsLoading(false)
-      showSuccess('PROCESS', 'default', 'Data refreshed successfully')
-    }, 1000)
   }
 
   // Paginated data
@@ -222,33 +142,13 @@ export default function DemoTablePage() {
         <div>
           <h1 className="text-2xl font-bold">Enhanced DataTable Demo</h1>
           <p className="text-muted-foreground">
-            Showcase of the new modular DataTable system with all features
+            Showcase of the new modular DataTable system
           </p>
         </div>
-        <Button onClick={handleRefresh} disabled={isLoading}>
+        <Button onClick={() => setData(generateMockData(50))}>
           <IconRefresh className="h-4 w-4 mr-2" />
           Refresh Data
         </Button>
-      </div>
-
-      {/* Features Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="p-4 border rounded-lg">
-          <h3 className="font-semibold text-sm">Search & Filter</h3>
-          <p className="text-xs text-muted-foreground">Global search with debouncing</p>
-        </div>
-        <div className="p-4 border rounded-lg">
-          <h3 className="font-semibold text-sm">Row Selection</h3>
-          <p className="text-xs text-muted-foreground">Multi-select with bulk actions</p>
-        </div>
-        <div className="p-4 border rounded-lg">
-          <h3 className="font-semibold text-sm">Sorting</h3>
-          <p className="text-xs text-muted-foreground">Click column headers to sort</p>
-        </div>
-        <div className="p-4 border rounded-lg">
-          <h3 className="font-semibold text-sm">Pagination</h3>
-          <p className="text-xs text-muted-foreground">Configurable page sizes</p>
-        </div>
       </div>
 
       {/* Enhanced DataTable */}
@@ -263,13 +163,10 @@ export default function DemoTablePage() {
         }}
         actions={actions}
         paginationInfo={paginationInfo}
-        onPageChange={(page) => setCurrentPage(page + 1)} // Convert back to 1-based
+        onPageChange={(page) => setCurrentPage(page + 1)}
         onPageSizeChange={(size) => {
           setPageSize(size)
           setCurrentPage(1)
-        }}
-        onRowClick={(row) => {
-          showSuccess('VIEW', 'default', `Clicked on transaction ${row.id}`)
         }}
         loadingState={{
           isLoading,
@@ -278,8 +175,7 @@ export default function DemoTablePage() {
           isEmpty: data.length === 0,
         }}
         emptyStateMessage="No transactions found"
-        emptyStateDescription="Try adjusting your search criteria or add some transactions."
-        caption="Transaction data table with enhanced features"
+        emptyStateDescription="Try adjusting your search criteria."
       />
     </div>
   )

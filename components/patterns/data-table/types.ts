@@ -9,7 +9,7 @@ export const baseDataSchema = z.object({
 export type BaseData = z.infer<typeof baseDataSchema>
 
 // Table configuration interface
-export interface TableConfig<TData = any> {
+export interface TableConfig {
   enableSorting?: boolean
   enableFiltering?: boolean
   enableRowSelection?: boolean
@@ -42,11 +42,11 @@ export interface FilterConfig {
   label: string
   placeholder?: string
   options?: Array<{ label: string; value: string }>
-  defaultValue?: any
+  defaultValue?: string | number | Date
 }
 
 // Column configuration with additional metadata
-export interface ExtendedColumnDef<TData = any> extends ColumnDef<TData> {
+export interface ExtendedColumnDef<TData extends BaseData = BaseData> extends ColumnDef<TData> {
   filterConfig?: FilterConfig
   exportable?: boolean
   description?: string
@@ -56,15 +56,15 @@ export interface ExtendedColumnDef<TData = any> extends ColumnDef<TData> {
 }
 
 // Export configuration
-export interface ExportConfig {
+export interface ExportConfig<TData extends BaseData = BaseData> {
   filename?: string
   formats?: Array<'csv' | 'excel' | 'pdf'>
   includeFilters?: boolean
-  customFields?: Record<string, (data: any) => string>
+  customFields?: Record<string, (data: TData) => string>
 }
 
 // Table action configuration
-export interface TableAction<TData = any> {
+export interface TableAction<TData extends BaseData = BaseData> {
   label: string
   icon?: React.ComponentType<{ className?: string }>
   onClick: (selectedRows: TData[]) => void
@@ -101,12 +101,12 @@ export interface PaginationInfo {
 }
 
 // Table context type
-export interface TableContextType<TData = any> {
-  config: TableConfig<TData>
+export interface TableContextType<TData extends BaseData = BaseData> {
+  config: TableConfig
   state: Partial<TableState>
   actions: TableAction<TData>[]
   onStateChange: (newState: Partial<TableState>) => void
-  onExport?: (config: ExportConfig) => void
+  onExport?: (config: ExportConfig<TData>) => void
   loadingState: TableLoadingState
   paginationInfo?: PaginationInfo
 } 

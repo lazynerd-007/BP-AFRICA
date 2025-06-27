@@ -22,16 +22,16 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
-import { TableAction } from "../types"
+import { TableAction, BaseData } from "../types"
 
-interface TableActionsProps<TData = any> {
+interface TableActionsProps<TData extends BaseData = BaseData> {
   selectedRows: TData[]
   actions: TableAction<TData>[]
   className?: string
   disabled?: boolean
 }
 
-export function TableActions<TData = any>({
+export function TableActions<TData extends BaseData = BaseData>({
   selectedRows,
   actions,
   className,
@@ -178,7 +178,7 @@ export function TableActions<TData = any>({
 
 // Predefined common actions
 export const commonTableActions = {
-  delete: <TData = any>(onDelete: (rows: TData[]) => void): TableAction<TData> => ({
+  delete: <TData extends BaseData = BaseData>(onDelete: (rows: TData[]) => void): TableAction<TData> => ({
     label: "Delete",
     icon: IconTrash,
     onClick: onDelete,
@@ -187,14 +187,14 @@ export const commonTableActions = {
     confirmationMessage: "Are you sure you want to delete the selected items? This action cannot be undone.",
   }),
   
-  export: <TData = any>(onExport: (rows: TData[]) => void): TableAction<TData> => ({
+  export: <TData extends BaseData = BaseData>(onExport: (rows: TData[]) => void): TableAction<TData> => ({
     label: "Export",
     icon: IconDownload,
     onClick: onExport,
     variant: "outline" as const,
   }),
   
-  refresh: <TData = any>(onRefresh: () => void): TableAction<TData> => ({
+  refresh: <TData extends BaseData = BaseData>(onRefresh: () => void): TableAction<TData> => ({
     label: "Refresh",
     icon: IconRefresh,
     onClick: () => onRefresh(),

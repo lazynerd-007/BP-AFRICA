@@ -29,12 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ErrorBoundary
-          onError={(error, errorInfo) => {
-            // Log to external service in production
-            console.error("App Error:", error, errorInfo);
-          }}
-        >
+        <ErrorBoundary>
           {children}
         </ErrorBoundary>
         <Toaster 

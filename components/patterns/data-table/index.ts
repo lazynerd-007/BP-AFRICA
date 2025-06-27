@@ -6,6 +6,7 @@ export { EnhancedDataTable, SafeEnhancedDataTable } from './EnhancedDataTable'
 export { TableSearch } from './components/TableSearch'
 export { TablePagination } from './components/TablePagination'
 export { TableActions, commonTableActions } from './components/TableActions'
+export { DataTableErrorBoundary, useDataTableErrorBoundary } from './components/DataTableErrorBoundary'
 
 // Hooks
 export { useTableState } from './hooks/useTableState'
