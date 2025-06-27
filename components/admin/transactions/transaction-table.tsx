@@ -32,7 +32,7 @@ export function TransactionTable({
       <CardHeader>
         <CardTitle>All Transactions</CardTitle>
         <CardDescription>View all MoMo transactions below.</CardDescription>
-        <Tabs value={transactionType} onValueChange={onTransactionTypeChange} className="mt-2">
+        <Tabs value={transactionType} onValueChange={(value) => onTransactionTypeChange(value as TransactionType)} className="mt-2">
           <TabsList>
             <TabsTrigger value="collection">Collection</TabsTrigger>
             <TabsTrigger value="reversal">Reversal</TabsTrigger>
