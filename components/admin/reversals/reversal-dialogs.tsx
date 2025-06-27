@@ -132,8 +132,9 @@ export function ReversalDialogs({
         actionLabel={`Confirm ${pendingAction?.action || 'Action'}`}
         actionDetails={pendingAction ? {
           action: pendingAction.action,
-          amount: pendingAction.amount,
-          reference: pendingAction.reference
+          amount: pendingAction.reversal.amount,
+          reference: pendingAction.reversal.transactionId,
+          merchant: pendingAction.reversal.merchantName
         } : undefined}
         isProcessing={isProcessing}
         otpLength={6}
