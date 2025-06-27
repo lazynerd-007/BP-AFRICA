@@ -38,23 +38,35 @@ export function useTableState({
 
   // State update handlers
   const handleSortingChange = useCallback((updater: Updater<SortingState>) => {
-    setSorting(updater)
-    onStateChange?.({ sorting: typeof updater === 'function' ? updater : () => updater })
+    setSorting(prev => {
+      const newValue = typeof updater === 'function' ? updater(prev) : updater
+      onStateChange?.({ sorting: newValue })
+      return newValue
+    })
   }, [onStateChange])
 
   const handleColumnFiltersChange = useCallback((updater: Updater<ColumnFiltersState>) => {
-    setColumnFilters(updater)
-    onStateChange?.({ columnFilters: typeof updater === 'function' ? updater : () => updater })
+    setColumnFilters(prev => {
+      const newValue = typeof updater === 'function' ? updater(prev) : updater
+      onStateChange?.({ columnFilters: newValue })
+      return newValue
+    })
   }, [onStateChange])
 
   const handleColumnVisibilityChange = useCallback((updater: Updater<VisibilityState>) => {
-    setColumnVisibility(updater)
-    onStateChange?.({ columnVisibility: typeof updater === 'function' ? updater : () => updater })
+    setColumnVisibility(prev => {
+      const newValue = typeof updater === 'function' ? updater(prev) : updater
+      onStateChange?.({ columnVisibility: newValue })
+      return newValue
+    })
   }, [onStateChange])
 
   const handleRowSelectionChange = useCallback((updater: Updater<Record<string, boolean>>) => {
-    setRowSelection(updater)
-    onStateChange?.({ rowSelection: typeof updater === 'function' ? updater : () => updater })
+    setRowSelection(prev => {
+      const newValue = typeof updater === 'function' ? updater(prev) : updater
+      onStateChange?.({ rowSelection: newValue })
+      return newValue
+    })
   }, [onStateChange])
 
   const handleGlobalFilterChange = useCallback((value: string) => {
@@ -64,8 +76,11 @@ export function useTableState({
   }, [onStateChange])
 
   const handlePaginationChange = useCallback((updater: Updater<{ pageIndex: number; pageSize: number }>) => {
-    setPagination(updater)
-    onStateChange?.({ pagination: typeof updater === 'function' ? updater : () => updater })
+    setPagination(prev => {
+      const newValue = typeof updater === 'function' ? updater(prev) : updater
+      onStateChange?.({ pagination: newValue })
+      return newValue
+    })
   }, [onStateChange])
 
   // Reset functions

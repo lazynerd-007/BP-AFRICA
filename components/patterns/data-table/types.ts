@@ -46,7 +46,7 @@ export interface FilterConfig {
 }
 
 // Column configuration with additional metadata
-export interface ExtendedColumnDef<TData extends BaseData = BaseData> extends ColumnDef<TData> {
+export type ExtendedColumnDef<TData extends BaseData = BaseData> = ColumnDef<TData> & {
   filterConfig?: FilterConfig
   exportable?: boolean
   description?: string

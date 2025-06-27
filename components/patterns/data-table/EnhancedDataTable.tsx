@@ -138,7 +138,7 @@ export function EnhancedDataTable<TData extends BaseData = BaseData>({
             />
           )}
         </div>
-        <LoadingOverlay>
+        <LoadingOverlay isLoading={true}>
           <div className="h-96 rounded-lg border" />
         </LoadingOverlay>
       </div>
