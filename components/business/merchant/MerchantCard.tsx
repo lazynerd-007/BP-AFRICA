@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { 
-  IconStorefront, 
+  IconBuildingStore, 
   IconMail, 
   IconPhone, 
   IconMapPin, 
@@ -102,7 +102,7 @@ export function MerchantCard({
               <Avatar className="h-10 w-10">
                 <AvatarImage src="" alt={merchant.merchantName} />
                 <AvatarFallback>
-                  <IconStorefront className="h-5 w-5" />
+                  <IconBuildingStore className="h-5 w-5" />
                 </AvatarFallback>
               </Avatar>
               <div>
@@ -187,7 +187,7 @@ export function MerchantCard({
             <Avatar className="h-12 w-12">
               <AvatarImage src="" alt={merchant.merchantName} />
               <AvatarFallback>
-                <IconStorefront className="h-6 w-6" />
+                <IconBuildingStore className="h-6 w-6" />
               </AvatarFallback>
             </Avatar>
             <div>
