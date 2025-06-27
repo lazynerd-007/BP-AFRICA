@@ -20,7 +20,10 @@ import {
   IconBell,
   IconLoader2,
   IconClipboardCheck,
-  IconArrowLeftRight
+  IconArrowLeftRight,
+  IconCoins,
+  IconSend,
+  IconSettings
 } from "@tabler/icons-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -88,6 +91,16 @@ const adminData = {
       icon: IconCreditCard,
     },
     {
+      title: "Disburse",
+      url: "/dashboard/disbursement",
+      icon: IconSend,
+    },
+    {
+      title: "Charges",
+      url: "/dashboard/charges",
+      icon: IconCoins,
+    },
+    {
       title: "Financial Reports",
       url: "/dashboard/financial-reports",
       icon: IconFileAnalytics,
@@ -103,14 +116,21 @@ const adminData = {
       icon: IconDeviceMobile,
     },
     {
-      title: "System Logs",
-      url: "/dashboard/system-logs",
-      icon: IconDatabase,
-    },
-    {
-      title: "System Status",
-      url: "/dashboard/system-status",
-      icon: IconServer,
+      title: "Systems",
+      url: "#",
+      icon: IconSettings,
+      items: [
+        {
+          title: "System Logs",
+          url: "/dashboard/system-logs",
+          icon: IconDatabase,
+        },
+        {
+          title: "System Status",
+          url: "/dashboard/system-status",
+          icon: IconServer,
+        },
+      ],
     },
   ],
   navSecondary: [

@@ -296,67 +296,67 @@ export default function PartnerBankDashboardPage() {
           <Card>
             <CardHeader className="space-y-4">
               <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
-                <div>
+              <div>
                   <CardTitle className="text-lg sm:text-xl">Recent Settlement Transactions</CardTitle>
                   <CardDescription className="text-sm">Latest settlement activities</CardDescription>
-                </div>
+              </div>
                 <Button variant="outline" size="sm" className="flex items-center gap-1 w-full sm:w-auto">
-                  <IconDownload className="h-4 w-4" />
-                  <span>Export</span>
-                </Button>
+                <IconDownload className="h-4 w-4" />
+                <span>Export</span>
+              </Button>
               </div>
             </CardHeader>
             <CardContent>
               {/* Desktop Table View */}
               <div className="hidden sm:block">
                 <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Settlement ID</TableHead>
-                        <TableHead>Merchant</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Transactions</TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {settlementTransactions.map((transaction) => (
-                        <TableRow key={transaction.id}>
-                          <TableCell className="font-medium">{transaction.id}</TableCell>
-                          <TableCell>{transaction.merchantName}</TableCell>
-                          <TableCell>{transaction.date}</TableCell>
-                          <TableCell>{transaction.transactionCount}</TableCell>
-                          <TableCell className="text-right">{transaction.amount}</TableCell>
-                          <TableCell>
-                            <Badge
-                              variant={
-                                transaction.status === "Completed" 
-                                  ? "default" 
-                                  : transaction.status === "Pending" 
-                                    ? "outline" 
-                                    : "destructive"
-                              }
-                              className={
-                                transaction.status === "Completed" 
-                                  ? "bg-green-100 text-green-800 hover:bg-green-100/80 dark:bg-green-800/20 dark:text-green-400" 
-                                  : ""
-                              }
-                            >
-                              {transaction.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                              <IconEye className="h-4 w-4" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Settlement ID</TableHead>
+                    <TableHead>Merchant</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Transactions</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {settlementTransactions.map((transaction) => (
+                    <TableRow key={transaction.id}>
+                      <TableCell className="font-medium">{transaction.id}</TableCell>
+                      <TableCell>{transaction.merchantName}</TableCell>
+                      <TableCell>{transaction.date}</TableCell>
+                      <TableCell>{transaction.transactionCount}</TableCell>
+                      <TableCell className="text-right">{transaction.amount}</TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            transaction.status === "Completed" 
+                              ? "default" 
+                              : transaction.status === "Pending" 
+                                ? "outline" 
+                                : "destructive"
+                          }
+                          className={
+                            transaction.status === "Completed" 
+                              ? "bg-green-100 text-green-800 hover:bg-green-100/80 dark:bg-green-800/20 dark:text-green-400" 
+                              : ""
+                          }
+                        >
+                          {transaction.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <IconEye className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
                 </div>
               </div>
 
@@ -418,38 +418,38 @@ export default function PartnerBankDashboardPage() {
               {/* Desktop Table View */}
               <div className="hidden sm:block">
                 <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Merchant</TableHead>
-                        <TableHead className="text-right">Transaction Volume</TableHead>
-                        <TableHead className="text-right">Growth</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {topMerchants.map((merchant) => (
-                        <TableRow key={merchant.id}>
-                          <TableCell className="font-medium">{merchant.name}</TableCell>
-                          <TableCell className="text-right">{merchant.transactionVolume}</TableCell>
-                          <TableCell className="text-right">
-                            <span className={`${
-                              merchant.growth.startsWith('+') 
-                                ? 'text-green-500' 
-                                : 'text-red-500'
-                            }`}>
-                              {merchant.growth}
-                            </span>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                              <IconEye className="h-4 w-4" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Merchant</TableHead>
+                    <TableHead className="text-right">Transaction Volume</TableHead>
+                    <TableHead className="text-right">Growth</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {topMerchants.map((merchant) => (
+                    <TableRow key={merchant.id}>
+                      <TableCell className="font-medium">{merchant.name}</TableCell>
+                      <TableCell className="text-right">{merchant.transactionVolume}</TableCell>
+                      <TableCell className="text-right">
+                        <span className={`${
+                          merchant.growth.startsWith('+') 
+                            ? 'text-green-500' 
+                            : 'text-red-500'
+                        }`}>
+                          {merchant.growth}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <IconEye className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
                 </div>
               </div>
 

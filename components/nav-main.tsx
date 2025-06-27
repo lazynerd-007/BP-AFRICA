@@ -9,13 +9,27 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+import { IconChevronRight } from "@tabler/icons-react"
 
 // Define the type for the menu items
 type NavItem = {
   title: string
   url: string
   icon?: Icon
+  items?: {
+    title: string
+    url: string
+    icon?: Icon
+  }[]
 }
 
 export function NavMain({
@@ -28,21 +42,52 @@ export function NavMain({
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
           {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild={item.url !== "#"} tooltip={item.title}>
-                {item.url !== "#" ? (
-                  <Link href={item.url}>
-                    {item.icon && <item.icon />}
-                    <span>{item.title}</span>
-                  </Link>
-                ) : (
-                  <>
-                    {item.icon && <item.icon />}
-                    <span>{item.title}</span>
-                  </>
+            <Collapsible
+              key={item.title}
+              asChild
+              defaultOpen={item.items ? false : undefined}
+              className="group/collapsible"
+            >
+              <SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton tooltip={item.title}>
+                    {item.url !== "#" ? (
+                      <Link href={item.url} className="flex items-center gap-2 w-full">
+                        {item.icon && <item.icon className="size-4" />}
+                        <span>{item.title}</span>
+                        {item.items && (
+                          <IconChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 size-4" />
+                        )}
+                      </Link>
+                    ) : (
+                      <>
+                        {item.icon && <item.icon className="size-4" />}
+                        <span>{item.title}</span>
+                        {item.items && (
+                          <IconChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 size-4" />
+                        )}
+                      </>
+                    )}
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+                {item.items && (
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {item.items.map((subItem) => (
+                        <SidebarMenuSubItem key={subItem.title}>
+                          <SidebarMenuSubButton asChild>
+                            <Link href={subItem.url}>
+                              {subItem.icon && <subItem.icon className="size-4" />}
+                              <span>{subItem.title}</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
                 )}
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+              </SidebarMenuItem>
+            </Collapsible>
           ))}
         </SidebarMenu>
       </SidebarGroupContent>

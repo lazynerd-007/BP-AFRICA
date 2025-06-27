@@ -191,31 +191,31 @@ export default function SubmerchantTransactionsPage() {
   // Filter transactions based on all filters
   const filteredTransactions = useMemo(() => {
     return mockTransactions.filter(transaction => {
-      // Search filter
-      const matchesSearch = 
-        transaction.merchantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        transaction.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        transaction.customerNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        transaction.terminalId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        transaction.reference.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      // Transaction type filter
-      const matchesType = !transactionType || transactionType === "all" || 
-        transaction.type === transactionType;
-      
-      // Date range filter
-      const transactionDate = new Date(transaction.date);
-      const afterStartDate = !startDate || transactionDate >= startDate;
-      const beforeEndDate = !endDate || transactionDate <= endDate;
-      
-      return matchesSearch && matchesType && afterStartDate && beforeEndDate;
-    });
+    // Search filter
+    const matchesSearch = 
+      transaction.merchantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      transaction.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      transaction.customerNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      transaction.terminalId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      transaction.reference.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Transaction type filter
+    const matchesType = !transactionType || transactionType === "all" || 
+      transaction.type === transactionType;
+    
+    // Date range filter
+    const transactionDate = new Date(transaction.date);
+    const afterStartDate = !startDate || transactionDate >= startDate;
+    const beforeEndDate = !endDate || transactionDate <= endDate;
+    
+    return matchesSearch && matchesType && afterStartDate && beforeEndDate;
+  });
   }, [searchTerm, transactionType, startDate, endDate]);
   
   // Pagination logic
   const totalPages = useMemo(() => Math.ceil(filteredTransactions.length / itemsPerPage), [filteredTransactions.length, itemsPerPage]);
   const paginatedTransactions = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
+  const startIndex = (currentPage - 1) * itemsPerPage;
     return filteredTransactions.slice(startIndex, startIndex + itemsPerPage);
   }, [filteredTransactions, currentPage, itemsPerPage]);
 
@@ -614,58 +614,58 @@ export default function SubmerchantTransactionsPage() {
 
           {/* Desktop Table View */}
           <div className="hidden md:block">
-            <div className="overflow-x-auto">
-              <div className="rounded-md border min-w-full">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="min-w-[120px]">Date</TableHead>
-                      <TableHead className="min-w-[100px]">Terminal ID</TableHead>
-                      <TableHead className="min-w-[120px]">Customer</TableHead>
-                      <TableHead className="min-w-[130px]">Customer Number</TableHead>
-                      <TableHead className="min-w-[100px] text-right">Amount</TableHead>
-                      <TableHead className="min-w-[100px]">Scheme</TableHead>
-                      <TableHead className="min-w-[120px]">Reference</TableHead>
-                      <TableHead className="min-w-[80px]">Status</TableHead>
-                      <TableHead className="w-[80px]">Actions</TableHead>
+          <div className="overflow-x-auto">
+            <div className="rounded-md border min-w-full">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="min-w-[120px]">Date</TableHead>
+                    <TableHead className="min-w-[100px]">Terminal ID</TableHead>
+                    <TableHead className="min-w-[120px]">Customer</TableHead>
+                    <TableHead className="min-w-[130px]">Customer Number</TableHead>
+                    <TableHead className="min-w-[100px] text-right">Amount</TableHead>
+                    <TableHead className="min-w-[100px]">Scheme</TableHead>
+                    <TableHead className="min-w-[120px]">Reference</TableHead>
+                    <TableHead className="min-w-[80px]">Status</TableHead>
+                    <TableHead className="w-[80px]">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {paginatedTransactions.map((transaction) => (
+                    <TableRow key={transaction.reference}>
+                      <TableCell className="font-medium whitespace-nowrap">{formatDate(transaction.date)}</TableCell>
+                      <TableCell className="whitespace-nowrap">{transaction.terminalId}</TableCell>
+                      <TableCell className="whitespace-nowrap">{transaction.customer}</TableCell>
+                      <TableCell className="font-mono text-xs whitespace-nowrap">{transaction.customerNumber}</TableCell>
+                      <TableCell className="text-right whitespace-nowrap">
+                        {transaction.currency} {transaction.amount.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">{transaction.scheme}</TableCell>
+                      <TableCell className="font-mono text-xs whitespace-nowrap">{transaction.reference}</TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        <Badge variant={getStatusBadgeVariant(transaction.status) as "secondary" | "destructive" | "default" | "outline"}>
+                          {transaction.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        <Button variant="ghost" size="icon" onClick={() => handleViewTransaction(transaction)}>
+                          <IconEye className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {paginatedTransactions.map((transaction) => (
-                      <TableRow key={transaction.reference}>
-                        <TableCell className="font-medium whitespace-nowrap">{formatDate(transaction.date)}</TableCell>
-                        <TableCell className="whitespace-nowrap">{transaction.terminalId}</TableCell>
-                        <TableCell className="whitespace-nowrap">{transaction.customer}</TableCell>
-                        <TableCell className="font-mono text-xs whitespace-nowrap">{transaction.customerNumber}</TableCell>
-                        <TableCell className="text-right whitespace-nowrap">
-                          {transaction.currency} {transaction.amount.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap">{transaction.scheme}</TableCell>
-                        <TableCell className="font-mono text-xs whitespace-nowrap">{transaction.reference}</TableCell>
-                        <TableCell className="whitespace-nowrap">
-                          <Badge variant={getStatusBadgeVariant(transaction.status) as "secondary" | "destructive" | "default" | "outline"}>
-                            {transaction.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap">
-                          <Button variant="ghost" size="icon" onClick={() => handleViewTransaction(transaction)}>
-                            <IconEye className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    
-                    {paginatedTransactions.length === 0 && (
-                      <TableRow>
-                        <TableCell colSpan={9} className="h-24 text-center">
-                          No transactions found matching your criteria.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
+                  ))}
+                  
+                  {paginatedTransactions.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={9} className="h-24 text-center">
+                        No transactions found matching your criteria.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
             </div>
+          </div>
           </div>
 
           {/* Empty state for mobile */}
@@ -679,8 +679,8 @@ export default function SubmerchantTransactionsPage() {
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
               <div className="text-sm text-muted-foreground">
                 Showing {paginatedTransactions.length} of {filteredTransactions.length} transactions
-              </div>
-              
+            </div>
+            
               <div className="flex items-center gap-2">
                 <Label htmlFor="items-per-page" className="text-sm whitespace-nowrap">
                   Rows per page:
@@ -700,8 +700,8 @@ export default function SubmerchantTransactionsPage() {
                   <option value={50}>50</option>
                 </select>
               </div>
-            </div>
-            
+              </div>
+              
             <div className="flex items-center justify-center sm:justify-end">
               <div className="flex items-center gap-1">
                 <Button

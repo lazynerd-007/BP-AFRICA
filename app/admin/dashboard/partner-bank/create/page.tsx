@@ -22,6 +22,9 @@ export default function CreatePartnerBank() {
     settlementBankName: string;
     settlementAccountName: string;
     settlementAccountNumber: string;
+    momoProvider: string;
+    momoNumber: string;
+    momoAccountName: string;
   }>({
     // Partner Bank Details
     bankName: "",
@@ -39,6 +42,11 @@ export default function CreatePartnerBank() {
     settlementBankName: "",
     settlementAccountName: "",
     settlementAccountNumber: "",
+    
+    // MOMO Settlement Details
+    momoProvider: "",
+    momoNumber: "",
+    momoAccountName: "",
   })
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,6 +85,9 @@ export default function CreatePartnerBank() {
       settlementBankName: "",
       settlementAccountName: "",
       settlementAccountNumber: "",
+      momoProvider: "",
+      momoNumber: "",
+      momoAccountName: "",
     })
     
     // Reset file input
@@ -234,6 +245,53 @@ export default function CreatePartnerBank() {
                 name="settlementAccountNumber"
                 value={formData.settlementAccountNumber}
                 onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+
+          {/* MOMO Settlement Details Section */}
+          <h3 className="text-lg font-medium mb-4">MOMO Settlement Details</h3>
+          <Separator className="mb-6" />
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div className="space-y-2">
+              <Label htmlFor="momoProvider">MOMO Provider</Label>
+              <select
+                id="momoProvider"
+                name="momoProvider"
+                value={formData.momoProvider}
+                onChange={(e) => setFormData(prev => ({ ...prev, momoProvider: e.target.value }))}
+                className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
+                required
+              >
+                <option value="">Select Provider</option>
+                <option value="MTN Mobile Money">MTN Mobile Money</option>
+                <option value="Vodafone Cash">Vodafone Cash</option>
+                <option value="AirtelTigo Money">AirtelTigo Money</option>
+              </select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="momoNumber">MOMO Number</Label>
+              <Input 
+                id="momoNumber"
+                name="momoNumber"
+                value={formData.momoNumber}
+                onChange={handleChange}
+                placeholder="e.g., 0244123456"
+                required
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="momoAccountName">MOMO Account Name</Label>
+              <Input 
+                id="momoAccountName"
+                name="momoAccountName"
+                value={formData.momoAccountName}
+                onChange={handleChange}
+                placeholder="Account holder name"
                 required
               />
             </div>

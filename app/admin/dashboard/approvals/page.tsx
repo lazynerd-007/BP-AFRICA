@@ -333,7 +333,7 @@ export default function ApprovalsPage() {
       setShowOtpDialog(false);
       setPendingAction(null);
       setApprovalNotes("");
-      setRejectionReason("");
+    setRejectionReason("");
       
       if (action === "approve") {
         setShowApprovedModal(true);
@@ -371,13 +371,13 @@ export default function ApprovalsPage() {
   const getEntityIcon = (type: string) => {
     switch (type) {
       case "Merchant":
-        return <IconBuildingStore className="h-4 w-4" />;
+      return <IconBuildingStore className="h-4 w-4" />;
       case "Partner Bank":
-        return <IconBuildingBank className="h-4 w-4" />;
+      return <IconBuildingBank className="h-4 w-4" />;
       case "Remittance":
         return <IconSend className="h-4 w-4" />;
       default:
-        return null;
+    return null;
     }
   };
 
@@ -879,27 +879,27 @@ export default function ApprovalsPage() {
                 </>
               ) : (
                 <>
-                  <p className="text-sm font-medium text-muted-foreground mb-2">Changes</p>
-                  <div className="border rounded-md">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Field</TableHead>
-                          <TableHead>From</TableHead>
-                          <TableHead>To</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {currentApproval?.details.changes.map((change, index) => (
-                          <TableRow key={index}>
-                            <TableCell className="font-medium">{change.field}</TableCell>
-                            <TableCell>{change.from || "-"}</TableCell>
-                            <TableCell>{change.to}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
+              <p className="text-sm font-medium text-muted-foreground mb-2">Changes</p>
+              <div className="border rounded-md">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Field</TableHead>
+                      <TableHead>From</TableHead>
+                      <TableHead>To</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {currentApproval?.details.changes.map((change, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="font-medium">{change.field}</TableCell>
+                        <TableCell>{change.from || "-"}</TableCell>
+                        <TableCell>{change.to}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
                 </>
               )}
             </div>

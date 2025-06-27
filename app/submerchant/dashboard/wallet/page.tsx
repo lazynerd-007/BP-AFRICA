@@ -1230,10 +1230,10 @@ export default function SubmerchantWalletPage() {
            <DialogFooter>
              <Button onClick={() => setRemittanceSubmittedModalOpen(false)} className="w-full">
                Continue
-             </Button>
-           </DialogFooter>
-         </DialogContent>
-       </Dialog>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Recent Activity */}
       <Card>

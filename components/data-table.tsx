@@ -295,7 +295,7 @@ const getColumns = (currentTab: string, tableType: string = "transaction"): Colu
               }}
             >
               {scheme}
-            </Badge>
+          </Badge>
           );
         },
       },
@@ -384,7 +384,7 @@ const getColumns = (currentTab: string, tableType: string = "transaction"): Colu
             }}
           >
             {scheme}
-          </Badge>
+        </Badge>
         );
       },
     },
