@@ -11,11 +11,12 @@ import {
   TableAction,
   PaginationInfo,
   commonTableActions,
+  BaseData,
 } from "@/components/patterns/data-table"
 import { useErrorHandler } from "@/hooks/use-error-handler"
 
 // Demo data type
-interface Transaction {
+interface Transaction extends BaseData {
   id: string
   merchant: string
   amount: number
