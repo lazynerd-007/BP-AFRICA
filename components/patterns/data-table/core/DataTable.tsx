@@ -22,13 +22,13 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { EmptyState } from "@/components/ui/loading-states"
-import { TableConfig, ExtendedColumnDef } from "../types"
+import { TableConfig, ExtendedColumnDef, BaseData } from "../types"
 import { useTableState } from "../hooks/useTableState"
 
-interface DataTableProps<TData> {
+interface DataTableProps<TData extends BaseData> {
   data: TData[]
   columns: ExtendedColumnDef<TData>[]
-  config?: TableConfig<TData>
+  config?: TableConfig
   className?: string
   emptyStateMessage?: string
   emptyStateDescription?: string
@@ -37,7 +37,7 @@ interface DataTableProps<TData> {
   children?: React.ReactNode
 }
 
-export function DataTable<TData>({
+export function DataTable<TData extends BaseData>({
   data,
   columns,
   config = {},
