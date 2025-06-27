@@ -23,7 +23,7 @@ interface ErrorBoundaryProps {
 interface ErrorFallbackProps {
   error: Error
   resetErrorBoundary: () => void
-  componentStack?: string
+  componentStack?: string | null
 }
 
 class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
