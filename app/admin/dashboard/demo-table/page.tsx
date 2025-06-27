@@ -4,9 +4,9 @@ import * as React from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { IconRefresh } from "@tabler/icons-react"
+import { ColumnDef } from "@tanstack/react-table"
 import {
   SafeEnhancedDataTable,
-  ExtendedColumnDef,
   TableConfig,
   TableAction,
   PaginationInfo,
@@ -52,7 +52,7 @@ export default function DemoTablePage() {
   const [isLoading] = React.useState(false)
 
   // Column definitions
-  const columns: ExtendedColumnDef<Transaction>[] = [
+  const columns: ColumnDef<Transaction>[] = [
     {
       accessorKey: 'id',
       header: 'Transaction ID',
