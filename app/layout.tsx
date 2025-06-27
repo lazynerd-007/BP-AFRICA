@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import ErrorBoundary from "@/components/error-boundary";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +29,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <ErrorBoundary
+          onError={(error, errorInfo) => {
+            // Log to external service in production
+            console.error("App Error:", error, errorInfo);
+          }}
+        >
+          {children}
+        </ErrorBoundary>
         <Toaster 
           position="top-center" 
           richColors 

@@ -11,6 +11,9 @@ import { useAuthStore } from "@/lib/store";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { showLoginSuccess } from "@/components/success-toast";
+import { useErrorHandler } from "@/hooks/use-error-handler";
+import { LoadingButton } from "@/components/ui/loading-states";
+import ErrorBoundary, { FormErrorFallback } from "@/components/error-boundary";
 
 // Define validation schema with Zod
 const loginSchema = z.object({
@@ -34,7 +37,8 @@ export function LoginForm({
   userType,
   ...props
 }: LoginFormProps) {
-  const { login, isLoading, error } = useAuthStore();
+  const { login, isLoading } = useAuthStore();
+  const { showError, showSuccess } = useErrorHandler();
   
   const { 
     register, 
@@ -49,26 +53,30 @@ export function LoginForm({
   });
 
   const onSubmit = async (data: LoginFormValues) => {
-    const result = await login(data.email, data.password, userType);
-    if (result === true) {
-      // Create user object from form data for toast
-      const userForToast = { email: data.email, name: data.email.split('@')[0] };
-      
-      // Show success toast
-      await showLoginSuccess(userType, userForToast);
-      
-      // Navigate after toast is shown
-      setTimeout(() => {
-        if (userType === "admin") {
-          window.location.href = "/admin/dashboard";
-        } else if (userType === "merchant") {
-          window.location.href = "/merchant/dashboard";
-        } else if (userType === "partner-bank") {
-          window.location.href = "/partner-bank/dashboard";
-        } else if (userType === "submerchant") {
-          window.location.href = "/submerchant/dashboard";
-        }
-      }, 500);
+    try {
+      const result = await login(data.email, data.password, userType);
+      if (result === true) {
+        // Create user object from form data for toast
+        const userForToast = { email: data.email, name: data.email.split('@')[0] };
+        
+        // Show success toast
+        await showLoginSuccess(userType, userForToast);
+        
+        // Navigate after toast is shown
+        setTimeout(() => {
+          if (userType === "admin") {
+            window.location.href = "/admin/dashboard";
+          } else if (userType === "merchant") {
+            window.location.href = "/merchant/dashboard";
+          } else if (userType === "partner-bank") {
+            window.location.href = "/partner-bank/dashboard";
+          } else if (userType === "submerchant") {
+            window.location.href = "/submerchant/dashboard";
+          }
+        }, 500);
+      }
+    } catch (error) {
+      showError(error);
     }
   };
 
@@ -118,71 +126,59 @@ export function LoginForm({
   };
 
   return (
-    <form 
-      className={cn("flex flex-col gap-6", className)} 
-      {...props}
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">
-          {getLoginTitle()}
-        </h1>
-        <p className="text-muted-foreground text-sm text-balance">
-          {getLoginDescription()}
-        </p>
-      </div>
-      {error && (
-        <div className="bg-destructive/15 text-destructive p-3 rounded-md text-sm">
-          {error}
+    <ErrorBoundary fallback={FormErrorFallback}>
+      <form 
+        className={cn("flex flex-col gap-6", className)} 
+        {...props}
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <div className="flex flex-col items-center gap-2 text-center">
+          <h1 className="text-2xl font-bold">
+            {getLoginTitle()}
+          </h1>
+          <p className="text-muted-foreground text-sm text-balance">
+            {getLoginDescription()}
+          </p>
         </div>
-      )}
-      <div className="grid gap-6">
-        <div className="grid gap-3">
-          <Label htmlFor="email">Email</Label>
-          <Input 
-            id="email" 
-            type="email" 
-            placeholder={getEmailPlaceholder()} 
-            {...register("email")}
-            aria-invalid={errors.email ? "true" : "false"}
-          />
-          {errors.email && (
-            <p className="text-destructive text-sm">{errors.email.message}</p>
-          )}
-        </div>
-        <div className="grid gap-3">
-          <div className="flex items-center">
-            <Label htmlFor="password">Password</Label>
-            <Link
-              href={getForgotPasswordLink()}
-              className="ml-auto text-sm underline-offset-4 hover:underline"
-            >
-              Forgot your password?
-            </Link>
+        <div className="grid gap-6">
+          <div className="grid gap-3">
+            <Label htmlFor="email">Email</Label>
+            <Input 
+              id="email" 
+              type="email" 
+              placeholder={getEmailPlaceholder()} 
+              {...register("email")}
+              aria-invalid={errors.email ? "true" : "false"}
+            />
+            {errors.email && (
+              <p className="text-destructive text-sm">{errors.email.message}</p>
+            )}
           </div>
-          <Input 
-            id="password" 
-            type="password"
-            {...register("password")}
-            aria-invalid={errors.password ? "true" : "false"}
-          />
-          {errors.password && (
-            <p className="text-destructive text-sm">{errors.password.message}</p>
-          )}
+          <div className="grid gap-3">
+            <div className="flex items-center">
+              <Label htmlFor="password">Password</Label>
+              <Link
+                href={getForgotPasswordLink()}
+                className="ml-auto text-sm underline-offset-4 hover:underline"
+              >
+                Forgot your password?
+              </Link>
+            </div>
+            <Input 
+              id="password" 
+              type="password"
+              {...register("password")}
+              aria-invalid={errors.password ? "true" : "false"}
+            />
+            {errors.password && (
+              <p className="text-destructive text-sm">{errors.password.message}</p>
+            )}
+          </div>
+          <LoadingButton type="submit" className="w-full" loading={isLoading}>
+            Login
+          </LoadingButton>
         </div>
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Logging in...
-            </>
-          ) : (
-            "Login"
-          )}
-        </Button>
-        
-       
-      </div>
-    </form>
+      </form>
+    </ErrorBoundary>
   );
 }

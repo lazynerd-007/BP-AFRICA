@@ -21,8 +21,9 @@ import {
   IconX 
 } from "@tabler/icons-react"
 import { useState } from "react"
-import { toast } from "sonner"
 import { useCurrency } from "@/lib/currency-context"
+import { useErrorHandler } from "@/hooks/use-error-handler"
+import ErrorBoundary, { PageErrorFallback } from "@/components/error-boundary"
 
 // Type definitions
 interface ChargeData {
@@ -88,6 +89,7 @@ const mockCharges: {
 
 export default function ChargesPage() {
   const { currency } = useCurrency()
+  const { showSuccess, showError } = useErrorHandler()
   const [editingCharge, setEditingCharge] = useState<string | null>(null)
   const [charges, setCharges] = useState(mockCharges)
 
@@ -100,22 +102,27 @@ export default function ChargesPage() {
   }
 
   const handleSave = (chargeType: string, formData: ChargeFormData) => {
-    setCharges(prev => ({
-      ...prev,
-      [chargeType]: {
-        ...prev[chargeType as keyof typeof prev],
-        ...formData,
-        lastUpdated: new Date().toISOString().split('T')[0]
-      }
-    }))
-    setEditingCharge(null)
-    toast.success(`${chargeType} charge updated successfully`)
+    try {
+      setCharges(prev => ({
+        ...prev,
+        [chargeType]: {
+          ...prev[chargeType as keyof typeof prev],
+          ...formData,
+          lastUpdated: new Date().toISOString().split('T')[0]
+        }
+      }))
+      setEditingCharge(null)
+      showSuccess("UPDATE", "default", `${chargeType} charge updated successfully`)
+    } catch (error) {
+      showError(error)
+    }
   }
 
   const formatAmount = (amount: number) => `${currency}${amount.toFixed(2)}`
 
   return (
-    <div className="px-4 lg:px-6 space-y-6">
+    <ErrorBoundary fallback={PageErrorFallback}>
+      <div className="px-4 lg:px-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Charges Management</h1>
@@ -210,6 +217,7 @@ export default function ChargesPage() {
         />
       </div>
     </div>
+    </ErrorBoundary>
   )
 }
 
