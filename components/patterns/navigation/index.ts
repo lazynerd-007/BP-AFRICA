@@ -5,5 +5,4 @@ export { Pagination } from './Pagination'
 // Types
 export type {
   BreadcrumbItem,
-  PaginationInfo,
 } from './Breadcrumb' 

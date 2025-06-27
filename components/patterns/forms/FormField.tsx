@@ -130,7 +130,7 @@ export function FormField({
         return (
           <Input
             type="file"
-            onChange={(e) => onChange(e.target.files)}
+            onChange={(e) => e.target.files && onChange(e.target.files)}
             onBlur={onBlur}
             disabled={disabled || config.disabled}
             accept={config.accept}

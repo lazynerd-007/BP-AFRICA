@@ -113,6 +113,7 @@ export const SUCCESS_MESSAGES = {
     logout: "Logged out successfully",
     reset: "Password reset email sent",
     change: "Password changed successfully",
+    default: "Authentication successful",
   },
 }
 
@@ -331,17 +332,17 @@ export function validateField(value: unknown, rules: string[]): StandardError[] 
         }
         break
       case "email":
-        if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        if (value && typeof value === "string" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
           errors.push(createValidationError("email", "email"))
         }
         break
       case "phone":
-        if (value && !/^\+?[\d\s\-\(\)]{10,}$/.test(value)) {
+        if (value && typeof value === "string" && !/^\+?[\d\s\-\(\)]{10,}$/.test(value)) {
           errors.push(createValidationError("phone", "phone"))
         }
         break
       case "positive":
-        if (value && parseFloat(value) <= 0) {
+        if (value && typeof value === "string" && parseFloat(value) <= 0) {
           errors.push(createValidationError("amount", "positive"))
         }
         break
