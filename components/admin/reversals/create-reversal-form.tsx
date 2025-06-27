@@ -71,7 +71,7 @@ export function CreateReversalForm({
     
     // Simulate API call
     setTimeout(() => {
-      const newReversal = {
+      const newReversal: ReversalData = {
         id: `REV-${Date.now()}`,
         transactionId: reversalForm.transactionId,
         merchantName: lookupResult.merchantName,
