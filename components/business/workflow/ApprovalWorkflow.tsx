@@ -51,7 +51,6 @@ export function ApprovalWorkflow({
   const [showApprovalDialog, setShowApprovalDialog] = useState(false)
   const [showRejectionDialog, setShowRejectionDialog] = useState(false)
   const [showInfoDialog, setShowInfoDialog] = useState(false)
-  const [actionType, setActionType] = useState<'approve' | 'reject' | 'request_info'>('approve')
   const [comments, setComments] = useState("")
   const [otp, setOtp] = useState("")
   const [processing, setProcessing] = useState(false)
@@ -153,7 +152,6 @@ export function ApprovalWorkflow({
   }
 
   const openActionDialog = (type: 'approve' | 'reject' | 'request_info') => {
-    setActionType(type)
     switch (type) {
       case 'approve':
         setShowApprovalDialog(true)
