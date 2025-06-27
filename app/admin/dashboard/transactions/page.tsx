@@ -1,22 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { IconDownload } from "@tabler/icons-react";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { IconSearch, IconDownload } from "@tabler/icons-react";
-import { DataTable } from "@/components/data-table"
+  TransactionFiltersComponent,
+  TransactionStatsComponent,
+  TransactionTable,
+  Transaction,
+  TransformedTransaction,
+  TransactionFilters,
+  TransactionStats,
+  TransactionType
+} from "@/components/admin/transactions";
 
 // Mock data for transactions
-const transactionData = [
+const transactionData: Transaction[] = [
   {
     id: 1,
     merchantName: "TechStore Ghana",
@@ -85,7 +84,7 @@ const transactionData = [
 ];
 
 // Convert to the schema format expected by DataTable
-const transformedData = transactionData.map(item => ({
+const transformedData: TransformedTransaction[] = transactionData.map(item => ({
   id: item.id,
   merchant: item.merchantName,
   date: item.date,
@@ -95,33 +94,40 @@ const transformedData = transactionData.map(item => ({
   status: item.status
 }));
 
-// Ghana banks for dropdown
-const ghanaBanks = [
-  { id: "all", name: "-- All --" },
-  { id: "gcb", name: "Ghana Commercial Bank (GCB)" },
-  { id: "ecobank", name: "Ecobank Ghana" },
-  { id: "stanbic", name: "Stanbic Bank Ghana" },
-  { id: "zenith", name: "Zenith Bank Ghana" },
-  { id: "scb", name: "Standard Chartered Bank Ghana" },
-];
+// Mock stats data
+const mockStats: TransactionStats = {
+  successfulCollections: {
+    count: 2,
+    amount: "GHS0.02"
+  },
+  failedTransactions: {
+    count: 1868,
+    amount: "GHS950,421.45"
+  },
+  successfulPayouts: {
+    count: 0,
+    amount: "GHS0.00"
+  }
+};
 
 export default function TransactionsPage() {
-  const [transactionType, setTransactionType] = useState("collection");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [selectedBank, setSelectedBank] = useState("all");
-  const [parentMerchant, setParentMerchant] = useState("all");
-  const [subMerchant, setSubMerchant] = useState("all");
-  const [transactionFilter, setTransactionFilter] = useState("all");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [perPage, setPerPage] = useState("10");
-  
+  const [transactionType, setTransactionType] = useState<TransactionType>("collection");
+  const [filters, setFilters] = useState<TransactionFilters>({
+    selectedBank: "all",
+    parentMerchant: "all",
+    subMerchant: "all",
+    startDate: "",
+    endDate: "",
+    transactionFilter: "all",
+    searchTerm: "",
+    perPage: "10"
+  });
+
   return (
     <div className="px-4 lg:px-6 space-y-6">
-      
-      
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <div>
+          <h1 className="text-2xl font-bold">Transactions</h1>
           <p className="text-muted-foreground">
             Filter and download transaction reports within a date range
           </p>
@@ -132,208 +138,22 @@ export default function TransactionsPage() {
         </Button>
       </div>
       
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle>Filter Transactions</CardTitle>
-          <CardDescription>
-            Refine your search with the filters below.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Partner Bank</label>
-              <Select value={selectedBank} onValueChange={setSelectedBank}>
-                <SelectTrigger>
-                  <SelectValue placeholder="-- All --" />
-                </SelectTrigger>
-                <SelectContent>
-                  {ghanaBanks.map((bank) => (
-                    <SelectItem key={bank.id} value={bank.id}>
-                      {bank.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Parent Merchant</label>
-              <Select value={parentMerchant} onValueChange={setParentMerchant}>
-                <SelectTrigger>
-                  <SelectValue placeholder="-- All --" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">-- All --</SelectItem>
-                  <SelectItem value="bluwave">BluWave Limited</SelectItem>
-                  <SelectItem value="blupenguin">Blu Penguin</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Sub Merchant</label>
-              <Select value={subMerchant} onValueChange={setSubMerchant}>
-                <SelectTrigger>
-                  <SelectValue placeholder="-- All --" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">-- All --</SelectItem>
-                  <SelectItem value="chensha">Chensha City Ghana Ltd</SelectItem>
-                  <SelectItem value="timings">Timings Ltd</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Start Date</label>
-              <div className="relative">
-                <Input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <label className="text-sm font-medium">End Date</label>
-              <div className="relative">
-                <Input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Transaction Type</label>
-              <Select value={transactionFilter} onValueChange={setTransactionFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="-- All --" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">-- All --</SelectItem>
-                  <SelectItem value="collection">Collection</SelectItem>
-                  <SelectItem value="payout">Payout</SelectItem>
-                  <SelectItem value="reversal">Reversal</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <TransactionFiltersComponent
+        filters={filters}
+        onFiltersChange={setFilters}
+      />
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">
-              Successful Collections
-            </CardTitle>
-        
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Count</p>
-                <p className="text-2xl font-bold">2</p>
-              </div>
-              <div className="text-right">
-                <p className="text-xs text-muted-foreground">Amount</p>
-                <p className="text-2xl font-bold">GHS0.02</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">
-              Failed Transactions
-            </CardTitle>
-       
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Count</p>
-                <p className="text-2xl font-bold">1868</p>
-              </div>
-              <div className="text-right">
-                <p className="text-xs text-muted-foreground">Amount</p>
-                <p className="text-2xl font-bold">GHS950,421.45</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">
-              Successful Payouts
-            </CardTitle>
-        upd
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Count</p>
-                <p className="text-2xl font-bold">0</p>
-              </div>
-              <div className="text-right">
-                <p className="text-xs text-muted-foreground">Amount</p>
-                <p className="text-2xl font-bold">GHS0.00</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <TransactionStatsComponent stats={mockStats} />
       
-      <Card>
-        <CardHeader>
-          <CardTitle>All Transactions</CardTitle>
-          <CardDescription>View all MoMo transactions below.</CardDescription>
-          <Tabs defaultValue={transactionType} onValueChange={setTransactionType} className="mt-2">
-            <TabsList>
-              <TabsTrigger value="collection">Collection</TabsTrigger>
-              <TabsTrigger value="reversal">Reversal</TabsTrigger>
-              <TabsTrigger value="payout">Payout</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
-            <Select value={perPage} onValueChange={setPerPage}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="10 per page" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="10">10 per page</SelectItem>
-                <SelectItem value="25">25 per page</SelectItem>
-                <SelectItem value="50">50 per page</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            <div className="relative w-full max-w-sm">
-              <IconSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search transactions..."
-                className="pl-8"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-          </div>
-          
-          <DataTable 
-            data={transformedData} 
-            enableRowSelection={false}
-            enablePagination={true}
-          />
-        </CardContent>
-      </Card>
+      <TransactionTable
+        data={transformedData}
+        transactionType={transactionType}
+        onTransactionTypeChange={setTransactionType}
+        searchTerm={filters.searchTerm}
+        onSearchChange={(search) => setFilters(prev => ({ ...prev, searchTerm: search }))}
+        perPage={filters.perPage}
+        onPerPageChange={(perPage) => setFilters(prev => ({ ...prev, perPage }))}
+      />
     </div>
   );
 } 

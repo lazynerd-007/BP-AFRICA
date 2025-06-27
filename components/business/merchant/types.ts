@@ -202,5 +202,5 @@ export interface OnboardingStep {
   completed: boolean
   current: boolean
   optional: boolean
-  component?: React.ComponentType<any>
+  component?: React.ComponentType<Record<string, unknown>>
 } 

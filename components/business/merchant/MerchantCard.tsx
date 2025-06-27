@@ -93,10 +93,6 @@ export function MerchantCard({
     return ""
   }
 
-  const getInitials = (name: string) => {
-    return name.split(' ').map(part => part.charAt(0)).join('').toUpperCase().slice(0, 2)
-  }
-
   if (compact) {
     return (
       <Card className={className}>

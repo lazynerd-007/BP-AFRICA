@@ -2,8 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { IconWallet, IconTrendingUp, IconTrendingDown, IconClock, IconEye, IconEyeOff } from "@tabler/icons-react"
+import { IconWallet, IconTrendingUp, IconClock, IconEye, IconEyeOff } from "@tabler/icons-react"
 import { useState } from "react"
 import { BalanceInfo } from "./types"
 
