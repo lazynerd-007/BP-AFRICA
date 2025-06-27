@@ -155,7 +155,7 @@ export default function DemoTablePage() {
       {/* Enhanced DataTable */}
       <SafeEnhancedDataTable
         data={paginatedData}
-        columns={columns}
+        columns={columns as any}
         config={config}
         enableSearch={true}
         searchConfig={{
