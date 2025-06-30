@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -154,6 +154,7 @@ interface SubMerchant {
 }
 
 export function ViewSubMerchants() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedParent, setSelectedParent] = useState<string>("all");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
@@ -502,18 +503,26 @@ export function ViewSubMerchants() {
                   className="flex-1"
                   onClick={() => {
                     setShowDetailsDialog(false);
-                    handleEditSubMerchant(selectedSubMerchant);
+                    setTimeout(() => {
+                      handleEditSubMerchant(selectedSubMerchant);
+                    }, 100);
                   }}
                 >
                   <IconEdit className="h-4 w-4 mr-2" />
                   Edit Sub-Merchant
                 </Button>
-                <Link href={`/admin/dashboard/merchant/${selectedSubMerchant.id}`}>
-                  <Button className="flex-1">
-                    <IconEye className="h-4 w-4 mr-2" />
-                    View Full Details
-                  </Button>
-                </Link>
+                <Button 
+                  className="flex-1"
+                  onClick={() => {
+                    setShowDetailsDialog(false);
+                    setTimeout(() => {
+                      router.push(`/admin/dashboard/merchant/${selectedSubMerchant.id}`);
+                    }, 100);
+                  }}
+                >
+                  <IconEye className="h-4 w-4 mr-2" />
+                  View Full Details
+                </Button>
               </div>
             </div>
           )}
