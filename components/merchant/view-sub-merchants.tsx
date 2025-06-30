@@ -191,7 +191,7 @@ export function ViewSubMerchants() {
       }
       acc[parentId].subMerchants.push(subMerchant);
       return acc;
-    }, {} as Record<string, { parent: any; subMerchants: SubMerchant[] }>);
+    }, {} as Record<string, { parent: { id: string; name: string; code: string }; subMerchants: SubMerchant[] }>);
 
     return Object.values(grouped);
   }, [filteredSubMerchants]);

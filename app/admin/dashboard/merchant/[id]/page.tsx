@@ -62,7 +62,16 @@ const merchantData = {
   ovaSettings: {
     enabled: true,
     accountNumber: "9876543210",
-    balanceLimit: "10000.00"
+    balanceLimit: "10000.00",
+    mtn: "1234567890",
+    airtel: "0987654321", 
+    telecel: "1122334455"
+  },
+  settlementFrequency: "daily",
+  momoDetails: {
+    provider: "mtn",
+    number: "024 123 4567",
+    accountName: "John Doe"
   },
   recentTransactions: [
     { id: 1, date: "2023-09-15", reference: "TRX123456", amount: "5,000.00", status: "Completed" },
@@ -137,13 +146,13 @@ export default function MerchantDetailPage() {
         surchargeMerchant: '1.5',
         surchargeCustomer: '2.0', 
         surchargeCap: '100',
-        settlementFrequency: 'daily',
-        momoProvider: 'mtn',
-        momoNumber: '024 123 4567',
-        momoAccountName: 'John Doe',
-        mtnOva: '1234567890',
-        airtelOva: '0987654321',
-        telecelOva: '1122334455'
+        settlementFrequency: merchantData.settlementFrequency || 'daily',
+        momoProvider: merchantData.momoDetails?.provider || 'mtn',
+        momoNumber: merchantData.momoDetails?.number || '024 123 4567',
+        momoAccountName: merchantData.momoDetails?.accountName || 'John Doe',
+        mtnOva: merchantData.ovaSettings?.mtn || '1234567890',
+        airtelOva: merchantData.ovaSettings?.airtel || '0987654321',
+        telecelOva: merchantData.ovaSettings?.telecel || '1122334455'
       });
     }
   }, [params.id]);
