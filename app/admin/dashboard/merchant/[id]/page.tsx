@@ -217,6 +217,17 @@ export default function MerchantDetailPage() {
       surchargeDetails: {
         ...prev.surchargeDetails,
         globalSurchargeValue: `${editMerchantData.surchargeValue}%`
+      },
+      settlementFrequency: editMerchantData.settlementFrequency,
+      momoDetails: {
+        provider: editMerchantData.momoProvider,
+        number: editMerchantData.momoNumber,
+        accountName: editMerchantData.momoAccountName
+      },
+      ovaSettings: {
+        mtn: editMerchantData.mtnOva,
+        airtel: editMerchantData.airtelOva,
+        telecel: editMerchantData.telecelOva
       }
     }));
     
@@ -557,11 +568,11 @@ export default function MerchantDetailPage() {
       
       {/* Edit Merchant Dialog */}
       <Dialog open={editMerchantOpen} onOpenChange={setEditMerchantOpen}>
-        <DialogContent className="sm:max-w-[450px] max-h-[85vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Merchant</DialogTitle>
             <DialogDescription>
-              Update merchant information and banking details
+              Update merchant information, banking details, settlement settings, MOMO details, and OVA configuration
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-6 py-4">
