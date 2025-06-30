@@ -636,7 +636,7 @@ export function CreateMerchant() {
               <div>
                 <h3 className="text-base font-medium text-center mb-4 text-muted-foreground">Settlement Details</h3>
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-1 gap-x-6 gap-y-4">
                     <FormField
                       control={form.control}
                       name="settlementFrequency"
