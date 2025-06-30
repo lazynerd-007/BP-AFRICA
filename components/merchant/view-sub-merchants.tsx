@@ -7,8 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
+import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { 
   IconSearch, 
@@ -159,9 +162,16 @@ export function ViewSubMerchants() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedParent, setSelectedParent] = useState<string>("all");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
-  const [viewMode, setViewMode] = useState<"table" | "grouped">("grouped");
   const [selectedSubMerchant, setSelectedSubMerchant] = useState<SubMerchant | null>(null);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
+  const [editSubMerchantOpen, setEditSubMerchantOpen] = useState(false);
+  const [editSubMerchantData, setEditSubMerchantData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    status: 'Active'
+  });
 
   // Filter and search logic
   const filteredSubMerchants = useMemo(() => {
@@ -178,23 +188,6 @@ export function ViewSubMerchants() {
       return matchesSearch && matchesParent && matchesStatus;
     });
   }, [searchTerm, selectedParent, selectedStatus]);
-
-  // Group by parent merchant
-  const groupedSubMerchants = useMemo(() => {
-    const grouped = filteredSubMerchants.reduce((acc, subMerchant) => {
-      const parentId = subMerchant.parentMerchant.id;
-      if (!acc[parentId]) {
-        acc[parentId] = {
-          parent: subMerchant.parentMerchant,
-          subMerchants: []
-        };
-      }
-      acc[parentId].subMerchants.push(subMerchant);
-      return acc;
-    }, {} as Record<string, { parent: { id: string; name: string; code: string }; subMerchants: SubMerchant[] }>);
-
-    return Object.values(grouped);
-  }, [filteredSubMerchants]);
 
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
@@ -221,6 +214,32 @@ export function ViewSubMerchants() {
     setShowDetailsDialog(true);
   };
 
+  const handleEditSubMerchant = (subMerchant: SubMerchant) => {
+    setSelectedSubMerchant(subMerchant);
+    setEditSubMerchantData({
+      name: subMerchant.name,
+      email: subMerchant.email,
+      phone: subMerchant.phone,
+      address: subMerchant.address,
+      status: subMerchant.status
+    });
+    setEditSubMerchantOpen(true);
+  };
+
+  const handleSaveEditSubMerchant = () => {
+    // Here you would call the API to update the submerchant
+    // For demo purposes, we're just closing the modal
+    setEditSubMerchantOpen(false);
+    // You could also update local state or trigger a refresh
+  };
+
+  const handleEditSubMerchantChange = (field: string, value: string) => {
+    setEditSubMerchantData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   const clearFilters = () => {
     setSearchTerm("");
     setSelectedParent("all");
@@ -239,58 +258,25 @@ export function ViewSubMerchants() {
             View and manage sub-merchant accounts ({filteredSubMerchants.length} total)
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant={viewMode === "table" ? "default" : "outline"}
-            onClick={() => setViewMode("table")}
-            size="sm"
-          >
-            Table View
-          </Button>
-          <Button
-            variant={viewMode === "grouped" ? "default" : "outline"}
-            onClick={() => setViewMode("grouped")}
-            size="sm"
-          >
-            Grouped View
-          </Button>
-        </div>
       </div>
 
       {/* Filters */}
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <IconFilter className="h-5 w-5" />
-            Filters
-            {hasActiveFilters && (
-              <Button
-                variant="ghost" 
-                size="sm"
-                onClick={clearFilters}
-                className="ml-auto"
-              >
-                <IconX className="h-4 w-4 mr-1" />
-                Clear All
-              </Button>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Search</label>
+              <label className="text-sm font-medium">Search Sub-Merchants</label>
               <div className="relative">
                 <IconSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
-                  placeholder="Search sub-merchants..."
+                  placeholder="Search by name, code, email..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <label className="text-sm font-medium">Parent Merchant</label>
               <Select value={selectedParent} onValueChange={setSelectedParent}>
@@ -300,8 +286,8 @@ export function ViewSubMerchants() {
                 <SelectContent>
                   <SelectItem value="all">All Parent Merchants</SelectItem>
                   {parentMerchants.map((parent) => (
-                    <SelectItem key={parent?.id} value={parent?.id || ""}>
-                      {parent?.name}
+                    <SelectItem key={parent?.id} value={parent?.id || ''}>
+                      {parent?.name} ({parent?.code})
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -323,233 +309,126 @@ export function ViewSubMerchants() {
               </Select>
             </div>
 
-            <div className="flex items-end">
+            <div className="flex items-end gap-2">
               <div className="text-sm">
                 <span className="font-medium">{filteredSubMerchants.length}</span> sub-merchant(s) found
               </div>
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <IconX className="h-4 w-4 mr-1" />
+                  Clear
+                </Button>
+              )}
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Content */}
-      {viewMode === "table" ? (
-        // Table View
-        <Card>
-          <CardHeader>
-            <CardTitle>Sub-Merchants List</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Sub-Merchant</TableHead>
-                  <TableHead>Parent Merchant</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Transaction Volume</TableHead>
-                  <TableHead>Actions</TableHead>
+      {/* Sub-Merchants Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Sub-Merchants List</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Sub-Merchant</TableHead>
+                <TableHead>Parent Merchant</TableHead>
+                <TableHead>Contact</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Transaction Volume</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredSubMerchants.map((subMerchant) => (
+                <TableRow key={subMerchant.id}>
+                  <TableCell>
+                    <div>
+                      <div className="font-medium">{subMerchant.name}</div>
+                      <div className="text-sm text-muted-foreground">{subMerchant.code}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <div className="font-medium">{subMerchant.parentMerchant.name}</div>
+                      <div className="text-sm text-muted-foreground">{subMerchant.parentMerchant.code}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <div className="text-sm">{subMerchant.email}</div>
+                      <div className="text-sm text-muted-foreground">{subMerchant.phone}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge 
+                      variant={getStatusBadgeVariant(subMerchant.status)}
+                      className={getStatusBadgeClasses(subMerchant.status)}
+                    >
+                      {subMerchant.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <div className="font-medium">{subMerchant.transactionVolume}</div>
+                      <div className="text-sm text-muted-foreground">Last: {subMerchant.lastTransaction}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <IconDots className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleViewDetails(subMerchant)}>
+                          <IconEye className="h-4 w-4 mr-2" />
+                          View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleEditSubMerchant(subMerchant)}>
+                          <IconEdit className="h-4 w-4 mr-2" />
+                          Edit Sub-Merchant
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                          {subMerchant.status === 'Active' ? (
+                            <>
+                              <IconBan className="h-4 w-4 mr-2" />
+                              Suspend
+                            </>
+                          ) : (
+                            <>
+                              <IconCheck className="h-4 w-4 mr-2" />
+                              Activate
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredSubMerchants.map((subMerchant) => (
-                  <TableRow key={subMerchant.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{subMerchant.name}</div>
-                        <div className="text-sm text-muted-foreground">{subMerchant.code}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{subMerchant.parentMerchant.name}</div>
-                        <div className="text-sm text-muted-foreground">{subMerchant.parentMerchant.code}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="text-sm">{subMerchant.email}</div>
-                        <div className="text-sm text-muted-foreground">{subMerchant.phone}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge 
-                        variant={getStatusBadgeVariant(subMerchant.status)}
-                        className={getStatusBadgeClasses(subMerchant.status)}
-                      >
-                        {subMerchant.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{subMerchant.transactionVolume}</div>
-                        <div className="text-sm text-muted-foreground">Last: {subMerchant.lastTransaction}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <IconDots className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleViewDetails(subMerchant)}>
-                            <IconEye className="h-4 w-4 mr-2" />
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <IconEdit className="h-4 w-4 mr-2" />
-                            Edit Sub-Merchant
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem>
-                            {subMerchant.status === 'Active' ? (
-                              <>
-                                <IconBan className="h-4 w-4 mr-2" />
-                                Suspend
-                              </>
-                            ) : (
-                              <>
-                                <IconCheck className="h-4 w-4 mr-2" />
-                                Activate
-                              </>
-                            )}
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {filteredSubMerchants.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8">
-                      <div className="text-muted-foreground">
-                        No sub-merchants found matching your criteria
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      ) : (
-        // Grouped View
-        <div className="space-y-6">
-          {groupedSubMerchants.map((group) => (
-            <Card key={group.parent.id}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <IconBuilding className="h-5 w-5" />
-                  {group.parent.name}
-                  <Badge variant="outline" className="ml-2">
-                    {group.subMerchants.length} sub-merchant{group.subMerchants.length !== 1 ? 's' : ''}
-                  </Badge>
-                </CardTitle>
-                <CardDescription>
-                  Parent Merchant Code: {group.parent.code}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {group.subMerchants.map((subMerchant) => (
-                    <Card key={subMerchant.id} className="border-l-4 border-l-blue-500">
-                      <CardContent className="p-4">
-                        <div className="space-y-3">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h4 className="font-medium">{subMerchant.name}</h4>
-                              <p className="text-sm text-muted-foreground">{subMerchant.code}</p>
-                            </div>
-                            <Badge 
-                              variant={getStatusBadgeVariant(subMerchant.status)}
-                              className={getStatusBadgeClasses(subMerchant.status)}
-                            >
-                              {subMerchant.status}
-                            </Badge>
-                          </div>
-                          
-                          <div className="space-y-2 text-sm">
-                            <div className="flex items-center gap-2">
-                              <IconMail className="h-4 w-4 text-muted-foreground" />
-                              <span>{subMerchant.email}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <IconPhone className="h-4 w-4 text-muted-foreground" />
-                              <span>{subMerchant.phone}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <IconCalendar className="h-4 w-4 text-muted-foreground" />
-                              <span>Created: {subMerchant.createdAt}</span>
-                            </div>
-                          </div>
-
-                          <div className="pt-2 border-t">
-                            <div className="flex justify-between text-sm">
-                              <span className="text-muted-foreground">Volume:</span>
-                              <span className="font-medium">{subMerchant.transactionVolume}</span>
-                            </div>
-                          </div>
-
-                          <div className="flex gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleViewDetails(subMerchant)}
-                              className="flex-1"
-                            >
-                              <IconEye className="h-4 w-4 mr-1" />
-                              View
-                            </Button>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="outline" size="sm">
-                                  <IconDots className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem>
-                                  <IconEdit className="h-4 w-4 mr-2" />
-                                  Edit
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>
-                                  {subMerchant.status === 'Active' ? (
-                                    <>
-                                      <IconBan className="h-4 w-4 mr-2" />
-                                      Suspend
-                                    </>
-                                  ) : (
-                                    <>
-                                      <IconCheck className="h-4 w-4 mr-2" />
-                                      Activate
-                                    </>
-                                  )}
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-          
-          {groupedSubMerchants.length === 0 && (
-            <Card>
-              <CardContent className="text-center py-8">
-                <div className="text-muted-foreground">
-                  No sub-merchants found matching your criteria
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      )}
+              ))}
+              {filteredSubMerchants.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8">
+                    <div className="text-muted-foreground">
+                      No sub-merchants found matching your criteria
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
       {/* Sub-Merchant Details Dialog */}
       <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
@@ -623,7 +502,14 @@ export function ViewSubMerchants() {
               </div>
 
               <div className="flex gap-2 pt-4">
-                <Button variant="outline" className="flex-1">
+                <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={() => {
+                    setShowDetailsDialog(false);
+                    handleEditSubMerchant(selectedSubMerchant);
+                  }}
+                >
                   <IconEdit className="h-4 w-4 mr-2" />
                   Edit Sub-Merchant
                 </Button>
@@ -636,6 +522,145 @@ export function ViewSubMerchants() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Sub-Merchant Dialog */}
+      <Dialog open={editSubMerchantOpen} onOpenChange={setEditSubMerchantOpen}>
+        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Sub-Merchant</DialogTitle>
+            <DialogDescription>
+              Update sub-merchant information and contact details
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-6 py-4">
+            {selectedSubMerchant && (
+              <>
+                {/* Parent Merchant Info (Read-only) */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-medium">Parent Merchant</h3>
+                  <div className="p-3 bg-muted rounded-lg">
+                    <div className="grid grid-cols-1 gap-2">
+                      <div>
+                        <Label className="text-sm text-muted-foreground">Parent Merchant Name</Label>
+                        <p className="text-sm font-medium">{selectedSubMerchant.parentMerchant.name}</p>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-muted-foreground">Parent Merchant Code</Label>
+                        <p className="text-sm font-medium">{selectedSubMerchant.parentMerchant.code}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Sub-Merchant Details */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-medium">Sub-Merchant Information</h3>
+                  <div className="grid grid-cols-1 gap-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="submerchant-name">Sub-Merchant Name</Label>
+                      <Input 
+                        id="submerchant-name" 
+                        value={editSubMerchantData.name} 
+                        onChange={(e) => handleEditSubMerchantChange('name', e.target.value)}
+                        placeholder="Enter sub-merchant name"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="submerchant-code">Sub-Merchant Code</Label>
+                      <Input 
+                        id="submerchant-code" 
+                        value={selectedSubMerchant.code}
+                        disabled
+                        className="bg-muted"
+                      />
+                      <p className="text-xs text-muted-foreground">Sub-merchant code cannot be changed</p>
+                    </div>
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Contact Information */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-medium">Contact Information</h3>
+                  <div className="grid grid-cols-1 gap-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="submerchant-email">Email Address</Label>
+                      <Input 
+                        id="submerchant-email" 
+                        type="email"
+                        value={editSubMerchantData.email} 
+                        onChange={(e) => handleEditSubMerchantChange('email', e.target.value)}
+                        placeholder="Enter email address"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="submerchant-phone">Phone Number</Label>
+                      <Input 
+                        id="submerchant-phone" 
+                        value={editSubMerchantData.phone} 
+                        onChange={(e) => handleEditSubMerchantChange('phone', e.target.value)}
+                        placeholder="Enter phone number"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="submerchant-address">Address</Label>
+                      <Textarea 
+                        id="submerchant-address" 
+                        value={editSubMerchantData.address} 
+                        onChange={(e) => handleEditSubMerchantChange('address', e.target.value)}
+                        placeholder="Enter business address"
+                        rows={3}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Status and Settings */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-medium">Status & Settings</h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="submerchant-status">Status</Label>
+                      <Select
+                        value={editSubMerchantData.status}
+                        onValueChange={(value) => handleEditSubMerchantChange('status', value)}
+                      >
+                        <SelectTrigger id="submerchant-status">
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Active">Active</SelectItem>
+                          <SelectItem value="Suspended">Suspended</SelectItem>
+                          <SelectItem value="Inactive">Inactive</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm text-muted-foreground">Created Date</Label>
+                      <p className="text-sm font-medium pt-2">{selectedSubMerchant.createdAt}</p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditSubMerchantOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveEditSubMerchant}>
+              Save Changes
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
