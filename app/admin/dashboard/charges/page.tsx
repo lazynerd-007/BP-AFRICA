@@ -29,11 +29,6 @@ export default function ChargesPage() {
       mtn: "100.00",
       telecel: "95.00",
       airtelTigo: "90.00"
-    },
-    bankCollection: {
-      mtn: "150.00",
-      telecel: "145.00",
-      airtelTigo: "140.00"
     }
   })
 
@@ -79,11 +74,11 @@ export default function ChargesPage() {
     }
   }
 
-  const updateMaxCollectionCap = (chargeType: 'momoCollection' | 'bankCollection', telco: 'mtn' | 'telecel' | 'airtelTigo', value: string) => {
+  const updateMaxCollectionCap = (telco: 'mtn' | 'telecel' | 'airtelTigo', value: string) => {
     setMaxCollectionCapData(prev => ({
       ...prev,
-      [chargeType]: {
-        ...prev[chargeType],
+      momoCollection: {
+        ...prev.momoCollection,
         [telco]: value
       }
     }))
@@ -177,9 +172,9 @@ export default function ChargesPage() {
             <p className="text-muted-foreground">Configure maximum collection charge caps for different payment providers</p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="flex justify-center">
             {/* MOMO Collection MAX CHARGE CAP */}
-            <Card>
+            <Card className="w-full max-w-2xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <IconDeviceMobile className="h-5 w-5" />
@@ -194,24 +189,27 @@ export default function ChargesPage() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-3 gap-4">
                       <div className="space-y-2">
-                        <Label className="text-sm text-muted-foreground">MTN</Label>
-                        <div className="flex items-center gap-2">
-                          <Badge className="bg-yellow-500 text-white">MTN</Badge>
-                          <span className="font-medium">{currency}{maxCollectionCapData.momoCollection.mtn}</span>
+                        <div className="flex items-center justify-center p-3 bg-yellow-500 text-white rounded-lg">
+                          <span className="font-semibold">MTN</span>
+                        </div>
+                        <div className="text-center">
+                          <span className="font-medium text-lg">{currency}{maxCollectionCapData.momoCollection.mtn}</span>
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-sm text-muted-foreground">TELECEL</Label>
-                        <div className="flex items-center gap-2">
-                          <Badge className="bg-red-500 text-white">TELECEL</Badge>
-                          <span className="font-medium">{currency}{maxCollectionCapData.momoCollection.telecel}</span>
+                        <div className="flex items-center justify-center p-3 bg-red-500 text-white rounded-lg">
+                          <span className="font-semibold">TELECEL</span>
+                        </div>
+                        <div className="text-center">
+                          <span className="font-medium text-lg">{currency}{maxCollectionCapData.momoCollection.telecel}</span>
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-sm text-muted-foreground">AIRTELTIGO</Label>
-                        <div className="flex items-center gap-2">
-                          <Badge className="bg-blue-500 text-white">AIRTELTIGO</Badge>
-                          <span className="font-medium">{currency}{maxCollectionCapData.momoCollection.airtelTigo}</span>
+                        <div className="flex items-center justify-center p-3 bg-blue-500 text-white rounded-lg">
+                          <span className="font-semibold">AIRTELTIGO</span>
+                        </div>
+                        <div className="text-center">
+                          <span className="font-medium text-lg">{currency}{maxCollectionCapData.momoCollection.airtelTigo}</span>
                         </div>
                       </div>
                     </div>
@@ -231,7 +229,7 @@ export default function ChargesPage() {
                           step="0.01"
                           min="0"
                           value={maxCollectionCapData.momoCollection.mtn}
-                          onChange={(e) => updateMaxCollectionCap('momoCollection', 'mtn', e.target.value)}
+                          onChange={(e) => updateMaxCollectionCap('mtn', e.target.value)}
                           placeholder="MTN maximum collection charge"
                         />
                       </div>
@@ -243,7 +241,7 @@ export default function ChargesPage() {
                           step="0.01"
                           min="0"
                           value={maxCollectionCapData.momoCollection.telecel}
-                          onChange={(e) => updateMaxCollectionCap('momoCollection', 'telecel', e.target.value)}
+                          onChange={(e) => updateMaxCollectionCap('telecel', e.target.value)}
                           placeholder="TELECEL maximum collection charge"
                         />
                       </div>
@@ -255,7 +253,7 @@ export default function ChargesPage() {
                           step="0.01"
                           min="0"
                           value={maxCollectionCapData.momoCollection.airtelTigo}
-                          onChange={(e) => updateMaxCollectionCap('momoCollection', 'airtelTigo', e.target.value)}
+                          onChange={(e) => updateMaxCollectionCap('airtelTigo', e.target.value)}
                           placeholder="AIRTELTIGO maximum collection charge"
                         />
                       </div>
@@ -266,103 +264,6 @@ export default function ChargesPage() {
                         Cancel
                       </Button>
                       <Button onClick={() => handleMaxCollectionSave("momoCollection")}>
-                        <IconDeviceFloppy className="h-4 w-4 mr-2" />
-                        Save Changes
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Bank Collection MAX CHARGE CAP */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <IconBuildingBank className="h-5 w-5" />
-                  Bank Collection MAX CHARGE CAP
-                </CardTitle>
-                <CardDescription>
-                  Set maximum charge limits for bank collection transactions
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {editingMaxCollectionType !== "bankCollection" ? (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="space-y-2">
-                        <Label className="text-sm text-muted-foreground">MTN</Label>
-                        <div className="flex items-center gap-2">
-                          <Badge className="bg-yellow-500 text-white">MTN</Badge>
-                          <span className="font-medium">{currency}{maxCollectionCapData.bankCollection.mtn}</span>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-sm text-muted-foreground">TELECEL</Label>
-                        <div className="flex items-center gap-2">
-                          <Badge className="bg-red-500 text-white">TELECEL</Badge>
-                          <span className="font-medium">{currency}{maxCollectionCapData.bankCollection.telecel}</span>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-sm text-muted-foreground">AIRTELTIGO</Label>
-                        <div className="flex items-center gap-2">
-                          <Badge className="bg-blue-500 text-white">AIRTELTIGO</Badge>
-                          <span className="font-medium">{currency}{maxCollectionCapData.bankCollection.airtelTigo}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <Button onClick={() => handleMaxCollectionEdit("bankCollection")} className="w-full">
-                      <IconSettings className="h-4 w-4 mr-2" />
-                      Edit MAX COLLECTION CAP
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="bank-collection-mtn-cap">MTN Max Collection Charge ({currency})</Label>
-                        <Input
-                          id="bank-collection-mtn-cap"
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          value={maxCollectionCapData.bankCollection.mtn}
-                          onChange={(e) => updateMaxCollectionCap('bankCollection', 'mtn', e.target.value)}
-                          placeholder="MTN maximum collection charge"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="bank-collection-telecel-cap">TELECEL Max Collection Charge ({currency})</Label>
-                        <Input
-                          id="bank-collection-telecel-cap"
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          value={maxCollectionCapData.bankCollection.telecel}
-                          onChange={(e) => updateMaxCollectionCap('bankCollection', 'telecel', e.target.value)}
-                          placeholder="TELECEL maximum collection charge"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="bank-collection-airteltigo-cap">AIRTELTIGO Max Collection Charge ({currency})</Label>
-                        <Input
-                          id="bank-collection-airteltigo-cap"
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          value={maxCollectionCapData.bankCollection.airtelTigo}
-                          onChange={(e) => updateMaxCollectionCap('bankCollection', 'airtelTigo', e.target.value)}
-                          placeholder="AIRTELTIGO maximum collection charge"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex justify-end space-x-2">
-                      <Button variant="outline" onClick={handleMaxCollectionCancel}>
-                        <IconX className="h-4 w-4 mr-2" />
-                        Cancel
-                      </Button>
-                      <Button onClick={() => handleMaxCollectionSave("bankCollection")}>
                         <IconDeviceFloppy className="h-4 w-4 mr-2" />
                         Save Changes
                       </Button>
