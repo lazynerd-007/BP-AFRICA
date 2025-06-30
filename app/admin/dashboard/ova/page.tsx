@@ -1,6 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import {
   IconWallet,
   IconChecks,
@@ -11,13 +14,33 @@ import { RequestOVA } from "./request-ova";
 import { ApprovalOVA } from "./approval-ova";
 
 export default function OVAPage() {
+  const [selectedOvaProvider, setSelectedOvaProvider] = useState("EGANOW");
+
   return (
     <div className="px-4 lg:px-6 space-y-6">
-      <div className="flex flex-col space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">Online Virtual Account (OVA)</h2>
-        <p className="text-muted-foreground">
-          Manage your collection and payout virtual accounts
-        </p>
+      <div className="flex flex-col space-y-4">
+        <div className="flex flex-col space-y-2">
+          <h2 className="text-2xl font-bold tracking-tight">Online Virtual Account (OVA)</h2>
+          <p className="text-muted-foreground">
+            Manage your collection and payout virtual accounts
+          </p>
+        </div>
+        
+        {/* OVA Selection */}
+        <div className="flex items-center gap-4">
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">OVA Selection</Label>
+            <Select value={selectedOvaProvider} onValueChange={setSelectedOvaProvider}>
+              <SelectTrigger className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="EGANOW">EGANOW</SelectItem>
+                <SelectItem value="BLUPAY">BLUPAY</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
       </div>
       
       <Tabs defaultValue="view" className="w-full">
@@ -37,15 +60,15 @@ export default function OVAPage() {
         </TabsList>
         
         <TabsContent value="view">
-          <ViewOVA />
+          <ViewOVA selectedProvider={selectedOvaProvider} />
         </TabsContent>
         
         <TabsContent value="request">
-          <RequestOVA />
+          <RequestOVA selectedProvider={selectedOvaProvider} />
         </TabsContent>
         
         <TabsContent value="approval">
-          <ApprovalOVA />
+          <ApprovalOVA selectedProvider={selectedOvaProvider} />
         </TabsContent>
       </Tabs>
     </div>

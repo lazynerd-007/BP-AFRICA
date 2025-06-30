@@ -5,11 +5,6 @@ export interface ChargeData {
   chargeType: "fixed" | "percentage"
   status: "Active" | "Inactive"
   lastUpdated: string
-  maxChargeCap?: {
-    mtn?: number
-    telecel?: number
-    airtelTigo?: number
-  }
 }
 
 export interface ChargeFormData {
@@ -18,11 +13,6 @@ export interface ChargeFormData {
   cap: number
   chargeType: "fixed" | "percentage"
   status: "Active" | "Inactive"
-  maxChargeCap?: {
-    mtn?: number
-    telecel?: number
-    airtelTigo?: number
-  }
 }
 
 export interface ChargeCardProps {
@@ -77,12 +67,7 @@ export const mockCharges: ChargesData = {
     cap: 12.00,
     chargeType: "percentage",
     status: "Active",
-    lastUpdated: "2024-01-15",
-    maxChargeCap: {
-      mtn: 50.00,
-      telecel: 45.00,
-      airtelTigo: 40.00
-    }
+    lastUpdated: "2024-01-15"
   },
   bankPayout: {
     amount: 8.00,
@@ -90,11 +75,6 @@ export const mockCharges: ChargesData = {
     cap: 25.00,
     chargeType: "percentage",
     status: "Active",
-    lastUpdated: "2024-01-15",
-    maxChargeCap: {
-      mtn: 60.00,
-      telecel: 55.00,
-      airtelTigo: 50.00
-    }
+    lastUpdated: "2024-01-15"
   }
 } 

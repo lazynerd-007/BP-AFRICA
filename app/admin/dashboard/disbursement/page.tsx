@@ -12,12 +12,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { 
   IconSend, 
   IconRefresh, 
   IconCheck, 
   IconBuildingBank,
-  IconClock
+  IconClock,
+  IconLockAccess
 } from "@tabler/icons-react"
 import { useState } from "react"
 import { toast } from "sonner"
@@ -102,13 +111,15 @@ export default function DisbursementPage() {
   const [selectedBank, setSelectedBank] = useState<typeof mockPartnerBanks[0] | null>(null)
   const [amount, setAmount] = useState("")
   const [isProcessing, setIsProcessing] = useState(false)
-  const [selectedOva, setSelectedOva] = useState("payout") // Selected OVA account
+  const [selectedOva, setSelectedOva] = useState("EGANOW") // Selected OVA account
+  const [showOtpDialog, setShowOtpDialog] = useState(false)
+  const [otp, setOtp] = useState("")
+  const [otpProcessing, setOtpProcessing] = useState(false)
 
-  // Mock OVA accounts
+  // Mock OVA accounts with EGANOW/BLUPAY
   const ovaAccounts = [
-    { id: "payout", name: "Payout OVA", balance: 250000.00 },
-    { id: "collection", name: "Collection OVA", balance: 180000.00 },
-    { id: "settlement", name: "Settlement OVA", balance: 95000.00 }
+    { id: "EGANOW", name: "EGANOW", balance: 250000.00 },
+    { id: "BLUPAY", name: "BLUPAY", balance: 180000.00 }
   ]
 
   const getCurrentOvaBalance = () => {
@@ -128,19 +139,38 @@ export default function DisbursementPage() {
     }
     
     if (parseFloat(amount) > getCurrentOvaBalance()) {
-      toast.error(`Insufficient ${ovaAccounts.find(acc => acc.id === selectedOva)?.name || "OVA"} balance`)
+      toast.error(`Insufficient ${selectedOva} balance`)
       return
     }
     
-    setIsProcessing(true)
+    // Show OTP dialog instead of directly processing
+    setShowOtpDialog(true)
+  }
+
+  const handleOtpSubmit = () => {
+    if (!otp || otp.length !== 6) {
+      toast.error("Please enter a valid 6-digit OTP")
+      return
+    }
+
+    setOtpProcessing(true)
     
-    // Simulate API call
+    // Simulate OTP verification and disbursement
     setTimeout(() => {
-      toast.success(`Disbursement of ${currency}${parseFloat(amount).toFixed(2)} sent to ${selectedBank.bankName}`)
+      toast.success(`Disbursement of ${currency}${parseFloat(amount).toFixed(2)} sent to ${selectedBank?.bankName}`)
       setAmount("")
       setSelectedBank(null)
+      setOtp("")
+      setShowOtpDialog(false)
+      setOtpProcessing(false)
       setIsProcessing(false)
     }, 2000)
+  }
+
+  const handleOtpCancel = () => {
+    setShowOtpDialog(false)
+    setOtp("")
+    setIsProcessing(false)
   }
 
   const formatAmount = (amount: number) => `${currency}${amount.toFixed(2)}`
@@ -176,7 +206,7 @@ export default function DisbursementPage() {
         </div>
         <div className="text-right space-y-3">
           <div>
-            <Label className="text-sm text-muted-foreground">Select OVA Account</Label>
+            <Label className="text-sm text-muted-foreground">Select Payout OVA account</Label>
             <Select
               value={selectedOva}
               onValueChange={setSelectedOva}
@@ -400,6 +430,61 @@ export default function DisbursementPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* OTP Authorization Dialog */}
+      <Dialog open={showOtpDialog} onOpenChange={setShowOtpDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <IconLockAccess className="h-5 w-5" />
+              OTP Authorization
+            </DialogTitle>
+            <DialogDescription>
+              Enter the 6-digit OTP sent to your registered mobile number to authorize this disbursement.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="otp">OTP Code</Label>
+              <Input
+                id="otp"
+                type="text"
+                maxLength={6}
+                value={otp}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                placeholder="Enter 6-digit OTP"
+                className="text-center text-lg tracking-wider"
+              />
+            </div>
+            
+            {selectedBank && (
+              <div className="p-3 bg-muted/50 rounded-lg text-sm">
+                <p><strong>Amount:</strong> {currency}{parseFloat(amount).toFixed(2)}</p>
+                <p><strong>To:</strong> {selectedBank.bankName}</p>
+                <p><strong>From:</strong> {selectedOva} OVA</p>
+              </div>
+            )}
+          </div>
+          <DialogFooter className="flex gap-2">
+            <Button variant="outline" onClick={handleOtpCancel} disabled={otpProcessing}>
+              Cancel
+            </Button>
+            <Button onClick={handleOtpSubmit} disabled={otpProcessing || otp.length !== 6}>
+              {otpProcessing ? (
+                <>
+                  <IconRefresh className="h-4 w-4 mr-2 animate-spin" />
+                  Verifying...
+                </>
+              ) : (
+                <>
+                  <IconCheck className="h-4 w-4 mr-2" />
+                  Confirm Disbursement
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -145,7 +145,11 @@ const processedRequestsData: ProcessedRequest[] = [
   }
 ];
 
-export function ApprovalOVA() {
+interface ApprovalOVAProps {
+  selectedProvider?: string;
+}
+
+export function ApprovalOVA({ selectedProvider }: ApprovalOVAProps) {
   const { currency } = useCurrency();
   
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);

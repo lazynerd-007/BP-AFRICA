@@ -78,7 +78,11 @@ const recentRequestsData = [
   }
 ];
 
-export function RequestOVA() {
+interface RequestOVAProps {
+  selectedProvider?: string;
+}
+
+export function RequestOVA({ selectedProvider }: RequestOVAProps) {
   const { currency } = useCurrency();
   const { user } = useAuthStore();
   

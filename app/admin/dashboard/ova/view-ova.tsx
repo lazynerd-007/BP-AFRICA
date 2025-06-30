@@ -70,7 +70,11 @@ const transactionHistoryData = [
   }
 ];
 
-export function ViewOVA() {
+interface ViewOVAProps {
+  selectedProvider?: string;
+}
+
+export function ViewOVA({ selectedProvider }: ViewOVAProps) {
   const { currency } = useCurrency();
   const [transactionType, setTransactionType] = useState("all");
   const [showCollectionBalance, setShowCollectionBalance] = useState(false);
