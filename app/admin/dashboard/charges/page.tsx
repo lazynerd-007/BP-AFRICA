@@ -173,7 +173,7 @@ export default function ChargesPage() {
 
           <div className="flex justify-center">
             {/* MOMO Collection MAX CHARGE CAP */}
-            <Card className="w-full max-w-2xl">
+            <Card className="w-full max-w-lg">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <IconDeviceMobile className="h-5 w-5" />
