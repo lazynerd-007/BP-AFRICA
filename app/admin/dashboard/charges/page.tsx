@@ -1,14 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { IconWallet, IconDeviceMobile, IconBuildingBank, IconSettings, IconDeviceFloppy, IconX } from "@tabler/icons-react"
+import { IconWallet, IconDeviceMobile, IconBuildingBank } from "@tabler/icons-react"
 import { useCurrency } from "@/lib/currency-context"
 import { useErrorHandler } from "@/hooks/use-error-handler"
 import ErrorBoundary, { PageErrorFallback } from "@/components/error-boundary"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
   ChargeCard,
   ChargesData,
