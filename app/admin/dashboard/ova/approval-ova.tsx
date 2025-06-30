@@ -149,7 +149,7 @@ interface ApprovalOVAProps {
   selectedProvider?: string;
 }
 
-export function ApprovalOVA({ selectedProvider }: ApprovalOVAProps) {
+export function ApprovalOVA({ selectedProvider: _selectedProvider }: ApprovalOVAProps) {
   const { currency } = useCurrency();
   
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);

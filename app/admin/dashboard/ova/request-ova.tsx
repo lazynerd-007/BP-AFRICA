@@ -82,7 +82,7 @@ interface RequestOVAProps {
   selectedProvider?: string;
 }
 
-export function RequestOVA({ selectedProvider }: RequestOVAProps) {
+export function RequestOVA({ selectedProvider: _selectedProvider }: RequestOVAProps) {
   const { currency } = useCurrency();
   const { user } = useAuthStore();
   
