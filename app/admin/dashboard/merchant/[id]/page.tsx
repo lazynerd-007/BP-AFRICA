@@ -235,6 +235,7 @@ export default function MerchantDetailPage() {
         accountName: editMerchantData.momoAccountName
       },
       ovaSettings: {
+        ...prev.ovaSettings,
         mtn: editMerchantData.mtnOva,
         airtel: editMerchantData.airtelOva,
         telecel: editMerchantData.telecelOva
