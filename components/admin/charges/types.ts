@@ -5,6 +5,11 @@ export interface ChargeData {
   chargeType: "fixed" | "percentage"
   status: "Active" | "Inactive"
   lastUpdated: string
+  maxChargeCap?: {
+    mtn?: number
+    telecel?: number
+    airtelTigo?: number
+  }
 }
 
 export interface ChargeFormData {
@@ -13,6 +18,11 @@ export interface ChargeFormData {
   cap: number
   chargeType: "fixed" | "percentage"
   status: "Active" | "Inactive"
+  maxChargeCap?: {
+    mtn?: number
+    telecel?: number
+    airtelTigo?: number
+  }
 }
 
 export interface ChargeCardProps {
@@ -31,6 +41,8 @@ export interface ChargesData {
   walletToWallet: ChargeData
   momoSettlement: ChargeData
   bankSettlement: ChargeData
+  momoPayout: ChargeData
+  bankPayout: ChargeData
 }
 
 // Mock data for current active charges (only one per settlement type)
@@ -58,5 +70,31 @@ export const mockCharges: ChargesData = {
     chargeType: "percentage",
     status: "Active",
     lastUpdated: "2024-01-10"
+  },
+  momoPayout: {
+    amount: 3.00,
+    percentage: 0.5,
+    cap: 12.00,
+    chargeType: "percentage",
+    status: "Active",
+    lastUpdated: "2024-01-15",
+    maxChargeCap: {
+      mtn: 50.00,
+      telecel: 45.00,
+      airtelTigo: 40.00
+    }
+  },
+  bankPayout: {
+    amount: 8.00,
+    percentage: 1.2,
+    cap: 25.00,
+    chargeType: "percentage",
+    status: "Active",
+    lastUpdated: "2024-01-15",
+    maxChargeCap: {
+      mtn: 60.00,
+      telecel: 55.00,
+      airtelTigo: 50.00
+    }
   }
 } 

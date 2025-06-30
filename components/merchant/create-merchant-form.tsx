@@ -52,9 +52,6 @@ const formSchema = z.object({
   mtn: z.string().optional(),
   airtel: z.string().optional(),
   telecel: z.string().optional(),
-  mtnMaxChargeCap: z.string().optional(),
-  telecelMaxChargeCap: z.string().optional(),
-  airtelTigoMaxChargeCap: z.string().optional(),
   
   // User Details
   firstName: z.string().min(2, { message: "First name is required" }),
@@ -96,9 +93,6 @@ export function CreateMerchant() {
       mtn: "",
       airtel: "",
       telecel: "",
-      mtnMaxChargeCap: "",
-      telecelMaxChargeCap: "",
-      airtelTigoMaxChargeCap: "",
       firstName: "",
       lastName: "",
       email: "",
@@ -230,32 +224,6 @@ export function CreateMerchant() {
                         <FormControl>
                           <Input placeholder="" {...field} />
                         </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="settlementFrequency"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Settlement Frequency</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="daily">Daily</SelectItem>
-                            <SelectItem value="weekly">Weekly</SelectItem>
-                            <SelectItem value="monthly">Monthly</SelectItem>
-                          </SelectContent>
-                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -534,53 +502,7 @@ export function CreateMerchant() {
                   />
                 </div>
 
-                {/* MAX CHARGE CAP Section */}
-                <div className="mt-6">
-                  <h4 className="text-sm font-medium text-center mb-4 text-muted-foreground">MAX CHARGE CAP</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
-                    <FormField
-                      control={form.control}
-                      name="mtnMaxChargeCap"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>MTN Max Charge Cap</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter amount" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="telecelMaxChargeCap"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>TELECEL Max Charge Cap</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter amount" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="airtelTigoMaxChargeCap"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>AIRTELTIGO Max Charge Cap</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter amount" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
+
               </div>
               
               <Separator />
@@ -639,6 +561,32 @@ export function CreateMerchant() {
               <div>
                 <h3 className="text-base font-medium text-center mb-4 text-muted-foreground">Settlement Details</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
+                  <FormField
+                    control={form.control}
+                    name="settlementFrequency"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Settlement Frequency</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="daily">Daily</SelectItem>
+                            <SelectItem value="weekly">Weekly</SelectItem>
+                            <SelectItem value="monthly">Monthly</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
                   <FormField
                     control={form.control}
                     name="merchantBank"

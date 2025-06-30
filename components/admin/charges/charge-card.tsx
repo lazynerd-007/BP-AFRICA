@@ -26,16 +26,29 @@ export function ChargeCard({
     percentage: charge.percentage.toString(),
     cap: charge.cap.toString(),
     chargeType: charge.chargeType,
-    status: charge.status
+    status: charge.status,
+    maxChargeCap: {
+      mtn: charge.maxChargeCap?.mtn?.toString() || "",
+      telecel: charge.maxChargeCap?.telecel?.toString() || "",
+      airtelTigo: charge.maxChargeCap?.airtelTigo?.toString() || ""
+    }
   })
 
   const handleSubmit = () => {
+    const hasChargeCap = chargeType === "momoPayout" || chargeType === "bankPayout"
     onSave(chargeType, {
       amount: parseFloat(formData.amount),
       percentage: parseFloat(formData.percentage),
       cap: parseFloat(formData.cap),
       chargeType: formData.chargeType,
-      status: formData.status
+      status: formData.status,
+      ...(hasChargeCap && {
+        maxChargeCap: {
+          mtn: formData.maxChargeCap.mtn ? parseFloat(formData.maxChargeCap.mtn) : undefined,
+          telecel: formData.maxChargeCap.telecel ? parseFloat(formData.maxChargeCap.telecel) : undefined,
+          airtelTigo: formData.maxChargeCap.airtelTigo ? parseFloat(formData.maxChargeCap.airtelTigo) : undefined
+        }
+      })
     })
   }
 
@@ -93,6 +106,27 @@ export function ChargeCard({
               </div>
             </div>
             
+            {/* MAX CHARGE CAP for payout charges */}
+            {(chargeType === "momoPayout" || chargeType === "bankPayout") && charge.maxChargeCap && (
+              <div className="space-y-2 border-t pt-4">
+                <Label className="text-sm text-muted-foreground">MAX CHARGE CAP</Label>
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div>
+                    <span className="text-muted-foreground">MTN:</span>
+                    <p className="font-medium">{currency}{charge.maxChargeCap.mtn?.toFixed(2) || "N/A"}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">TELECEL:</span>
+                    <p className="font-medium">{currency}{charge.maxChargeCap.telecel?.toFixed(2) || "N/A"}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">AIRTELTIGO:</span>
+                    <p className="font-medium">{currency}{charge.maxChargeCap.airtelTigo?.toFixed(2) || "N/A"}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div>
               <Label className="text-sm text-muted-foreground">Last Updated</Label>
               <p className="text-sm">{charge.lastUpdated}</p>
@@ -174,6 +208,60 @@ export function ChargeCard({
                 </SelectContent>
               </Select>
             </div>
+
+            {/* MAX CHARGE CAP for payout charges */}
+            {(chargeType === "momoPayout" || chargeType === "bankPayout") && (
+              <div className="space-y-4 border-t pt-4">
+                <Label className="text-sm font-medium">MAX CHARGE CAP</Label>
+                <div className="grid grid-cols-1 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor={`${chargeType}-mtn-cap`}>MTN Max Charge ({currency})</Label>
+                    <Input
+                      id={`${chargeType}-mtn-cap`}
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={formData.maxChargeCap.mtn}
+                      onChange={(e) => setFormData({
+                        ...formData, 
+                        maxChargeCap: { ...formData.maxChargeCap, mtn: e.target.value }
+                      })}
+                      placeholder="MTN maximum charge"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor={`${chargeType}-telecel-cap`}>TELECEL Max Charge ({currency})</Label>
+                    <Input
+                      id={`${chargeType}-telecel-cap`}
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={formData.maxChargeCap.telecel}
+                      onChange={(e) => setFormData({
+                        ...formData, 
+                        maxChargeCap: { ...formData.maxChargeCap, telecel: e.target.value }
+                      })}
+                      placeholder="TELECEL maximum charge"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor={`${chargeType}-airteltigo-cap`}>AIRTELTIGO Max Charge ({currency})</Label>
+                    <Input
+                      id={`${chargeType}-airteltigo-cap`}
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={formData.maxChargeCap.airtelTigo}
+                      onChange={(e) => setFormData({
+                        ...formData, 
+                        maxChargeCap: { ...formData.maxChargeCap, airtelTigo: e.target.value }
+                      })}
+                      placeholder="AIRTELTIGO maximum charge"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
             
             <div className="flex justify-end space-x-2 pt-4">
               <Button variant="outline" onClick={onCancel}>

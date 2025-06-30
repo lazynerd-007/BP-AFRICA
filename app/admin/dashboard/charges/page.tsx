@@ -58,7 +58,7 @@ export default function ChargesPage() {
         <ChargeStatsCards charges={charges} currency={currency} />
 
         {/* Charge Configuration Cards */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-6">
           {/* Wallet to Wallet Charges */}
           <ChargeCard
             title="Wallet to Wallet Charges"
@@ -92,6 +92,32 @@ export default function ChargesPage() {
             charge={charges.bankSettlement}
             chargeType="bankSettlement"
             isEditing={editingCharge === "bankSettlement"}
+            onEdit={handleEdit}
+            onCancel={handleCancel}
+            onSave={handleSave}
+            currency={currency}
+          />
+
+          {/* MOMO Payout Charges */}
+          <ChargeCard
+            title="MOMO Payout Charges"
+            icon={<IconDeviceMobile className="h-5 w-5" />}
+            charge={charges.momoPayout}
+            chargeType="momoPayout"
+            isEditing={editingCharge === "momoPayout"}
+            onEdit={handleEdit}
+            onCancel={handleCancel}
+            onSave={handleSave}
+            currency={currency}
+          />
+
+          {/* Bank Payout Charges */}
+          <ChargeCard
+            title="Bank Payout Charges"
+            icon={<IconBuildingBank className="h-5 w-5" />}
+            charge={charges.bankPayout}
+            chargeType="bankPayout"
+            isEditing={editingCharge === "bankPayout"}
             onEdit={handleEdit}
             onCancel={handleCancel}
             onSave={handleSave}

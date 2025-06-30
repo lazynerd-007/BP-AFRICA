@@ -102,7 +102,19 @@ export default function DisbursementPage() {
   const [selectedBank, setSelectedBank] = useState<typeof mockPartnerBanks[0] | null>(null)
   const [amount, setAmount] = useState("")
   const [isProcessing, setIsProcessing] = useState(false)
-  const [ovaBalance] = useState(250000.00) // Mock OVA balance
+  const [selectedOva, setSelectedOva] = useState("payout") // Selected OVA account
+
+  // Mock OVA accounts
+  const ovaAccounts = [
+    { id: "payout", name: "Payout OVA", balance: 250000.00 },
+    { id: "collection", name: "Collection OVA", balance: 180000.00 },
+    { id: "settlement", name: "Settlement OVA", balance: 95000.00 }
+  ]
+
+  const getCurrentOvaBalance = () => {
+    const account = ovaAccounts.find(acc => acc.id === selectedOva)
+    return account?.balance || 0
+  }
 
   const handleSendDisbursement = () => {
     if (!selectedBank) {
@@ -115,8 +127,8 @@ export default function DisbursementPage() {
       return
     }
     
-    if (parseFloat(amount) > ovaBalance) {
-      toast.error("Insufficient OVA balance")
+    if (parseFloat(amount) > getCurrentOvaBalance()) {
+      toast.error(`Insufficient ${ovaAccounts.find(acc => acc.id === selectedOva)?.name || "OVA"} balance`)
       return
     }
     
@@ -159,12 +171,37 @@ export default function DisbursementPage() {
     <div className="px-4 lg:px-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-         
-          <p className="text-muted-foreground">Disburse funds from Payout OVA to Bank MOMO wallets</p>
+          <h1 className="text-2xl font-bold">Disbursement</h1>
+          <p className="text-muted-foreground">Disburse funds from OVA to Bank MOMO wallets</p>
         </div>
-        <div className="text-right">
-          <p className="text-sm text-muted-foreground">Payout OVA Balance</p>
-          <p className="text-lg font-bold text-green-600">{formatAmount(ovaBalance)}</p>
+        <div className="text-right space-y-3">
+          <div>
+            <Label className="text-sm text-muted-foreground">Select OVA Account</Label>
+            <Select
+              value={selectedOva}
+              onValueChange={setSelectedOva}
+            >
+              <SelectTrigger className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {ovaAccounts.map((account) => (
+                  <SelectItem key={account.id} value={account.id}>
+                    <div className="flex justify-between w-full">
+                      <span>{account.name}</span>
+                      <span className="ml-2 text-muted-foreground">
+                        {formatAmount(account.balance)}
+                      </span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">Selected OVA Balance</p>
+            <p className="text-lg font-bold text-green-600">{formatAmount(getCurrentOvaBalance())}</p>
+          </div>
         </div>
       </div>
 
@@ -222,7 +259,7 @@ export default function DisbursementPage() {
         <CardHeader>
           <CardTitle>Send Disbursement</CardTitle>
           <CardDescription>
-            Select a bank and enter the amount to Disburse from Payout OVA
+            Select a bank and enter the amount to disburse from {ovaAccounts.find(acc => acc.id === selectedOva)?.name || "selected OVA"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -292,13 +329,13 @@ export default function DisbursementPage() {
                   type="number"
                   step="0.01"
                   min="0"
-                  max={ovaBalance}
+                  max={getCurrentOvaBalance()}
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="Enter amount to send"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Available balance: {formatAmount(ovaBalance)}
+                  Available balance: {formatAmount(getCurrentOvaBalance())}
                 </p>
               </div>
 
