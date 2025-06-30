@@ -66,11 +66,7 @@ const formSchema = z.object({
   lastName: z.string().min(2, { message: "Last name is required" }),
   email: z.string().email({ message: "Valid email is required" }),
   
-  // Additional Settings
-  inheritPartnerBank: z.boolean().default(true),
-  partnerBank: z.string().optional(),
-  organizationType: z.string({ required_error: "Organization type is required" }),
-  merchantCategory: z.string({ required_error: "Merchant category is required" }),
+
 }).refine(
   (data) => {
     if (!data.inheritSurcharge) {
@@ -99,7 +95,7 @@ export function CreateSubMerchant() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [inheritSurcharge, setInheritSurcharge] = useState(true);
   const [useParentSettlement, setUseParentSettlement] = useState(true);
-  const [inheritPartnerBank, setInheritPartnerBank] = useState(true);
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema) as Resolver<z.infer<typeof formSchema>>,
@@ -124,10 +120,6 @@ export function CreateSubMerchant() {
       firstName: "",
       lastName: "",
       email: "",
-      inheritPartnerBank: true,
-      partnerBank: "",
-      organizationType: "",
-      merchantCategory: "",
     },
   });
 
@@ -531,125 +523,7 @@ export function CreateSubMerchant() {
                 </div>
               </div>
               
-              <Separator />
-              
-              {/* Additional Settings */}
-              <div>
-                <h3 className="text-base font-medium text-center mb-4 text-muted-foreground">Additional Settings</h3>
-                
-                <FormField
-                  control={form.control}
-                  name="inheritPartnerBank"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 mb-4">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={(checked) => {
-                            field.onChange(checked);
-                            setInheritPartnerBank(!!checked);
-                          }}
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>Use parent merchant&apos;s partner bank</FormLabel>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-                
-                {!inheritPartnerBank && (
-                  <div className="grid grid-cols-1 mb-4">
-                    <FormField
-                      control={form.control}
-                      name="partnerBank"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Partner Bank</FormLabel>
-                          <Select 
-                            onValueChange={field.onChange} 
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select partner bank" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="gcb">Ghana Commercial Bank</SelectItem>
-                              <SelectItem value="ecobank">Ecobank Ghana</SelectItem>
-                              <SelectItem value="stanbic">Stanbic Bank Ghana</SelectItem>
-                              <SelectItem value="absa">Absa Bank Ghana</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                )}
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                  <FormField
-                    control={form.control}
-                    name="organizationType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Organization Type</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select organization type" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="sole">Sole Proprietorship</SelectItem>
-                            <SelectItem value="limited">Limited Liability Company</SelectItem>
-                            <SelectItem value="partnership">Partnership</SelectItem>
-                            <SelectItem value="corporation">Corporation</SelectItem>
-                            <SelectItem value="ngo">NGO/Non-Profit</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="merchantCategory"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Merchant Category</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select merchant category" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="retail">Retail</SelectItem>
-                            <SelectItem value="food">Food and Beverage</SelectItem>
-                            <SelectItem value="travel">Travel and Tourism</SelectItem>
-                            <SelectItem value="health">Healthcare</SelectItem>
-                            <SelectItem value="education">Education</SelectItem>
-                            <SelectItem value="services">Professional Services</SelectItem>
-                            <SelectItem value="technology">Technology</SelectItem>
-                            <SelectItem value="entertainment">Entertainment</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
+
               
               <div className="flex justify-end">
                 <Button 
