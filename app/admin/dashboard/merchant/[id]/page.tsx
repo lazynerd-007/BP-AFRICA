@@ -29,6 +29,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Link from "next/link";
 import { IconArrowLeft, IconEdit, IconBan, IconPlayerPause, IconPlayerPlay } from "@tabler/icons-react";
 
@@ -63,9 +64,9 @@ const merchantData = {
     enabled: true,
     accountNumber: "9876543210",
     balanceLimit: "10000.00",
-    mtn: "1234567890",
-    airtel: "0987654321", 
-    telecel: "1122334455"
+    mtn: "mtn-ova-001",
+    airtel: "airtel-ova-001", 
+    telecel: "telecel-ova-001"
   },
   settlementFrequency: "daily",
   momoDetails: {
@@ -150,9 +151,9 @@ export default function MerchantDetailPage() {
         momoProvider: merchantData.momoDetails?.provider || 'mtn',
         momoNumber: merchantData.momoDetails?.number || '024 123 4567',
         momoAccountName: merchantData.momoDetails?.accountName || 'John Doe',
-        mtnOva: merchantData.ovaSettings?.mtn || '1234567890',
-        airtelOva: merchantData.ovaSettings?.airtel || '0987654321',
-        telecelOva: merchantData.ovaSettings?.telecel || '1122334455'
+        mtnOva: merchantData.ovaSettings?.mtn || 'mtn-ova-001',
+        airtelOva: merchantData.ovaSettings?.airtel || 'airtel-ova-001',
+        telecelOva: merchantData.ovaSettings?.telecel || 'telecel-ova-001'
       });
     }
   }, [params.id]);
@@ -774,30 +775,54 @@ export default function MerchantDetailPage() {
               <div className="grid grid-cols-1 gap-3">
                 <div className="space-y-2">
                   <Label htmlFor="mtnOva">MTN OVA</Label>
-                  <Input 
-                    id="mtnOva" 
+                  <Select 
                     value={editMerchantData.mtnOva} 
-                    onChange={(e) => handleEditMerchantChange('mtnOva', e.target.value)}
-                    placeholder="MTN OVA Number"
-                  />
+                    onValueChange={(value) => handleEditMerchantChange('mtnOva', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select MTN OVA" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="mtn-ova-001">MTN OVA 001 - 1234567890</SelectItem>
+                      <SelectItem value="mtn-ova-002">MTN OVA 002 - 1234567891</SelectItem>
+                      <SelectItem value="mtn-ova-003">MTN OVA 003 - 1234567892</SelectItem>
+                      <SelectItem value="mtn-ova-004">MTN OVA 004 - 1234567893</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="airtelOva">Airtel OVA</Label>
-                  <Input 
-                    id="airtelOva" 
+                  <Select 
                     value={editMerchantData.airtelOva} 
-                    onChange={(e) => handleEditMerchantChange('airtelOva', e.target.value)}
-                    placeholder="Airtel OVA Number"
-                  />
+                    onValueChange={(value) => handleEditMerchantChange('airtelOva', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Airtel OVA" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="airtel-ova-001">Airtel OVA 001 - 0987654321</SelectItem>
+                      <SelectItem value="airtel-ova-002">Airtel OVA 002 - 0987654322</SelectItem>
+                      <SelectItem value="airtel-ova-003">Airtel OVA 003 - 0987654323</SelectItem>
+                      <SelectItem value="airtel-ova-004">Airtel OVA 004 - 0987654324</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="telecelOva">Telecel OVA</Label>
-                  <Input 
-                    id="telecelOva" 
+                  <Select 
                     value={editMerchantData.telecelOva} 
-                    onChange={(e) => handleEditMerchantChange('telecelOva', e.target.value)}
-                    placeholder="Telecel OVA Number"
-                  />
+                    onValueChange={(value) => handleEditMerchantChange('telecelOva', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Telecel OVA" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="telecel-ova-001">Telecel OVA 001 - 1122334455</SelectItem>
+                      <SelectItem value="telecel-ova-002">Telecel OVA 002 - 1122334456</SelectItem>
+                      <SelectItem value="telecel-ova-003">Telecel OVA 003 - 1122334457</SelectItem>
+                      <SelectItem value="telecel-ova-004">Telecel OVA 004 - 1122334458</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </div>
