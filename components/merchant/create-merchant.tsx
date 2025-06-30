@@ -39,7 +39,6 @@ const formSchema = z.object({
   surchargeOn: z.string({ required_error: "Surcharge setting is required" }),
   partnerBank: z.string({ required_error: "Partner bank is required" }),
   terminalId: z.string().optional(),
-  subMerchantSettlementAccount: z.string().optional(),
   phoneNumber: z.string().min(10, { message: "Valid phone number is required" }),
   
   // Surcharge Details
@@ -52,13 +51,16 @@ const formSchema = z.object({
   mtn: z.string().optional(),
   airtel: z.string().optional(),
   telecel: z.string().optional(),
+  mtnMaxChargeCap: z.string().optional(),
+  telecelMaxChargeCap: z.string().optional(),
+  airtelTigoMaxChargeCap: z.string().optional(),
   
   // User Details
   firstName: z.string().min(2, { message: "First name is required" }),
   lastName: z.string().min(2, { message: "Last name is required" }),
   email: z.string().email({ message: "Valid email is required" }),
   
-  // Bank Details
+  // Settlement Details (formerly Bank Details)
   merchantBank: z.string({ required_error: "Merchant bank is required" }),
   branch: z.string({ required_error: "Branch is required" }),
   accountType: z.string({ required_error: "Account type is required" }),
@@ -84,7 +86,6 @@ export function CreateMerchant() {
       surchargeOn: "",
       partnerBank: "",
       terminalId: "",
-      subMerchantSettlementAccount: "",
       phoneNumber: "",
       totalSurcharge: "1.5",
       merchantSurcharge: "0",
@@ -93,6 +94,9 @@ export function CreateMerchant() {
       mtn: "",
       airtel: "",
       telecel: "",
+      mtnMaxChargeCap: "",
+      telecelMaxChargeCap: "",
+      airtelTigoMaxChargeCap: "",
       firstName: "",
       lastName: "",
       email: "",
@@ -333,31 +337,6 @@ export function CreateMerchant() {
                   
                   <FormField
                     control={form.control}
-                    name="subMerchantSettlementAccount"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>SubMerchant Settlement Account</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="account1">Account 1</SelectItem>
-                            <SelectItem value="account2">Account 2</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
                     name="phoneNumber"
                     render={({ field }) => (
                       <FormItem>
@@ -524,6 +503,54 @@ export function CreateMerchant() {
                     )}
                   />
                 </div>
+
+                {/* MAX CHARGE CAP Section */}
+                <div className="mt-6">
+                  <h4 className="text-sm font-medium text-center mb-4 text-muted-foreground">MAX CHARGE CAP</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
+                    <FormField
+                      control={form.control}
+                      name="mtnMaxChargeCap"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>MTN Max Charge Cap</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter amount" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="telecelMaxChargeCap"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>TELECEL Max Charge Cap</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter amount" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="airtelTigoMaxChargeCap"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>AIRTELTIGO Max Charge Cap</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter amount" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
               </div>
               
               <Separator />
@@ -578,9 +605,9 @@ export function CreateMerchant() {
               
               <Separator />
               
-              {/* Bank Details Section */}
+              {/* Settlement Details Section */}
               <div>
-                <h3 className="text-base font-medium text-center mb-4 text-muted-foreground">Bank Details</h3>
+                <h3 className="text-base font-medium text-center mb-4 text-muted-foreground">Settlement Details</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
                   <FormField
                     control={form.control}
