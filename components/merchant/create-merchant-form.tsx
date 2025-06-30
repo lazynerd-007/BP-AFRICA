@@ -41,6 +41,8 @@ const formSchema = z.object({
   bdm: z.string().optional(),
   terminalId: z.string().optional(),
   phoneNumber: z.string().min(10, { message: "Valid phone number is required" }),
+  organizationType: z.string({ required_error: "Organization type is required" }),
+  merchantCategory: z.string({ required_error: "Merchant category is required" }),
   
   // Surcharge Details
   totalSurcharge: z.string().min(1, { message: "Total surcharge is required" }),
@@ -58,18 +60,37 @@ const formSchema = z.object({
   lastName: z.string().min(2, { message: "Last name is required" }),
   email: z.string().email({ message: "Valid email is required" }),
   
-  // Settlement Details (formerly Bank Details)
-  merchantBank: z.string({ required_error: "Merchant bank is required" }),
-  branch: z.string({ required_error: "Branch is required" }),
-  accountType: z.string({ required_error: "Account type is required" }),
-  accountNumber: z.string().min(1, { message: "Account number is required" }),
-  accountName: z.string().min(1, { message: "Account name is required" }),
-  organizationType: z.string({ required_error: "Organization type is required" }),
-  merchantCategory: z.string({ required_error: "Merchant category is required" }),
-});
+  // Settlement Details
+  settlementType: z.string({ required_error: "Settlement type is required" }),
+  // Bank Settlement fields
+  merchantBank: z.string().optional(),
+  branch: z.string().optional(),
+  accountType: z.string().optional(),
+  accountNumber: z.string().optional(),
+  accountName: z.string().optional(),
+  // MOMO Settlement fields
+  momoProvider: z.string().optional(),
+  momoNumber: z.string().optional(),
+  momoAccountName: z.string().optional(),
+}).refine(
+  (data) => {
+    if (data.settlementType === "bank") {
+      return !!data.merchantBank && !!data.branch && !!data.accountType && !!data.accountNumber && !!data.accountName;
+    }
+    if (data.settlementType === "momo") {
+      return !!data.momoProvider && !!data.momoNumber && !!data.momoAccountName;
+    }
+    return true;
+  },
+  {
+    message: "Settlement details are required based on selected settlement type",
+    path: ["settlementType"],
+  }
+);
 
 export function CreateMerchant() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [settlementType, setSettlementType] = useState<string>("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema) as Resolver<z.infer<typeof formSchema>>,
@@ -86,6 +107,8 @@ export function CreateMerchant() {
       bdm: "",
       terminalId: "",
       phoneNumber: "",
+      organizationType: "",
+      merchantCategory: "",
       totalSurcharge: "1.5",
       merchantSurcharge: "0",
       customerSurcharge: "0",
@@ -96,13 +119,15 @@ export function CreateMerchant() {
       firstName: "",
       lastName: "",
       email: "",
+      settlementType: "",
       merchantBank: "",
       branch: "",
       accountType: "",
       accountNumber: "",
       accountName: "",
-      organizationType: "",
-      merchantCategory: "",
+      momoProvider: "",
+      momoNumber: "",
+      momoAccountName: "",
     },
   });
 
@@ -224,6 +249,59 @@ export function CreateMerchant() {
                         <FormControl>
                           <Input placeholder="" {...field} />
                         </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="organizationType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Organization Type</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="business">Business</SelectItem>
+                            <SelectItem value="individual">Individual</SelectItem>
+                            <SelectItem value="ngo">NGO</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="merchantCategory"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Merchant Category</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="retail">Retail</SelectItem>
+                            <SelectItem value="food">Food & Beverage</SelectItem>
+                            <SelectItem value="education">Education</SelectItem>
+                            <SelectItem value="healthcare">Healthcare</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -408,11 +486,10 @@ export function CreateMerchant() {
                           <Checkbox
                             checked={field.value}
                             onCheckedChange={field.onChange}
-                            className="data-[state=checked]:bg-blue-500"
                           />
                         </FormControl>
-                        <div className="leading-none pt-0.5">
-                          <FormLabel>No Surcharge Cap applied</FormLabel>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>No Surcharge Cap</FormLabel>
                         </div>
                       </FormItem>
                     )}
@@ -438,12 +515,12 @@ export function CreateMerchant() {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="" />
+                              <SelectValue placeholder="Select MTN OVA" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="option1">Option 1</SelectItem>
-                            <SelectItem value="option2">Option 2</SelectItem>
+                            <SelectItem value="mtn1">MTN OVA 1</SelectItem>
+                            <SelectItem value="mtn2">MTN OVA 2</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -463,12 +540,12 @@ export function CreateMerchant() {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="" />
+                              <SelectValue placeholder="Select Airtel OVA" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="option1">Option 1</SelectItem>
-                            <SelectItem value="option2">Option 2</SelectItem>
+                            <SelectItem value="airtel1">Airtel OVA 1</SelectItem>
+                            <SelectItem value="airtel2">Airtel OVA 2</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -488,12 +565,12 @@ export function CreateMerchant() {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="" />
+                              <SelectValue placeholder="Select Telecel OVA" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="option1">Option 1</SelectItem>
-                            <SelectItem value="option2">Option 2</SelectItem>
+                            <SelectItem value="telecel1">Telecel OVA 1</SelectItem>
+                            <SelectItem value="telecel2">Telecel OVA 2</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -501,8 +578,6 @@ export function CreateMerchant() {
                     )}
                   />
                 </div>
-
-
               </div>
               
               <Separator />
@@ -560,189 +635,225 @@ export function CreateMerchant() {
               {/* Settlement Details Section */}
               <div>
                 <h3 className="text-base font-medium text-center mb-4 text-muted-foreground">Settlement Details</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
-                  <FormField
-                    control={form.control}
-                    name="settlementFrequency"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Settlement Frequency</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="daily">Daily</SelectItem>
-                            <SelectItem value="weekly">Weekly</SelectItem>
-                            <SelectItem value="monthly">Monthly</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="merchantBank"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Merchant Bank</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="bank1">Bank 1</SelectItem>
-                            <SelectItem value="bank2">Bank 2</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="branch"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Branch</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="branch1">Branch 1</SelectItem>
-                            <SelectItem value="branch2">Branch 2</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="accountType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Account Type</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="savings">Savings</SelectItem>
-                            <SelectItem value="current">Current</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="accountNumber"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Account Number</FormLabel>
-                        <FormControl>
-                          <Input placeholder="" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="accountName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Account Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="organizationType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Organization Type</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="business">Business</SelectItem>
-                            <SelectItem value="individual">Individual</SelectItem>
-                            <SelectItem value="ngo">NGO</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="mt-4">
-                  <FormField
-                    control={form.control}
-                    name="merchantCategory"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Merchant Category</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="retail">Retail</SelectItem>
-                            <SelectItem value="food">Food & Beverage</SelectItem>
-                            <SelectItem value="education">Education</SelectItem>
-                            <SelectItem value="healthcare">Healthcare</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                    <FormField
+                      control={form.control}
+                      name="settlementFrequency"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Settlement Frequency</FormLabel>
+                          <Select 
+                            onValueChange={field.onChange} 
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="daily">Daily</SelectItem>
+                              <SelectItem value="weekly">Weekly</SelectItem>
+                              <SelectItem value="monthly">Monthly</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="settlementType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Settlement Type</FormLabel>
+                          <Select 
+                            onValueChange={(value) => {
+                              field.onChange(value);
+                              setSettlementType(value);
+                            }} 
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select settlement type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="momo">MOMO Settlement</SelectItem>
+                              <SelectItem value="bank">BANK Settlement</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Dynamic Settlement Forms */}
+                  {settlementType === "bank" && (
+                    <div className="mt-6">
+                      <h4 className="text-sm font-medium mb-4 text-muted-foreground">Bank Settlement Details</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
+                        <FormField
+                          control={form.control}
+                          name="merchantBank"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Merchant Bank</FormLabel>
+                              <Select 
+                                onValueChange={field.onChange} 
+                                defaultValue={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select bank" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="gcb">Ghana Commercial Bank</SelectItem>
+                                  <SelectItem value="ecobank">Ecobank Ghana</SelectItem>
+                                  <SelectItem value="stanbic">Stanbic Bank Ghana</SelectItem>
+                                  <SelectItem value="absa">Absa Bank Ghana</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="branch"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Branch</FormLabel>
+                              <FormControl>
+                                <Input placeholder="" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="accountType"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Account Type</FormLabel>
+                              <Select 
+                                onValueChange={field.onChange} 
+                                defaultValue={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="savings">Savings</SelectItem>
+                                  <SelectItem value="current">Current</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="accountNumber"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Account Number</FormLabel>
+                              <FormControl>
+                                <Input placeholder="" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="accountName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Account Name</FormLabel>
+                              <FormControl>
+                                <Input placeholder="" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {settlementType === "momo" && (
+                    <div className="mt-6">
+                      <h4 className="text-sm font-medium mb-4 text-muted-foreground">MOMO Settlement Details</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
+                        <FormField
+                          control={form.control}
+                          name="momoProvider"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>MOMO Provider</FormLabel>
+                              <Select 
+                                onValueChange={field.onChange} 
+                                defaultValue={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select provider" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="mtn">MTN Mobile Money</SelectItem>
+                                  <SelectItem value="telecel">Telecel Cash</SelectItem>
+                                  <SelectItem value="airteltigo">AirtelTigo Money</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="momoNumber"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>MOMO Number</FormLabel>
+                              <FormControl>
+                                <Input placeholder="e.g., 0244123456" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="momoAccountName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>MOMO Account Name</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Account holder name" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               

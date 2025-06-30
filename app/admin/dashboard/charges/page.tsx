@@ -103,46 +103,7 @@ export default function ChargesPage() {
         <ChargeStatsCards charges={charges} currency={currency} />
 
         {/* Charge Configuration Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-6">
-          {/* Wallet to Wallet Charges */}
-          <ChargeCard
-            title="Wallet to Wallet Charges"
-            icon={<IconWallet className="h-5 w-5" />}
-            charge={charges.walletToWallet}
-            chargeType="walletToWallet"
-            isEditing={editingCharge === "walletToWallet"}
-            onEdit={handleEdit}
-            onCancel={handleCancel}
-            onSave={handleSave}
-            currency={currency}
-          />
-
-          {/* MOMO Settlement Charges */}
-          <ChargeCard
-            title="MOMO Settlement Charges"
-            icon={<IconDeviceMobile className="h-5 w-5" />}
-            charge={charges.momoSettlement}
-            chargeType="momoSettlement"
-            isEditing={editingCharge === "momoSettlement"}
-            onEdit={handleEdit}
-            onCancel={handleCancel}
-            onSave={handleSave}
-            currency={currency}
-          />
-
-          {/* Bank Settlement Charges */}
-          <ChargeCard
-            title="Bank Settlement Charges"
-            icon={<IconBuildingBank className="h-5 w-5" />}
-            charge={charges.bankSettlement}
-            chargeType="bankSettlement"
-            isEditing={editingCharge === "bankSettlement"}
-            onEdit={handleEdit}
-            onCancel={handleCancel}
-            onSave={handleSave}
-            currency={currency}
-          />
-
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* MOMO Payout Charges */}
           <ChargeCard
             title="MOMO Payout Charges"
