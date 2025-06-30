@@ -101,7 +101,14 @@ export default function MerchantDetailPage() {
     surchargeTotal: '',
     surchargeMerchant: '',
     surchargeCustomer: '',
-    surchargeCap: ''
+    surchargeCap: '',
+    settlementFrequency: '',
+    momoProvider: '',
+    momoNumber: '',
+    momoAccountName: '',
+    mtnOva: '',
+    airtelOva: '',
+    telecelOva: ''
   });
   const [newUser, setNewUser] = useState({
     name: '',
@@ -129,7 +136,14 @@ export default function MerchantDetailPage() {
         surchargeTotal: '3.5',
         surchargeMerchant: '1.5',
         surchargeCustomer: '2.0', 
-        surchargeCap: '100'
+        surchargeCap: '100',
+        settlementFrequency: 'daily',
+        momoProvider: 'mtn',
+        momoNumber: '024 123 4567',
+        momoAccountName: 'John Doe',
+        mtnOva: '1234567890',
+        airtelOva: '0987654321',
+        telecelOva: '1122334455'
       });
     }
   }, [params.id]);
@@ -668,6 +682,101 @@ export default function MerchantDetailPage() {
                     min="0" 
                     value={editMerchantData.surchargeCap} 
                     onChange={(e) => handleEditMerchantChange('surchargeCap', e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <Separator />
+            
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium">Settlement Details</h3>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="settlementFrequency">Settlement Frequency</Label>
+                  <select 
+                    id="settlementFrequency" 
+                    className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    value={editMerchantData.settlementFrequency} 
+                    onChange={(e) => handleEditMerchantChange('settlementFrequency', e.target.value)}
+                  >
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <Separator />
+            
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium">MOMO Details</h3>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="momoProvider">MOMO Provider</Label>
+                  <select 
+                    id="momoProvider" 
+                    className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    value={editMerchantData.momoProvider} 
+                    onChange={(e) => handleEditMerchantChange('momoProvider', e.target.value)}
+                  >
+                    <option value="mtn">MTN Mobile Money</option>
+                    <option value="telecel">Telecel Cash</option>
+                    <option value="airteltigo">AirtelTigo Money</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="momoNumber">MOMO Number</Label>
+                  <Input 
+                    id="momoNumber" 
+                    value={editMerchantData.momoNumber} 
+                    onChange={(e) => handleEditMerchantChange('momoNumber', e.target.value)}
+                    placeholder="024 123 4567"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="momoAccountName">MOMO Account Name</Label>
+                  <Input 
+                    id="momoAccountName" 
+                    value={editMerchantData.momoAccountName} 
+                    onChange={(e) => handleEditMerchantChange('momoAccountName', e.target.value)}
+                    placeholder="John Doe"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <Separator />
+            
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium">OVA Selection</h3>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="mtnOva">MTN OVA</Label>
+                  <Input 
+                    id="mtnOva" 
+                    value={editMerchantData.mtnOva} 
+                    onChange={(e) => handleEditMerchantChange('mtnOva', e.target.value)}
+                    placeholder="MTN OVA Number"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="airtelOva">Airtel OVA</Label>
+                  <Input 
+                    id="airtelOva" 
+                    value={editMerchantData.airtelOva} 
+                    onChange={(e) => handleEditMerchantChange('airtelOva', e.target.value)}
+                    placeholder="Airtel OVA Number"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="telecelOva">Telecel OVA</Label>
+                  <Input 
+                    id="telecelOva" 
+                    value={editMerchantData.telecelOva} 
+                    onChange={(e) => handleEditMerchantChange('telecelOva', e.target.value)}
+                    placeholder="Telecel OVA Number"
                   />
                 </div>
               </div>
