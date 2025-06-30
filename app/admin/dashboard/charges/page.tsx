@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { IconWallet, IconDeviceMobile, IconBuildingBank, IconSettings, IconDeviceFloppy, IconX } from "@tabler/icons-react"
+import { IconDeviceMobile, IconBuildingBank, IconSettings, IconDeviceFloppy, IconX } from "@tabler/icons-react"
 import { useCurrency } from "@/lib/currency-context"
 import { useErrorHandler } from "@/hooks/use-error-handler"
 import ErrorBoundary, { PageErrorFallback } from "@/components/error-boundary"

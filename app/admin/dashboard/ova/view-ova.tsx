@@ -74,7 +74,9 @@ interface ViewOVAProps {
   selectedProvider?: string;
 }
 
-export function ViewOVA({ selectedProvider: _selectedProvider }: ViewOVAProps) {
+export function ViewOVA({ selectedProvider }: ViewOVAProps) {
+  // Note: selectedProvider will be used in future implementation
+  void selectedProvider;
   const { currency } = useCurrency();
   const [transactionType, setTransactionType] = useState("all");
   const [showCollectionBalance, setShowCollectionBalance] = useState(false);
