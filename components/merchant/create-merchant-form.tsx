@@ -36,7 +36,11 @@ import {
   IconDeviceMobile,
   IconPhone,
   IconWallet,
-  IconCoins
+  IconCoins,
+  IconId,
+  IconCalendar,
+  IconUpload,
+  IconUserCheck
 } from "@tabler/icons-react";
 import { mockCharges } from "@/components/admin/charges/types";
 import { useCurrency } from "@/lib/currency-context";
@@ -67,10 +71,55 @@ const formSchema = z.object({
   customerSurcharge: z.string().optional(),
   noSurchargeCap: z.boolean().default(false),
   
+  // Custom Charge Fields for all charge types
+  customWalletToWalletAmount: z.string().optional(),
+  customWalletToWalletPercentage: z.string().optional(),
+  customWalletToWalletCap: z.string().optional(),
+  customWalletToWalletType: z.string().optional(),
+  
+  customMomoSettlementAmount: z.string().optional(),
+  customMomoSettlementPercentage: z.string().optional(),
+  customMomoSettlementCap: z.string().optional(),
+  customMomoSettlementType: z.string().optional(),
+  
+  customBankSettlementAmount: z.string().optional(),
+  customBankSettlementPercentage: z.string().optional(),
+  customBankSettlementCap: z.string().optional(),
+  customBankSettlementType: z.string().optional(),
+  
+  customMomoPayoutAmount: z.string().optional(),
+  customMomoPayoutPercentage: z.string().optional(),
+  customMomoPayoutCap: z.string().optional(),
+  customMomoPayoutType: z.string().optional(),
+  
+  customBankPayoutAmount: z.string().optional(),
+  customBankPayoutPercentage: z.string().optional(),
+  customBankPayoutCap: z.string().optional(),
+  customBankPayoutType: z.string().optional(),
+  
+  customBankCollectionAmount: z.string().optional(),
+  customBankCollectionPercentage: z.string().optional(),
+  customBankCollectionCap: z.string().optional(),
+  customBankCollectionType: z.string().optional(),
+  
+  customMomoCollectionAmount: z.string().optional(),
+  customMomoCollectionPercentage: z.string().optional(),
+  customMomoCollectionCap: z.string().optional(),
+  customMomoCollectionType: z.string().optional(),
+  
   // OVA Settings
   mtn: z.string().optional(),
   airtel: z.string().optional(),
   telecel: z.string().optional(),
+  
+  // KYC Information
+  ssnNumber: z.string().optional(),
+  ghanaIdNumber: z.string().min(1, { message: "Ghana ID number is required" }),
+  frontIdCard: z.any().optional(), // File upload
+  backIdCard: z.any().optional(), // File upload
+  profileImage: z.any().optional(), // File upload
+  signature: z.any().optional(), // File upload
+  dateOfBirth: z.string().min(1, { message: "Date of birth is required" }),
   
   // User Details
   firstName: z.string().min(2, { message: "First name is required" }),
@@ -144,9 +193,54 @@ export function CreateMerchant() {
       merchantSurcharge: "0",
       customerSurcharge: "0",
       noSurchargeCap: false,
+      
+      // Custom charge defaults
+      customWalletToWalletAmount: "",
+      customWalletToWalletPercentage: "",
+      customWalletToWalletCap: "",
+      customWalletToWalletType: "fixed",
+      
+      customMomoSettlementAmount: "",
+      customMomoSettlementPercentage: "",
+      customMomoSettlementCap: "",
+      customMomoSettlementType: "percentage",
+      
+      customBankSettlementAmount: "",
+      customBankSettlementPercentage: "",
+      customBankSettlementCap: "",
+      customBankSettlementType: "percentage",
+      
+      customMomoPayoutAmount: "",
+      customMomoPayoutPercentage: "",
+      customMomoPayoutCap: "",
+      customMomoPayoutType: "percentage",
+      
+      customBankPayoutAmount: "",
+      customBankPayoutPercentage: "",
+      customBankPayoutCap: "",
+      customBankPayoutType: "percentage",
+      
+      customBankCollectionAmount: "",
+      customBankCollectionPercentage: "",
+      customBankCollectionCap: "",
+      customBankCollectionType: "percentage",
+      
+      customMomoCollectionAmount: "",
+      customMomoCollectionPercentage: "",
+      customMomoCollectionCap: "",
+      customMomoCollectionType: "percentage",
       mtn: "",
       airtel: "",
       telecel: "",
+      
+      // KYC defaults
+      ssnNumber: "",
+      ghanaIdNumber: "",
+      frontIdCard: null,
+      backIdCard: null,
+      profileImage: null,
+      signature: null,
+      dateOfBirth: "",
       firstName: "",
       lastName: "",
       email: "",
@@ -704,206 +798,186 @@ export function CreateMerchant() {
                 </Card>
               </div>
 
-              {/* Right Column - Configuration */}
+                            {/* Right Column - Configuration */}
               <div className="space-y-6">
                 
-                {/* Charges Configuration */}
+                {/* KYC Information */}
                 <Card>
                   <CardHeader className="pb-4">
                     <CardTitle className="flex items-center gap-2 text-lg">
-                      <IconSettings className="h-5 w-5" />
-                      Charges Configuration
+                      <IconUserCheck className="h-5 w-5" />
+                      KYC Information
                     </CardTitle>
+                    <p className="text-muted-foreground text-sm mt-1">
+                      Know Your Customer verification documents and details
+                    </p>
                   </CardHeader>
-                  <CardContent className="space-y-6">
-                    {/* Charge Configuration Type Selection */}
+                  <CardContent className="space-y-4">
                     <FormField
                       control={form.control}
-                      name="chargeConfigType"
+                      name="ssnNumber"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium">Charge Configuration</FormLabel>
-                          <Select onValueChange={(value) => {
-                            field.onChange(value);
-                            setChargeConfigType(value);
-                          }} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select configuration type" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="default">
-                                <div className="flex items-center gap-2">
-                                  <IconSettings className="h-4 w-4" />
-                                  Use Default Charges
-                                </div>
-                              </SelectItem>
-                              <SelectItem value="custom">
-                                <div className="flex items-center gap-2">
-                                  <IconWallet className="h-4 w-4" />
-                                  Custom Charges
-                                </div>
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <FormLabel className="text-sm font-medium">SSN Number</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Social Security Number (Optional)" {...field} />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-
-                    {/* Default Charges Display */}
-                    {chargeConfigType === "default" && (
-                      <div className="space-y-4">
-                        <div className="p-4 bg-muted/50 rounded-lg">
-                          <h4 className="font-medium text-sm mb-3 flex items-center gap-2">
-                            <IconSettings className="h-4 w-4" />
-                            Applied Default Charges
-                          </h4>
-                          <div className="space-y-3 text-sm">
-                            {Object.entries(mockCharges).map(([key, charge]) => (
-                              <div key={key} className="flex justify-between items-center p-2 bg-background rounded border">
-                                <div className="flex items-center gap-2">
-                                  {key.includes('wallet') && <IconWallet className="h-4 w-4" />}
-                                  {key.includes('momo') && <IconDeviceMobile className="h-4 w-4" />}
-                                  {key.includes('bank') && <IconBuildingBank className="h-4 w-4" />}
-                                  {key.includes('Collection') && <IconCoins className="h-4 w-4" />}
-                                  <span className="font-medium capitalize">
-                                    {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                                  </span>
+                    
+                    <FormField
+                      control={form.control}
+                      name="ghanaIdNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">Ghana ID Number *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="GHA-123456789-0" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="dateOfBirth"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">Date of Birth *</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="date" 
+                              {...field} 
+                              className="block w-full"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="frontIdCard"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">Front Page of ID Card</FormLabel>
+                          <FormControl>
+                            <div className="flex items-center justify-center w-full">
+                              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-muted-foreground/25 rounded-lg cursor-pointer bg-muted/50 hover:bg-muted/70 transition-colors">
+                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                  <IconUpload className="w-8 h-8 mb-2 text-muted-foreground" />
+                                  <p className="mb-2 text-sm text-muted-foreground">
+                                    <span className="font-semibold">Click to upload</span> front of ID
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">PNG, JPG or PDF</p>
                                 </div>
-                                <div className="text-right">
-                                  <div className="font-medium">
-                                    {charge.chargeType === "fixed" 
-                                      ? `${currency}${charge.amount.toFixed(2)}` 
-                                      : `${charge.percentage}%`}
-                                  </div>
-                                  {charge.chargeType === "percentage" && (
-                                    <div className="text-xs text-muted-foreground">
-                                      Cap: {currency}{charge.cap.toFixed(2)}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                        
-                        <FormField
-                          control={form.control}
-                          name="surchargeOn"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-sm font-medium">Surcharge Applied To</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select option" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="merchant">Merchant</SelectItem>
-                                  <SelectItem value="customer">Customer</SelectItem>
-                                  <SelectItem value="both">Both</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    )}
-
-                    {/* Custom Charges Form */}
-                    {chargeConfigType === "custom" && (
-                      <div className="space-y-4">
-                        <FormField
-                          control={form.control}
-                          name="surchargeOn"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-sm font-medium">Surcharge Applied To</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select option" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="merchant">Merchant</SelectItem>
-                                  <SelectItem value="customer">Customer</SelectItem>
-                                  <SelectItem value="both">Both</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <div className="space-y-3">
-                          <FormField
-                            control={form.control}
-                            name="totalSurcharge"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-sm font-medium">Total Surcharge (%)</FormLabel>
-                                <FormControl>
-                                  <Input type="number" step="0.1" placeholder="1.5" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="merchantSurcharge"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-sm font-medium">Merchant Surcharge (%)</FormLabel>
-                                <FormControl>
-                                  <Input type="number" step="0.1" placeholder="0.0" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="customerSurcharge"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-sm font-medium">Customer Surcharge (%)</FormLabel>
-                                <FormControl>
-                                  <Input type="number" step="0.1" placeholder="0.0" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-
-                        <FormField
-                          control={form.control}
-                          name="noSurchargeCap"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-3 bg-muted/50 rounded-lg">
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
+                                <input 
+                                  type="file" 
+                                  className="hidden" 
+                                  accept="image/*,application/pdf"
+                                  onChange={(e) => field.onChange(e.target.files?.[0])}
                                 />
-                              </FormControl>
-                              <div className="space-y-1 leading-none">
-                                <FormLabel className="text-sm font-medium">No Surcharge Cap</FormLabel>
-                                <p className="text-xs text-muted-foreground">Remove maximum surcharge limits</p>
-                              </div>
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    )}
+                              </label>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="backIdCard"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">Back Page of ID Card</FormLabel>
+                          <FormControl>
+                            <div className="flex items-center justify-center w-full">
+                              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-muted-foreground/25 rounded-lg cursor-pointer bg-muted/50 hover:bg-muted/70 transition-colors">
+                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                  <IconUpload className="w-8 h-8 mb-2 text-muted-foreground" />
+                                  <p className="mb-2 text-sm text-muted-foreground">
+                                    <span className="font-semibold">Click to upload</span> back of ID
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">PNG, JPG or PDF</p>
+                                </div>
+                                <input 
+                                  type="file" 
+                                  className="hidden" 
+                                  accept="image/*,application/pdf"
+                                  onChange={(e) => field.onChange(e.target.files?.[0])}
+                                />
+                              </label>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="profileImage"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">Profile Image</FormLabel>
+                          <FormControl>
+                            <div className="flex items-center justify-center w-full">
+                              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-muted-foreground/25 rounded-lg cursor-pointer bg-muted/50 hover:bg-muted/70 transition-colors">
+                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                  <IconUpload className="w-8 h-8 mb-2 text-muted-foreground" />
+                                  <p className="mb-2 text-sm text-muted-foreground">
+                                    <span className="font-semibold">Click to upload</span> profile image
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">PNG, JPG (Max 5MB)</p>
+                                </div>
+                                <input 
+                                  type="file" 
+                                  className="hidden" 
+                                  accept="image/*"
+                                  onChange={(e) => field.onChange(e.target.files?.[0])}
+                                />
+                              </label>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="signature"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">Signature</FormLabel>
+                          <FormControl>
+                            <div className="flex items-center justify-center w-full">
+                              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-muted-foreground/25 rounded-lg cursor-pointer bg-muted/50 hover:bg-muted/70 transition-colors">
+                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                  <IconUpload className="w-8 h-8 mb-2 text-muted-foreground" />
+                                  <p className="mb-2 text-sm text-muted-foreground">
+                                    <span className="font-semibold">Click to upload</span> signature
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">PNG, JPG or PDF</p>
+                                </div>
+                                <input 
+                                  type="file" 
+                                  className="hidden" 
+                                  accept="image/*,application/pdf"
+                                  onChange={(e) => field.onChange(e.target.files?.[0])}
+                                />
+                              </label>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </CardContent>
                 </Card>
 
@@ -914,6 +988,9 @@ export function CreateMerchant() {
                       <IconPhone className="h-5 w-5" />
                       OVA Configuration
                     </CardTitle>
+                    <p className="text-muted-foreground text-sm mt-1">
+                      Select virtual accounts for mobile money providers
+                    </p>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <FormField
@@ -922,9 +999,20 @@ export function CreateMerchant() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-medium">MTN OVA</FormLabel>
-                          <FormControl>
-                            <Input placeholder="MTN virtual account" {...field} />
-                          </FormControl>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select MTN virtual account" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="mtn_ova_001">MTN-OVA-001 (0244123001)</SelectItem>
+                              <SelectItem value="mtn_ova_002">MTN-OVA-002 (0244123002)</SelectItem>
+                              <SelectItem value="mtn_ova_003">MTN-OVA-003 (0244123003)</SelectItem>
+                              <SelectItem value="mtn_ova_004">MTN-OVA-004 (0244123004)</SelectItem>
+                              <SelectItem value="mtn_ova_005">MTN-OVA-005 (0244123005)</SelectItem>
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -936,9 +1024,20 @@ export function CreateMerchant() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-medium">AirtelTigo OVA</FormLabel>
-                          <FormControl>
-                            <Input placeholder="AirtelTigo virtual account" {...field} />
-                          </FormControl>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select AirtelTigo virtual account" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="airtel_ova_001">AIRTEL-OVA-001 (0272123001)</SelectItem>
+                              <SelectItem value="airtel_ova_002">AIRTEL-OVA-002 (0272123002)</SelectItem>
+                              <SelectItem value="airtel_ova_003">AIRTEL-OVA-003 (0272123003)</SelectItem>
+                              <SelectItem value="airtel_ova_004">AIRTEL-OVA-004 (0272123004)</SelectItem>
+                              <SelectItem value="airtel_ova_005">AIRTEL-OVA-005 (0272123005)</SelectItem>
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -950,9 +1049,20 @@ export function CreateMerchant() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-medium">Telecel OVA</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Telecel virtual account" {...field} />
-                          </FormControl>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Telecel virtual account" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="telecel_ova_001">TELECEL-OVA-001 (0200123001)</SelectItem>
+                              <SelectItem value="telecel_ova_002">TELECEL-OVA-002 (0200123002)</SelectItem>
+                              <SelectItem value="telecel_ova_003">TELECEL-OVA-003 (0200123003)</SelectItem>
+                              <SelectItem value="telecel_ova_004">TELECEL-OVA-004 (0200123004)</SelectItem>
+                              <SelectItem value="telecel_ova_005">TELECEL-OVA-005 (0200123005)</SelectItem>
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -972,9 +1082,20 @@ export function CreateMerchant() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-medium">Business Development Manager</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Assigned BDM" {...field} />
-                          </FormControl>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select BDM" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="john_asante">John Asante</SelectItem>
+                              <SelectItem value="sarah_mensah">Sarah Mensah</SelectItem>
+                              <SelectItem value="michael_osei">Michael Osei</SelectItem>
+                              <SelectItem value="rebecca_adjei">Rebecca Adjei</SelectItem>
+                              <SelectItem value="david_kwame">David Kwame</SelectItem>
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -993,9 +1114,11 @@ export function CreateMerchant() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="term1">Terminal 1</SelectItem>
-                              <SelectItem value="term2">Terminal 2</SelectItem>
-                              <SelectItem value="term3">Terminal 3</SelectItem>
+                              <SelectItem value="term1">Terminal 1 (TERM-001)</SelectItem>
+                              <SelectItem value="term2">Terminal 2 (TERM-002)</SelectItem>
+                              <SelectItem value="term3">Terminal 3 (TERM-003)</SelectItem>
+                              <SelectItem value="term4">Terminal 4 (TERM-004)</SelectItem>
+                              <SelectItem value="term5">Terminal 5 (TERM-005)</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -1006,6 +1129,356 @@ export function CreateMerchant() {
                 </Card>
               </div>
             </div>
+
+            {/* Charges Configuration - Full Width Bottom Section */}
+            <Card>
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <IconSettings className="h-6 w-6" />
+                  Charges Configuration
+                </CardTitle>
+                <p className="text-muted-foreground text-sm mt-1">
+                  Configure transaction charges for this merchant - use default system charges or set custom rates
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Charge Configuration Type Selection */}
+                <div className="max-w-md">
+                  <FormField
+                    control={form.control}
+                    name="chargeConfigType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium">Charge Configuration</FormLabel>
+                        <Select onValueChange={(value) => {
+                          field.onChange(value);
+                          setChargeConfigType(value);
+                        }} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select configuration type" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="default">
+                              <div className="flex items-center gap-2">
+                                <IconSettings className="h-4 w-4" />
+                                Use Default Charges
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="custom">
+                              <div className="flex items-center gap-2">
+                                <IconWallet className="h-4 w-4" />
+                                Custom Charges
+                              </div>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Default Charges Display */}
+                {chargeConfigType === "default" && (
+                  <div className="space-y-6">
+                    <div className="p-6 bg-muted/50 rounded-lg">
+                      <h4 className="font-medium text-lg mb-4 flex items-center gap-2">
+                        <IconSettings className="h-5 w-5" />
+                        Applied Default Charges
+                      </h4>
+                      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        {Object.entries(mockCharges).map(([key, charge]) => (
+                          <div key={key} className="p-4 bg-background rounded-lg border shadow-sm">
+                            <div className="flex items-center gap-2 mb-3">
+                              {key.includes('wallet') && <IconWallet className="h-5 w-5 text-blue-600" />}
+                              {key.includes('momo') && !key.includes('Collection') && <IconDeviceMobile className="h-5 w-5 text-green-600" />}
+                              {key.includes('bank') && !key.includes('Collection') && <IconBuildingBank className="h-5 w-5 text-purple-600" />}
+                              {key.includes('Collection') && key.includes('momo') && <IconCoins className="h-5 w-5 text-orange-600" />}
+                              {key.includes('Collection') && key.includes('bank') && <IconCoins className="h-5 w-5 text-red-600" />}
+                              <span className="font-medium text-sm">
+                                {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                              </span>
+                            </div>
+                            <div className="space-y-2">
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs text-muted-foreground">Type</span>
+                                <Badge variant="secondary" className="text-xs">
+                                  {charge.chargeType}
+                                </Badge>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs text-muted-foreground">Rate</span>
+                                <span className="font-medium text-sm">
+                                  {charge.chargeType === "fixed" 
+                                    ? `${currency}${charge.amount.toFixed(2)}` 
+                                    : `${charge.percentage}%`}
+                                </span>
+                              </div>
+                              {charge.chargeType === "percentage" && (
+                                <div className="flex justify-between items-center">
+                                  <span className="text-xs text-muted-foreground">Cap</span>
+                                  <span className="text-sm font-medium">{currency}{charge.cap.toFixed(2)}</span>
+                                </div>
+                              )}
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs text-muted-foreground">Status</span>
+                                <Badge variant={charge.status === "Active" ? "default" : "secondary"} className="text-xs">
+                                  {charge.status}
+                                </Badge>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="max-w-md">
+                      <FormField
+                        control={form.control}
+                        name="surchargeOn"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-sm font-medium">Surcharge Applied To</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select option" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="merchant">Merchant</SelectItem>
+                                <SelectItem value="customer">Customer</SelectItem>
+                                <SelectItem value="both">Both</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Custom Charges Form */}
+                {chargeConfigType === "custom" && (
+                  <div className="space-y-6">
+                    <div className="max-w-md">
+                      <FormField
+                        control={form.control}
+                        name="surchargeOn"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-sm font-medium">Surcharge Applied To</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select option" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="merchant">Merchant</SelectItem>
+                                <SelectItem value="customer">Customer</SelectItem>
+                                <SelectItem value="both">Both</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    {/* Custom Charges Grid */}
+                    <div className="space-y-6">
+                      {Object.entries(mockCharges).map(([key, defaultCharge]) => {
+                        const fieldPrefix = `custom${key.charAt(0).toUpperCase() + key.slice(1)}`;
+                        const chargeTypeField = `${fieldPrefix}Type` as keyof typeof form.control._formValues;
+                        const currentChargeType = form.watch(chargeTypeField) || defaultCharge.chargeType;
+                        
+                        return (
+                          <div key={key} className="p-6 bg-muted/30 rounded-lg border">
+                            <div className="flex items-center gap-2 mb-4">
+                              {key.includes('wallet') && <IconWallet className="h-5 w-5 text-blue-600" />}
+                              {key.includes('momo') && !key.includes('Collection') && <IconDeviceMobile className="h-5 w-5 text-green-600" />}
+                              {key.includes('bank') && !key.includes('Collection') && <IconBuildingBank className="h-5 w-5 text-purple-600" />}
+                              {key.includes('Collection') && key.includes('momo') && <IconCoins className="h-5 w-5 text-orange-600" />}
+                              {key.includes('Collection') && key.includes('bank') && <IconCoins className="h-5 w-5 text-red-600" />}
+                              <h4 className="font-medium text-lg">
+                                {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())} Charges
+                              </h4>
+                              <Badge variant="outline" className="text-xs ml-auto">
+                                Default: {defaultCharge.chargeType === "fixed" 
+                                  ? `${currency}${defaultCharge.amount.toFixed(2)}` 
+                                  : `${defaultCharge.percentage}%`}
+                              </Badge>
+                            </div>
+                            
+                            <div className="grid gap-4 md:grid-cols-4">
+                              <FormField
+                                control={form.control}
+                                name={chargeTypeField}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-sm font-medium">Charge Type</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value || defaultCharge.chargeType}>
+                                      <FormControl>
+                                        <SelectTrigger>
+                                          <SelectValue />
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent>
+                                        <SelectItem value="fixed">Fixed Amount</SelectItem>
+                                        <SelectItem value="percentage">Percentage</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              
+                              {currentChargeType === "fixed" && (
+                                <FormField
+                                  control={form.control}
+                                  name={`${fieldPrefix}Amount` as keyof typeof form.control._formValues}
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel className="text-sm font-medium">Fixed Amount ({currency})</FormLabel>
+                                      <FormControl>
+                                        <Input 
+                                          type="number" 
+                                          step="0.01" 
+                                          placeholder={defaultCharge.amount.toString()} 
+                                          {...field} 
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                              )}
+                              
+                              {currentChargeType === "percentage" && (
+                                <>
+                                  <FormField
+                                    control={form.control}
+                                    name={`${fieldPrefix}Percentage` as keyof typeof form.control._formValues}
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel className="text-sm font-medium">Percentage (%)</FormLabel>
+                                        <FormControl>
+                                          <Input 
+                                            type="number" 
+                                            step="0.01" 
+                                            placeholder={defaultCharge.percentage.toString()} 
+                                            {...field} 
+                                          />
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                  
+                                  <FormField
+                                    control={form.control}
+                                    name={`${fieldPrefix}Cap` as keyof typeof form.control._formValues}
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel className="text-sm font-medium">Cap Amount ({currency})</FormLabel>
+                                        <FormControl>
+                                          <Input 
+                                            type="number" 
+                                            step="0.01" 
+                                            placeholder={defaultCharge.cap.toString()} 
+                                            {...field} 
+                                          />
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* General Surcharge Settings */}
+                    <div className="p-6 bg-muted/30 rounded-lg border">
+                      <h4 className="font-medium text-lg mb-4 flex items-center gap-2">
+                        <IconSettings className="h-5 w-5" />
+                        General Surcharge Settings
+                      </h4>
+                      
+                      <div className="grid gap-4 md:grid-cols-3 mb-4">
+                        <FormField
+                          control={form.control}
+                          name="totalSurcharge"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-sm font-medium">Total Surcharge (%)</FormLabel>
+                              <FormControl>
+                                <Input type="number" step="0.1" placeholder="1.5" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="merchantSurcharge"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-sm font-medium">Merchant Surcharge (%)</FormLabel>
+                              <FormControl>
+                                <Input type="number" step="0.1" placeholder="0.0" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="customerSurcharge"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-sm font-medium">Customer Surcharge (%)</FormLabel>
+                              <FormControl>
+                                <Input type="number" step="0.1" placeholder="0.0" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <FormField
+                        control={form.control}
+                        name="noSurchargeCap"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-3 bg-background rounded-lg border">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel className="text-sm font-medium">No Surcharge Cap</FormLabel>
+                              <p className="text-xs text-muted-foreground">Remove maximum surcharge limits for all charge types</p>
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
             {/* Form Actions */}
             <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t">
