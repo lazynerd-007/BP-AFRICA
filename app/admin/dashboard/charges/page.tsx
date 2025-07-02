@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { IconWallet, IconDeviceMobile, IconBuildingBank } from "@tabler/icons-react"
+import { IconWallet, IconDeviceMobile, IconBuildingBank, IconCoins, IconCreditCard } from "@tabler/icons-react"
 import { useCurrency } from "@/lib/currency-context"
 import { useErrorHandler } from "@/hooks/use-error-handler"
 import ErrorBoundary, { PageErrorFallback } from "@/components/error-boundary"
@@ -114,6 +114,32 @@ export default function ChargesPage() {
             charge={charges.bankPayout}
             chargeType="bankPayout"
             isEditing={editingCharge === "bankPayout"}
+            onEdit={handleEdit}
+            onCancel={handleCancel}
+            onSave={handleSave}
+            currency={currency}
+          />
+
+          {/* Bank Collection Charges */}
+          <ChargeCard
+            title="Bank Collection Charges"
+            icon={<IconCreditCard className="h-5 w-5" />}
+            charge={charges.bankCollection}
+            chargeType="bankCollection"
+            isEditing={editingCharge === "bankCollection"}
+            onEdit={handleEdit}
+            onCancel={handleCancel}
+            onSave={handleSave}
+            currency={currency}
+          />
+
+          {/* MOMO Collection Charges */}
+          <ChargeCard
+            title="MOMO Collection Charges"
+            icon={<IconCoins className="h-5 w-5" />}
+            charge={charges.momoCollection}
+            chargeType="momoCollection"
+            isEditing={editingCharge === "momoCollection"}
             onEdit={handleEdit}
             onCancel={handleCancel}
             onSave={handleSave}

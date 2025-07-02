@@ -33,6 +33,8 @@ export interface ChargesData {
   bankSettlement: ChargeData
   momoPayout: ChargeData
   bankPayout: ChargeData
+  bankCollection: ChargeData
+  momoCollection: ChargeData
 }
 
 // Mock data for current active charges (only one per settlement type)
@@ -73,6 +75,22 @@ export const mockCharges: ChargesData = {
     amount: 8.00,
     percentage: 1.2,
     cap: 25.00,
+    chargeType: "percentage",
+    status: "Active",
+    lastUpdated: "2024-01-15"
+  },
+  bankCollection: {
+    amount: 2.50,
+    percentage: 0.7,
+    cap: 18.00,
+    chargeType: "percentage",
+    status: "Active",
+    lastUpdated: "2024-01-15"
+  },
+  momoCollection: {
+    amount: 1.50,
+    percentage: 0.6,
+    cap: 14.00,
     chargeType: "percentage",
     status: "Active",
     lastUpdated: "2024-01-15"
