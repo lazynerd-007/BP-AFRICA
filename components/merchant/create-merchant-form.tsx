@@ -1241,7 +1241,6 @@ export function CreateMerchant() {
                               <SelectContent>
                                 <SelectItem value="merchant">Merchant</SelectItem>
                                 <SelectItem value="customer">Customer</SelectItem>
-                                <SelectItem value="both">Both</SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -1271,7 +1270,6 @@ export function CreateMerchant() {
                               <SelectContent>
                                 <SelectItem value="merchant">Merchant</SelectItem>
                                 <SelectItem value="customer">Customer</SelectItem>
-                                <SelectItem value="both">Both</SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -1396,76 +1394,7 @@ export function CreateMerchant() {
                       })}
                     </div>
 
-                    {/* General Surcharge Settings */}
-                    <div className="p-6 bg-muted/30 rounded-lg border">
-                      <h4 className="font-medium text-lg mb-4 flex items-center gap-2">
-                        <IconSettings className="h-5 w-5" />
-                        General Surcharge Settings
-                      </h4>
-                      
-                      <div className="grid gap-4 md:grid-cols-3 mb-4">
-                        <FormField
-                          control={form.control}
-                          name="totalSurcharge"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-sm font-medium">Total Surcharge (%)</FormLabel>
-                              <FormControl>
-                                <Input type="number" step="0.1" placeholder="1.5" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <FormField
-                          control={form.control}
-                          name="merchantSurcharge"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-sm font-medium">Merchant Surcharge (%)</FormLabel>
-                              <FormControl>
-                                <Input type="number" step="0.1" placeholder="0.0" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <FormField
-                          control={form.control}
-                          name="customerSurcharge"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-sm font-medium">Customer Surcharge (%)</FormLabel>
-                              <FormControl>
-                                <Input type="number" step="0.1" placeholder="0.0" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <FormField
-                        control={form.control}
-                        name="noSurchargeCap"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-3 bg-background rounded-lg border">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                            <div className="space-y-1 leading-none">
-                              <FormLabel className="text-sm font-medium">No Surcharge Cap</FormLabel>
-                              <p className="text-xs text-muted-foreground">Remove maximum surcharge limits for all charge types</p>
-                            </div>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                 
                   </div>
                 )}
               </CardContent>
