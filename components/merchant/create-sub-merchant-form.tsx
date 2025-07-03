@@ -32,8 +32,13 @@ import {
   IconCreditCard, 
   IconSettings, 
   IconBuildingBank,
-  IconPhone
+  IconPhone,
+  IconDeviceMobile,
+  IconWallet,
+  IconCoins
 } from "@tabler/icons-react";
+import { mockCharges } from "@/components/admin/charges/types";
+import { useCurrency } from "@/lib/currency-context";
 
 // Mock parent merchants data
 const parentMerchants = [
@@ -57,14 +62,57 @@ const formSchema = z.object({
   
   // Surcharge Details
   inheritSurcharge: z.boolean().default(true),
+  surchargeOn: z.string().optional(),
+  partnerBankSplit: z.boolean().default(false),
   
   // Settlement Account
   useParentSettlement: z.boolean().default(true),
+  settlementType: z.string().optional(),
   merchantBank: z.string().optional(),
   branch: z.string().optional(),
   accountType: z.string().optional(),
   accountNumber: z.string().optional(),
   accountName: z.string().optional(),
+  // MOMO Settlement fields
+  momoProvider: z.string().optional(),
+  momoNumber: z.string().optional(),
+  momoAccountName: z.string().optional(),
+  
+  // Custom Charge Fields for all charge types
+  customWalletToWalletAmount: z.string().optional(),
+  customWalletToWalletPercentage: z.string().optional(),
+  customWalletToWalletCap: z.string().optional(),
+  customWalletToWalletType: z.string().optional(),
+  
+  customMomoSettlementAmount: z.string().optional(),
+  customMomoSettlementPercentage: z.string().optional(),
+  customMomoSettlementCap: z.string().optional(),
+  customMomoSettlementType: z.string().optional(),
+  
+  customBankSettlementAmount: z.string().optional(),
+  customBankSettlementPercentage: z.string().optional(),
+  customBankSettlementCap: z.string().optional(),
+  customBankSettlementType: z.string().optional(),
+  
+  customMomoPayoutAmount: z.string().optional(),
+  customMomoPayoutPercentage: z.string().optional(),
+  customMomoPayoutCap: z.string().optional(),
+  customMomoPayoutType: z.string().optional(),
+  
+  customBankPayoutAmount: z.string().optional(),
+  customBankPayoutPercentage: z.string().optional(),
+  customBankPayoutCap: z.string().optional(),
+  customBankPayoutType: z.string().optional(),
+  
+  customBankCollectionAmount: z.string().optional(),
+  customBankCollectionPercentage: z.string().optional(),
+  customBankCollectionCap: z.string().optional(),
+  customBankCollectionType: z.string().optional(),
+  
+  customMomoCollectionAmount: z.string().optional(),
+  customMomoCollectionPercentage: z.string().optional(),
+  customMomoCollectionCap: z.string().optional(),
+  customMomoCollectionType: z.string().optional(),
   
   // OVA Settings
   mtn: z.string().optional(),
@@ -80,19 +128,27 @@ const formSchema = z.object({
 }).refine(
   (data) => {
     if (!data.useParentSettlement) {
-      return !!data.merchantBank && !!data.accountNumber && !!data.accountName;
+      if (data.settlementType === "bank") {
+        return !!data.merchantBank && !!data.branch && !!data.accountType && !!data.accountNumber && !!data.accountName;
+      }
+      if (data.settlementType === "momo") {
+        return !!data.momoProvider && !!data.momoNumber && !!data.momoAccountName;
+      }
     }
     return true;
   },
   {
     message: "Settlement account details are required when not using parent settlement",
-    path: ["merchantBank"],
+    path: ["settlementType"],
   }
 );
 
 export function CreateSubMerchant() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [useParentSettlement, setUseParentSettlement] = useState(true);
+  const [settlementType, setSettlementType] = useState<string>("");
+  const [inheritSurcharge, setInheritSurcharge] = useState(true);
+  const { currency } = useCurrency();
 
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -106,12 +162,54 @@ export function CreateSubMerchant() {
       tinNumber: "",
       phoneNumber: "",
       inheritSurcharge: true,
+      surchargeOn: "",
+      partnerBankSplit: false,
       useParentSettlement: true,
+      settlementType: "",
       merchantBank: "",
       branch: "",
       accountType: "",
       accountNumber: "",
       accountName: "",
+      momoProvider: "",
+      momoNumber: "",
+      momoAccountName: "",
+      
+      // Custom charge defaults
+      customWalletToWalletAmount: "",
+      customWalletToWalletPercentage: "",
+      customWalletToWalletCap: "",
+      customWalletToWalletType: "fixed",
+      
+      customMomoSettlementAmount: "",
+      customMomoSettlementPercentage: "",
+      customMomoSettlementCap: "",
+      customMomoSettlementType: "percentage",
+      
+      customBankSettlementAmount: "",
+      customBankSettlementPercentage: "",
+      customBankSettlementCap: "",
+      customBankSettlementType: "percentage",
+      
+      customMomoPayoutAmount: "",
+      customMomoPayoutPercentage: "",
+      customMomoPayoutCap: "",
+      customMomoPayoutType: "percentage",
+      
+      customBankPayoutAmount: "",
+      customBankPayoutPercentage: "",
+      customBankPayoutCap: "",
+      customBankPayoutType: "percentage",
+      
+      customBankCollectionAmount: "",
+      customBankCollectionPercentage: "",
+      customBankCollectionCap: "",
+      customBankCollectionType: "percentage",
+      
+      customMomoCollectionAmount: "",
+      customMomoCollectionPercentage: "",
+      customMomoCollectionCap: "",
+      customMomoCollectionType: "percentage",
       mtn: "",
       airtel: "",
       telecel: "",
@@ -148,10 +246,7 @@ export function CreateSubMerchant() {
                 Add a new sub-merchant to an existing parent merchant account
               </p>
             </div>
-            <div className="flex gap-2">
-              <Badge variant="outline">Step 1 of 1</Badge>
-              <Badge variant="secondary">Sub-merchant Setup</Badge>
-            </div>
+
           </div>
         </div>
 
@@ -297,141 +392,6 @@ export function CreateSubMerchant() {
                   </CardContent>
                 </Card>
 
-                {/* Settlement Configuration */}
-                <Card>
-                  <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center gap-2 text-lg">
-                      <IconCreditCard className="h-5 w-5" />
-                      Settlement Configuration
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="useParentSettlement"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-3 bg-muted/50 rounded-lg">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={(checked) => {
-                                field.onChange(checked);
-                                setUseParentSettlement(!!checked);
-                              }}
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel className="text-sm font-medium">Use Parent Settlement Account</FormLabel>
-                            <p className="text-xs text-muted-foreground">
-                              Funds will be settled to the parent merchant&apos;s account
-                            </p>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                    
-                    {!useParentSettlement && (
-                      <div className="p-4 bg-muted/50 rounded-lg space-y-4">
-                        <h4 className="font-medium text-sm flex items-center gap-2">
-                          <IconBuildingBank className="h-4 w-4" />
-                          Custom Settlement Account
-                        </h4>
-                        <div className="grid gap-4 md:grid-cols-2">
-                          <FormField
-                            control={form.control}
-                            name="merchantBank"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-sm">Bank</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                  <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select bank" />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    <SelectItem value="gcb">GCB Bank</SelectItem>
-                                    <SelectItem value="ecobank">Ecobank</SelectItem>
-                                    <SelectItem value="absa">Absa Bank</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="branch"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-sm">Branch</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Bank branch" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-                        
-                        <div className="grid gap-4 md:grid-cols-3">
-                          <FormField
-                            control={form.control}
-                            name="accountType"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-sm">Account Type</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                  <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select type" />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    <SelectItem value="savings">Savings</SelectItem>
-                                    <SelectItem value="current">Current</SelectItem>
-                                    <SelectItem value="corporate">Corporate</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="accountNumber"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-sm">Account Number</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Account number" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="accountName"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-sm">Account Name</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Account holder name" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
                 {/* OVA Configuration */}
                 <Card>
                   <CardHeader className="pb-4">
@@ -516,6 +476,236 @@ export function CreateSubMerchant() {
               {/* Right Column - Configuration */}
               <div className="space-y-6">
                 
+                {/* Settlement Configuration */}
+                <Card>
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <IconCreditCard className="h-5 w-5" />
+                      Settlement Configuration
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="useParentSettlement"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-3 bg-muted/50 rounded-lg">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={(checked) => {
+                                field.onChange(checked);
+                                setUseParentSettlement(!!checked);
+                              }}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel className="text-sm font-medium">Use Parent Settlement Account</FormLabel>
+                            <p className="text-xs text-muted-foreground">
+                              Funds will be settled to the parent merchant&apos;s account
+                            </p>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    
+                    {!useParentSettlement && (
+                      <div className="p-4 bg-muted/50 rounded-lg space-y-4">
+                        <h4 className="font-medium text-sm flex items-center gap-2">
+                          <IconCreditCard className="h-4 w-4" />
+                          Custom Settlement Account
+                        </h4>
+                        
+                        <FormField
+                          control={form.control}
+                          name="settlementType"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-sm font-medium">Settlement Type</FormLabel>
+                              <Select onValueChange={(value) => {
+                                field.onChange(value);
+                                setSettlementType(value);
+                              }} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select settlement type" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="bank">
+                                    <div className="flex items-center gap-2">
+                                      <IconBuildingBank className="h-4 w-4" />
+                                      Bank Account
+                                    </div>
+                                  </SelectItem>
+                                  <SelectItem value="momo">
+                                    <div className="flex items-center gap-2">
+                                      <IconDeviceMobile className="h-4 w-4" />
+                                      Mobile Money
+                                    </div>
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        {settlementType === "bank" && (
+                          <div className="space-y-4">
+                            <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
+                              <FormField
+                                control={form.control}
+                                name="merchantBank"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-sm">Bank</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                      <FormControl>
+                                        <SelectTrigger>
+                                          <SelectValue placeholder="Select bank" />
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent>
+                                        <SelectItem value="gcb">GCB Bank</SelectItem>
+                                        <SelectItem value="ecobank">Ecobank</SelectItem>
+                                        <SelectItem value="absa">Absa Bank</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              
+                              <FormField
+                                control={form.control}
+                                name="branch"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-sm">Branch</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="Bank branch" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                            
+                            <div className="space-y-4">
+                              <FormField
+                                control={form.control}
+                                name="accountType"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-sm">Account Type</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                      <FormControl>
+                                        <SelectTrigger>
+                                          <SelectValue placeholder="Select type" />
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent>
+                                        <SelectItem value="savings">Savings</SelectItem>
+                                        <SelectItem value="current">Current</SelectItem>
+                                        <SelectItem value="corporate">Corporate</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              
+                              <FormField
+                                control={form.control}
+                                name="accountNumber"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-sm">Account Number</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="Account number" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              
+                              <FormField
+                                control={form.control}
+                                name="accountName"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-sm">Account Name</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="Account holder name" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                          </div>
+                        )}
+                        
+                        {settlementType === "momo" && (
+                          <div className="space-y-4">
+                            <FormField
+                              control={form.control}
+                              name="momoProvider"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-sm">Mobile Money Provider</FormLabel>
+                                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select provider" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="mtn">MTN Mobile Money</SelectItem>
+                                      <SelectItem value="airtel">AirtelTigo Money</SelectItem>
+                                      <SelectItem value="telecel">Telecel Cash</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={form.control}
+                              name="momoNumber"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-sm">Mobile Money Number</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="0244123456" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={form.control}
+                              name="momoAccountName"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-sm">Account Name</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Account holder name" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+                
                 {/* Surcharge Configuration */}
                 <Card>
                   <CardHeader className="pb-4">
@@ -533,7 +723,10 @@ export function CreateSubMerchant() {
                           <FormControl>
                             <Checkbox
                               checked={field.value}
-                              onCheckedChange={field.onChange}
+                              onCheckedChange={(checked) => {
+                                field.onChange(checked);
+                                setInheritSurcharge(!!checked);
+                              }}
                             />
                           </FormControl>
                           <div className="space-y-1 leading-none">
@@ -546,7 +739,60 @@ export function CreateSubMerchant() {
                       )}
                     />
                     
-
+                    {/* Surcharge Settings */}
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <FormField
+                        control={form.control}
+                        name="surchargeOn"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-sm font-medium">Surcharge Applied To</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select option" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="merchant">Merchant</SelectItem>
+                                <SelectItem value="customer">Customer</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="partnerBankSplit"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0 pt-8">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel className="text-sm font-medium">Partner Bank Split</FormLabel>
+                              <p className="text-xs text-muted-foreground">
+                                Enable revenue sharing with partner bank
+                              </p>
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    
+                    {!inheritSurcharge && (
+                      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <p className="text-sm text-blue-800 dark:text-blue-200 flex items-center gap-2">
+                          <IconSettings className="h-4 w-4" />
+                          Custom charge configuration is available below in the &quot;Charge Configuration&quot; section.
+                        </p>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
 
@@ -609,6 +855,194 @@ export function CreateSubMerchant() {
                 </Card>
               </div>
             </div>
+
+            {/* Charge Configuration - Full Width Section */}
+            {!inheritSurcharge && (
+              <Card>
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <IconWallet className="h-6 w-6" />
+                    Charge Configuration
+                  </CardTitle>
+                  <p className="text-muted-foreground text-sm mt-1">
+                    Configure custom charges for this sub-merchant - these will override the parent merchant charges
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="p-6 bg-muted/50 rounded-lg">
+                    <h4 className="font-medium text-lg mb-4 flex items-center gap-2">
+                      <IconSettings className="h-5 w-5" />
+                      Applied Default Charges
+                    </h4>
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                      {Object.entries(mockCharges).map(([key, charge]) => (
+                        <div key={key} className="p-4 bg-background rounded-lg border shadow-sm">
+                          <div className="flex items-center gap-2 mb-3">
+                            {key.includes('wallet') && <IconWallet className="h-5 w-5 text-blue-600" />}
+                            {key.includes('momo') && !key.includes('Collection') && <IconDeviceMobile className="h-5 w-5 text-green-600" />}
+                            {key.includes('bank') && !key.includes('Collection') && <IconBuildingBank className="h-5 w-5 text-purple-600" />}
+                            {key.includes('Collection') && key.includes('momo') && <IconCoins className="h-5 w-5 text-orange-600" />}
+                            {key.includes('Collection') && key.includes('bank') && <IconCoins className="h-5 w-5 text-red-600" />}
+                            <span className="font-medium text-sm">
+                              {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                            </span>
+                          </div>
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-center">
+                              <span className="text-xs text-muted-foreground">Type</span>
+                              <Badge variant="secondary" className="text-xs">
+                                {charge.chargeType}
+                              </Badge>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-xs text-muted-foreground">Rate</span>
+                              <span className="font-medium text-sm">
+                                {charge.chargeType === "fixed" 
+                                  ? `${currency}${charge.amount.toFixed(2)}` 
+                                  : `${charge.percentage}%`}
+                              </span>
+                            </div>
+                            {charge.chargeType === "percentage" && (
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs text-muted-foreground">Cap</span>
+                                <span className="text-sm font-medium">{currency}{charge.cap.toFixed(2)}</span>
+                              </div>
+                            )}
+                            <div className="flex justify-between items-center">
+                              <span className="text-xs text-muted-foreground">Status</span>
+                              <Badge variant={charge.status === "Active" ? "default" : "secondary"} className="text-xs">
+                                {charge.status}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Custom Charges Configuration */}
+                  <div className="space-y-6">
+                    <h4 className="font-medium text-lg flex items-center gap-2">
+                      <IconWallet className="h-5 w-5" />
+                      Custom Charge Configuration
+                    </h4>
+                    
+                    {Object.entries(mockCharges).map(([key, defaultCharge]) => {
+                      const fieldPrefix = `custom${key.charAt(0).toUpperCase() + key.slice(1)}`;
+                      const chargeTypeField = `${fieldPrefix}Type` as keyof z.infer<typeof formSchema>;
+                      const currentChargeType = form.watch(chargeTypeField) || defaultCharge.chargeType;
+                      
+                      return (
+                        <div key={key} className="p-6 bg-muted/30 rounded-lg border">
+                          <div className="flex items-center gap-2 mb-4">
+                            {key.includes('wallet') && <IconWallet className="h-5 w-5 text-blue-600" />}
+                            {key.includes('momo') && !key.includes('Collection') && <IconDeviceMobile className="h-5 w-5 text-green-600" />}
+                            {key.includes('bank') && !key.includes('Collection') && <IconBuildingBank className="h-5 w-5 text-purple-600" />}
+                            {key.includes('Collection') && key.includes('momo') && <IconCoins className="h-5 w-5 text-orange-600" />}
+                            {key.includes('Collection') && key.includes('bank') && <IconCoins className="h-5 w-5 text-red-600" />}
+                            <h4 className="font-medium text-lg">
+                              {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())} Charges
+                            </h4>
+                            <Badge variant="outline" className="text-xs ml-auto">
+                              Default: {defaultCharge.chargeType === "fixed" 
+                                ? `${currency}${defaultCharge.amount.toFixed(2)}` 
+                                : `${defaultCharge.percentage}%`}
+                            </Badge>
+                          </div>
+                          
+                          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                            <FormField
+                              control={form.control}
+                              name={chargeTypeField}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-sm font-medium">Charge Type</FormLabel>
+                                  <Select onValueChange={field.onChange} defaultValue={field.value || defaultCharge.chargeType}>
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="fixed">Fixed Amount</SelectItem>
+                                      <SelectItem value="percentage">Percentage</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            {currentChargeType === "fixed" && (
+                              <FormField
+                                control={form.control}
+                                name={`${fieldPrefix}Amount` as keyof z.infer<typeof formSchema>}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-sm font-medium">Fixed Amount ({currency})</FormLabel>
+                                    <FormControl>
+                                      <Input 
+                                        type="number" 
+                                        step="0.01" 
+                                        placeholder={defaultCharge.amount.toString()} 
+                                        {...field} 
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            )}
+                            
+                            {currentChargeType === "percentage" && (
+                              <>
+                                <FormField
+                                  control={form.control}
+                                  name={`${fieldPrefix}Percentage` as keyof z.infer<typeof formSchema>}
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel className="text-sm font-medium">Percentage (%)</FormLabel>
+                                      <FormControl>
+                                        <Input 
+                                          type="number" 
+                                          step="0.01" 
+                                          placeholder={defaultCharge.percentage.toString()} 
+                                          {...field} 
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                
+                                <FormField
+                                  control={form.control}
+                                  name={`${fieldPrefix}Cap` as keyof z.infer<typeof formSchema>}
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel className="text-sm font-medium">Cap Amount ({currency})</FormLabel>
+                                      <FormControl>
+                                        <Input 
+                                          type="number" 
+                                          step="0.01" 
+                                          placeholder={defaultCharge.cap.toString()} 
+                                          {...field} 
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Form Actions */}
             <div className="flex justify-end space-x-4 pt-6">

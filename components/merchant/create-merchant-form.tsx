@@ -4,8 +4,8 @@ import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Resolver } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
   Form,
@@ -52,6 +52,7 @@ const formSchema = z.object({
   tinNumber: z.string().optional(),
   settlementFrequency: z.string({ required_error: "Settlement frequency is required" }),
   surchargeOn: z.string({ required_error: "Surcharge setting is required" }),
+  partnerBankSplit: z.boolean().default(false),
   partnerBank: z.string({ required_error: "Partner bank is required" }),
   bdm: z.string().optional(),
   terminalId: z.string().optional(),
@@ -168,8 +169,8 @@ export function CreateMerchant() {
   const [chargeConfigType, setChargeConfigType] = useState<string>("");
   const { currency } = useCurrency();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema) as Resolver<z.infer<typeof formSchema>>,
+  const form = useForm({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       merchantCode: "",
       merchantName: "",
@@ -179,6 +180,7 @@ export function CreateMerchant() {
       tinNumber: "",
       settlementFrequency: "",
       surchargeOn: "",
+      partnerBankSplit: false,
       partnerBank: "",
       bdm: "",
       terminalId: "",
@@ -1225,7 +1227,7 @@ export function CreateMerchant() {
                       </div>
                     </div>
                     
-                    <div className="max-w-md">
+                    <div className="grid gap-4 md:grid-cols-2 max-w-2xl">
                       <FormField
                         control={form.control}
                         name="surchargeOn"
@@ -1247,6 +1249,27 @@ export function CreateMerchant() {
                           </FormItem>
                         )}
                       />
+                      
+                      <FormField
+                        control={form.control}
+                        name="partnerBankSplit"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0 pt-8">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel className="text-sm font-medium">Partner Bank Split</FormLabel>
+                              <p className="text-xs text-muted-foreground">
+                                Enable revenue sharing with partner bank
+                              </p>
+                            </div>
+                          </FormItem>
+                        )}
+                      />
                     </div>
                   </div>
                 )}
@@ -1254,7 +1277,7 @@ export function CreateMerchant() {
                 {/* Custom Charges Form */}
                 {chargeConfigType === "custom" && (
                   <div className="space-y-6">
-                    <div className="max-w-md">
+                    <div className="grid gap-4 md:grid-cols-2 max-w-2xl">
                       <FormField
                         control={form.control}
                         name="surchargeOn"
@@ -1273,6 +1296,27 @@ export function CreateMerchant() {
                               </SelectContent>
                             </Select>
                             <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="partnerBankSplit"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0 pt-8">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel className="text-sm font-medium">Partner Bank Split</FormLabel>
+                              <p className="text-xs text-muted-foreground">
+                                Enable revenue sharing with partner bank
+                              </p>
+                            </div>
                           </FormItem>
                         )}
                       />
