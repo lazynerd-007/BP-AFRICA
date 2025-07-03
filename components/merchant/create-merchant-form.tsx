@@ -802,7 +802,7 @@ export function CreateMerchant() {
                       OVA Configuration
                     </CardTitle>
                     <p className="text-muted-foreground text-sm mt-1">
-                      Select virtual accounts for mobile money providers
+                      Select OVA accounts for mobile money providers
                     </p>
                   </CardHeader>
                   <CardContent>
