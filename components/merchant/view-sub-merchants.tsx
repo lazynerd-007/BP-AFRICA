@@ -160,14 +160,7 @@ export function ViewSubMerchants() {
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [selectedSubMerchant, setSelectedSubMerchant] = useState<SubMerchant | null>(null);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
-  const [editSubMerchantOpen, setEditSubMerchantOpen] = useState(false);
-  const [editSubMerchantData, setEditSubMerchantData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    status: 'Active'
-  });
+
 
   // Filter and search logic
   const filteredSubMerchants = useMemo(() => {
@@ -211,30 +204,11 @@ export function ViewSubMerchants() {
   };
 
   const handleEditSubMerchant = (subMerchant: SubMerchant) => {
-    setSelectedSubMerchant(subMerchant);
-    setEditSubMerchantData({
-      name: subMerchant.name,
-      email: subMerchant.email,
-      phone: subMerchant.phone,
-      address: subMerchant.address,
-      status: subMerchant.status
-    });
-    setEditSubMerchantOpen(true);
+    // Navigate to the create sub-merchant page with edit mode
+    window.location.href = `/admin/dashboard/merchant?tab=create-sub&id=${subMerchant.id}`;
   };
 
-  const handleSaveEditSubMerchant = () => {
-    // Here you would call the API to update the submerchant
-    // For demo purposes, we're just closing the modal
-    setEditSubMerchantOpen(false);
-    // You could also update local state or trigger a refresh
-  };
 
-  const handleEditSubMerchantChange = (field: string, value: string) => {
-    setEditSubMerchantData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
 
   const clearFilters = () => {
     setSearchTerm("");
@@ -529,144 +503,7 @@ export function ViewSubMerchants() {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Sub-Merchant Dialog */}
-      <Dialog open={editSubMerchantOpen} onOpenChange={setEditSubMerchantOpen}>
-        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Edit Sub-Merchant</DialogTitle>
-            <DialogDescription>
-              Update sub-merchant information and contact details
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="grid gap-6 py-4">
-            {selectedSubMerchant && (
-              <>
-                {/* Parent Merchant Info (Read-only) */}
-                <div className="space-y-4">
-                  <h3 className="text-sm font-medium">Parent Merchant</h3>
-                  <div className="p-3 bg-muted rounded-lg">
-                    <div className="grid grid-cols-1 gap-2">
-                      <div>
-                        <Label className="text-sm text-muted-foreground">Parent Merchant Name</Label>
-                        <p className="text-sm font-medium">{selectedSubMerchant.parentMerchant.name}</p>
-                      </div>
-                      <div>
-                        <Label className="text-sm text-muted-foreground">Parent Merchant Code</Label>
-                        <p className="text-sm font-medium">{selectedSubMerchant.parentMerchant.code}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
-                <Separator />
-
-                {/* Sub-Merchant Details */}
-                <div className="space-y-4">
-                  <h3 className="text-sm font-medium">Sub-Merchant Information</h3>
-                  <div className="grid grid-cols-1 gap-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="submerchant-name">Sub-Merchant Name</Label>
-                      <Input 
-                        id="submerchant-name" 
-                        value={editSubMerchantData.name} 
-                        onChange={(e) => handleEditSubMerchantChange('name', e.target.value)}
-                        placeholder="Enter sub-merchant name"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="submerchant-code">Sub-Merchant Code</Label>
-                      <Input 
-                        id="submerchant-code" 
-                        value={selectedSubMerchant.code}
-                        disabled
-                        className="bg-muted"
-                      />
-                      <p className="text-xs text-muted-foreground">Sub-merchant code cannot be changed</p>
-                    </div>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Contact Information */}
-                <div className="space-y-4">
-                  <h3 className="text-sm font-medium">Contact Information</h3>
-                  <div className="grid grid-cols-1 gap-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="submerchant-email">Email Address</Label>
-                      <Input 
-                        id="submerchant-email" 
-                        type="email"
-                        value={editSubMerchantData.email} 
-                        onChange={(e) => handleEditSubMerchantChange('email', e.target.value)}
-                        placeholder="Enter email address"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="submerchant-phone">Phone Number</Label>
-                      <Input 
-                        id="submerchant-phone" 
-                        value={editSubMerchantData.phone} 
-                        onChange={(e) => handleEditSubMerchantChange('phone', e.target.value)}
-                        placeholder="Enter phone number"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="submerchant-address">Address</Label>
-                      <Textarea 
-                        id="submerchant-address" 
-                        value={editSubMerchantData.address} 
-                        onChange={(e) => handleEditSubMerchantChange('address', e.target.value)}
-                        placeholder="Enter business address"
-                        rows={3}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Status and Settings */}
-                <div className="space-y-4">
-                  <h3 className="text-sm font-medium">Status & Settings</h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="submerchant-status">Status</Label>
-                      <Select
-                        value={editSubMerchantData.status}
-                        onValueChange={(value) => handleEditSubMerchantChange('status', value)}
-                      >
-                        <SelectTrigger id="submerchant-status">
-                          <SelectValue placeholder="Select status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Active">Active</SelectItem>
-                          <SelectItem value="Suspended">Suspended</SelectItem>
-                          <SelectItem value="Inactive">Inactive</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm text-muted-foreground">Created Date</Label>
-                      <p className="text-sm font-medium pt-2">{selectedSubMerchant.createdAt}</p>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditSubMerchantOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSaveEditSubMerchant}>
-              Save Changes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

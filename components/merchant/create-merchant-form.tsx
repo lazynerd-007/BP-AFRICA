@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,7 +38,8 @@ import {
   IconWallet,
   IconCoins,
   IconUpload,
-  IconUserCheck
+  IconUserCheck,
+  IconArrowLeft
 } from "@tabler/icons-react";
 import { mockCharges } from "@/components/admin/charges/types";
 import { useCurrency } from "@/lib/currency-context";
@@ -164,7 +166,13 @@ const formSchema = z.object({
 );
 
 export function CreateMerchant() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const merchantId = searchParams.get('id');
+  const isEditMode = Boolean(merchantId);
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(isEditMode);
   const [settlementType, setSettlementType] = useState<string>("");
   const [chargeConfigType, setChargeConfigType] = useState<string>("");
   const { currency } = useCurrency();
@@ -255,6 +263,72 @@ export function CreateMerchant() {
     },
   });
 
+  // Load merchant data when in edit mode
+  useEffect(() => {
+    if (isEditMode && merchantId) {
+      loadMerchantData(merchantId);
+    }
+  }, [isEditMode, merchantId]);
+
+  const loadMerchantData = async (id: string) => {
+    try {
+      setIsLoading(true);
+      
+      // Mock merchant data - in production, this would be an API call
+      const mockMerchantData = {
+        merchantCode: "BLUPAY1000",
+        merchantName: "Banco Limited",
+        merchantAddress: "123 Main Street, Accra, Ghana",
+        notificationEmail: "info@bancolimited.com",
+        country: "ghana",
+        tinNumber: "TAX8765432",
+        settlementFrequency: "daily",
+        surchargeOn: "merchant",
+        partnerBankSplit: false,
+        partnerBank: "gcb",
+        bdm: "john_asante",
+        terminalId: "term1",
+        phoneNumber: "+233 55 123 4567",
+        organizationType: "business",
+        merchantCategory: "services",
+        chargeConfigType: "default",
+        totalSurcharge: "2.5",
+        merchantSurcharge: "1.5",
+        customerSurcharge: "1.0",
+        noSurchargeCap: false,
+        mtn: "mtn_ova_001",
+        airtel: "airtel_ova_001",
+        telecel: "telecel_ova_001",
+        ssnNumber: "",
+        ghanaIdNumber: "GHA-123456789-0",
+        dateOfBirth: "1990-01-01",
+        firstName: "John",
+        lastName: "Doe",
+        email: "john@bancolimited.com",
+        settlementType: "bank",
+        merchantBank: "gcb",
+        branch: "Accra Main Branch",
+        accountType: "current",
+        accountNumber: "1234567890",
+        accountName: "Banco Limited",
+        momoProvider: "mtn",
+        momoNumber: "024 123 4567",
+        momoAccountName: "John Doe",
+      };
+      
+      // Set form values
+      form.reset(mockMerchantData);
+      setSettlementType(mockMerchantData.settlementType);
+      setChargeConfigType(mockMerchantData.chargeConfigType);
+      
+    } catch (error) {
+      console.error("Error loading merchant data:", error);
+      toast.error("Failed to load merchant data");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     
@@ -269,10 +343,30 @@ export function CreateMerchant() {
     // Simulate API call
     setTimeout(() => {
       console.log(submissionData);
-      toast.success("Merchant created successfully");
-      form.reset();
+      
+      if (isEditMode) {
+        toast.success("Merchant updated successfully");
+        router.push(`/admin/dashboard/merchant/${merchantId}`);
+      } else {
+        toast.success("Merchant created successfully");
+        // Reset form only on create
+        form.reset();
+        router.push("/admin/dashboard/merchant");
+      }
+      
       setIsSubmitting(false);
     }, 1500);
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-muted/30 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading merchant data...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -281,12 +375,28 @@ export function CreateMerchant() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.back()}
+              className="mr-2"
+            >
+              <IconArrowLeft className="h-4 w-4 mr-2" />
+              Back
+            </Button>
             <div className="p-2 bg-primary/10 rounded-lg">
               <IconBuilding className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Create New Merchant</h1>
-              <p className="text-muted-foreground">Set up a new BluPay merchant account with complete configuration</p>
+              <h1 className="text-3xl font-bold tracking-tight">
+                {isEditMode ? "Edit Merchant" : "Create New Merchant"}
+              </h1>
+              <p className="text-muted-foreground">
+                {isEditMode 
+                  ? "Update merchant account information and configuration"
+                  : "Set up a new BluPay merchant account with complete configuration"
+                }
+              </p>
             </div>
           </div>
           <div className="flex gap-2 mt-4">
@@ -1448,7 +1558,7 @@ export function CreateMerchant() {
             <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t">
               <div className="flex-1">
                 <p className="text-sm text-muted-foreground">
-                  Please review all information before creating the merchant account. This action cannot be undone.
+                  Please review all information before {isEditMode ? "updating" : "creating"} the merchant account.
                 </p>
               </div>
               <div className="flex gap-3">
@@ -1456,17 +1566,20 @@ export function CreateMerchant() {
                   type="button" 
                   variant="outline" 
                   disabled={isSubmitting} 
-                  onClick={() => form.reset()}
+                  onClick={() => router.back()}
                   className="min-w-[100px]"
                 >
-                  Reset Form
+                  Cancel
                 </Button>
                 <Button 
                   type="submit" 
                   disabled={isSubmitting}
                   className="min-w-[140px]"
                 >
-                  {isSubmitting ? "Creating..." : "Create Merchant"}
+                  {isSubmitting 
+                    ? (isEditMode ? "Updating..." : "Creating...") 
+                    : (isEditMode ? "Update Merchant" : "Create Merchant")
+                  }
                 </Button>
               </div>
             </div>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,7 +36,8 @@ import {
   IconPhone,
   IconDeviceMobile,
   IconWallet,
-  IconCoins
+  IconCoins,
+  IconArrowLeft
 } from "@tabler/icons-react";
 import { mockCharges } from "@/components/admin/charges/types";
 import { useCurrency } from "@/lib/currency-context";
@@ -143,7 +145,13 @@ const formSchema = z.object({
 );
 
 export function CreateSubMerchant() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const subMerchantId = searchParams.get('id');
+  const isEditMode = Boolean(subMerchantId);
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(isEditMode);
   const [useParentSettlement, setUseParentSettlement] = useState(true);
   const [settlementType, setSettlementType] = useState<string>("");
   const [inheritSurcharge, setInheritSurcharge] = useState(true);
@@ -217,16 +225,89 @@ export function CreateSubMerchant() {
     },
   });
 
+  // Load sub-merchant data when in edit mode
+  useEffect(() => {
+    if (isEditMode && subMerchantId) {
+      loadSubMerchantData(subMerchantId);
+    }
+  }, [isEditMode, subMerchantId]);
+
+  const loadSubMerchantData = async (id: string) => {
+    try {
+      setIsLoading(true);
+      
+      // Mock sub-merchant data - in production, this would be an API call
+      const mockSubMerchantData = {
+        parentMerchant: "bluwave",
+        merchantCode: "SUB001",
+        merchantName: "BluWave Store 1",
+        merchantAddress: "123 Main St, Accra",
+        notificationEmail: "store1@bluwave.com",
+        tinNumber: "",
+        phoneNumber: "+233 24 123 4567",
+        inheritSurcharge: true,
+        surchargeOn: "merchant",
+        useParentSettlement: true,
+        settlementType: "bank",
+        merchantBank: "gcb",
+        branch: "Accra Main",
+        accountType: "current",
+        accountNumber: "1234567890",
+        accountName: "BluWave Store 1",
+        momoProvider: "mtn",
+        momoNumber: "024 123 4567",
+        momoAccountName: "Store 1",
+        mtn: "mtn_ova_001",
+        airtel: "airtel_ova_001",
+        telecel: "telecel_ova_001",
+        firstName: "John",
+        lastName: "Doe",
+        email: "john@bluwave.com",
+      };
+      
+      // Set form values
+      form.reset(mockSubMerchantData);
+      setUseParentSettlement(mockSubMerchantData.useParentSettlement);
+      setInheritSurcharge(mockSubMerchantData.inheritSurcharge);
+      setSettlementType(mockSubMerchantData.settlementType);
+      
+    } catch (error) {
+      console.error("Error loading sub-merchant data:", error);
+      toast.error("Failed to load sub-merchant data");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     
     // Simulate API call
     setTimeout(() => {
       console.log(values);
-      toast.success("Sub-merchant created successfully");
-      form.reset();
+      
+      if (isEditMode) {
+        toast.success("Sub-merchant updated successfully");
+        router.push(`/admin/dashboard/merchant/${subMerchantId}`);
+      } else {
+        toast.success("Sub-merchant created successfully");
+        form.reset();
+        router.push("/admin/dashboard/merchant?tab=view-sub");
+      }
+      
       setIsSubmitting(false);
     }, 1500);
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-muted/30 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading sub-merchant data...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -235,13 +316,27 @@ export function CreateSubMerchant() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.back()}
+              className="mr-4"
+            >
+              <IconArrowLeft className="h-4 w-4 mr-2" />
+              Back
+            </Button>
             <div className="flex items-center justify-center w-12 h-12 bg-primary rounded-full">
               <IconBuilding className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold">Create Sub-Merchant</h1>
+              <h1 className="text-3xl font-bold">
+                {isEditMode ? "Edit Sub-Merchant" : "Create Sub-Merchant"}
+              </h1>
               <p className="text-muted-foreground mt-1">
-                Add a new sub-merchant to an existing parent merchant account
+                {isEditMode 
+                  ? "Update sub-merchant information and configuration"
+                  : "Add a new sub-merchant to an existing parent merchant account"
+                }
               </p>
             </div>
 
@@ -1027,17 +1122,17 @@ export function CreateSubMerchant() {
 
             {/* Form Actions */}
             <div className="flex justify-end space-x-4 pt-6">
-              <Button variant="outline" type="button" onClick={() => form.reset()}>
-                Reset Form
+              <Button variant="outline" type="button" onClick={() => router.back()}>
+                Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting} className="min-w-[150px]">
                 {isSubmitting ? (
                   <>
                     <IconSettings className="mr-2 h-4 w-4 animate-spin" />
-                    Creating...
+                    {isEditMode ? "Updating..." : "Creating..."}
                   </>
                 ) : (
-                  "Create Sub-Merchant"
+                  isEditMode ? "Update Sub-Merchant" : "Create Sub-Merchant"
                 )}
               </Button>
             </div>

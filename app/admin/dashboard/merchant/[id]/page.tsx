@@ -97,29 +97,7 @@ export default function MerchantDetailPage() {
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [statusAction, setStatusAction] = useState<'suspend' | 'deactivate' | 'activate' | null>(null);
   const [actionReason, setActionReason] = useState('');
-  const [editMerchantOpen, setEditMerchantOpen] = useState(false);
   const [addUserOpen, setAddUserOpen] = useState(false);
-  const [editMerchantData, setEditMerchantData] = useState({
-    email: '',
-    phone: '',
-    address: '',
-    bankName: '',
-    accountNumber: '',
-    accountName: '',
-    swiftCode: '',
-    surchargeValue: '',
-    surchargeTotal: '',
-    surchargeMerchant: '',
-    surchargeCustomer: '',
-    surchargeCap: '',
-    settlementFrequency: '',
-    momoProvider: '',
-    momoNumber: '',
-    momoAccountName: '',
-    mtnOva: '',
-    airtelOva: '',
-    telecelOva: ''
-  });
   const [newUser, setNewUser] = useState({
     name: '',
     email: '',
@@ -131,31 +109,6 @@ export default function MerchantDetailPage() {
     // For now using mock data
     setMerchant(merchantData);
     setLoading(false);
-    
-    // Initialize edit form data
-    if (merchantData) {
-      setEditMerchantData({
-        email: merchantData.email,
-        phone: merchantData.phone,
-        address: merchantData.address,
-        bankName: merchantData.bankDetails.bankName,
-        accountNumber: merchantData.bankDetails.accountNumber,
-        accountName: merchantData.bankDetails.accountName,
-        swiftCode: merchantData.bankDetails.swiftCode,
-        surchargeValue: merchantData.surchargeDetails.globalSurchargeValue.replace('%', ''),
-        surchargeTotal: '3.5',
-        surchargeMerchant: '1.5',
-        surchargeCustomer: '2.0', 
-        surchargeCap: '100',
-        settlementFrequency: merchantData.settlementFrequency || 'daily',
-        momoProvider: merchantData.momoDetails?.provider || 'mtn',
-        momoNumber: merchantData.momoDetails?.number || '024 123 4567',
-        momoAccountName: merchantData.momoDetails?.accountName || 'John Doe',
-        mtnOva: merchantData.ovaSettings?.mtn || 'mtn-ova-001',
-        airtelOva: merchantData.ovaSettings?.airtel || 'airtel-ova-001',
-        telecelOva: merchantData.ovaSettings?.telecel || 'telecel-ova-001'
-      });
-    }
   }, [params.id]);
   
   const handleStatusChange = (action: 'suspend' | 'deactivate' | 'activate') => {
@@ -205,51 +158,9 @@ export default function MerchantDetailPage() {
     }
   };
   
-  const handleOpenEditMerchant = () => {
-    setEditMerchantOpen(true);
-  };
-  
-  const handleSaveEditMerchant = () => {
-    // Here you would call the API to update the merchant
-    
-    // Update local state for demo purposes
-    setMerchant(prev => ({
-      ...prev,
-      email: editMerchantData.email,
-      phone: editMerchantData.phone,
-      address: editMerchantData.address,
-      bankDetails: {
-        bankName: editMerchantData.bankName,
-        accountNumber: editMerchantData.accountNumber,
-        accountName: editMerchantData.accountName,
-        swiftCode: editMerchantData.swiftCode
-      },
-      surchargeDetails: {
-        ...prev.surchargeDetails,
-        globalSurchargeValue: `${editMerchantData.surchargeValue}%`
-      },
-      settlementFrequency: editMerchantData.settlementFrequency,
-      momoDetails: {
-        provider: editMerchantData.momoProvider,
-        number: editMerchantData.momoNumber,
-        accountName: editMerchantData.momoAccountName
-      },
-      ovaSettings: {
-        ...prev.ovaSettings,
-        mtn: editMerchantData.mtnOva,
-        airtel: editMerchantData.airtelOva,
-        telecel: editMerchantData.telecelOva
-      }
-    }));
-    
-    setEditMerchantOpen(false);
-  };
-  
-  const handleEditMerchantChange = (field: string, value: string) => {
-    setEditMerchantData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  const handleEditMerchant = () => {
+    // Navigate to the create merchant page with edit mode
+    window.location.href = `/admin/dashboard/merchant?tab=create&id=${params.id}`;
   };
   
   const handleAddUser = () => {
@@ -341,10 +252,10 @@ export default function MerchantDetailPage() {
           
           <Button 
             variant="outline" 
-            className="flex items-center gap-2"
-            onClick={handleOpenEditMerchant}
+            size="sm"
+            onClick={handleEditMerchant}
           >
-            <IconEdit className="h-4 w-4" />
+            <IconEdit className="h-4 w-4 mr-2" />
             Edit Merchant
           </Button>
         </div>
@@ -572,268 +483,6 @@ export default function MerchantDetailPage() {
               {statusAction === 'suspend' && 'Suspend'}
               {statusAction === 'deactivate' && 'Deactivate'}
               {statusAction === 'activate' && 'Activate'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      
-      {/* Edit Merchant Dialog */}
-      <Dialog open={editMerchantOpen} onOpenChange={setEditMerchantOpen}>
-        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Edit Merchant</DialogTitle>
-            <DialogDescription>
-              Update merchant information, banking details, settlement settings, MOMO details, and OVA configuration
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-6 py-4">
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium">Contact Information</h3>
-              <div className="grid grid-cols-1 gap-3">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input 
-                    id="email" 
-                    value={editMerchantData.email} 
-                    onChange={(e) => handleEditMerchantChange('email', e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input 
-                    id="phone" 
-                    value={editMerchantData.phone} 
-                    onChange={(e) => handleEditMerchantChange('phone', e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="address">Address</Label>
-                  <Textarea 
-                    id="address" 
-                    value={editMerchantData.address} 
-                    onChange={(e) => handleEditMerchantChange('address', e.target.value)}
-                    rows={2}
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <Separator />
-            
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium">Bank Details</h3>
-              <div className="grid grid-cols-1 gap-3">
-                <div className="space-y-2">
-                  <Label htmlFor="bankName">Bank Name</Label>
-                  <Input 
-                    id="bankName" 
-                    value={editMerchantData.bankName} 
-                    onChange={(e) => handleEditMerchantChange('bankName', e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="accountNumber">Account Number</Label>
-                  <Input 
-                    id="accountNumber" 
-                    value={editMerchantData.accountNumber} 
-                    onChange={(e) => handleEditMerchantChange('accountNumber', e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="accountName">Account Name</Label>
-                  <Input 
-                    id="accountName" 
-                    value={editMerchantData.accountName} 
-                    onChange={(e) => handleEditMerchantChange('accountName', e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="swiftCode">Swift Code</Label>
-                  <Input 
-                    id="swiftCode" 
-                    value={editMerchantData.swiftCode} 
-                    onChange={(e) => handleEditMerchantChange('swiftCode', e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <Separator />
-            
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium">Surcharge Configuration</h3>
-              <div className="grid grid-cols-1 gap-3">
-                <div className="space-y-2">
-                  <Label htmlFor="surchargeTotal">Total Surcharge (%)</Label>
-                  <Input 
-                    id="surchargeTotal" 
-                    type="number" 
-                    min="0" 
-                    step="0.1" 
-                    value={editMerchantData.surchargeTotal} 
-                    onChange={(e) => handleEditMerchantChange('surchargeTotal', e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="surchargeMerchant">Merchant Surcharge (%)</Label>
-                  <Input 
-                    id="surchargeMerchant" 
-                    type="number" 
-                    min="0" 
-                    step="0.1" 
-                    value={editMerchantData.surchargeMerchant} 
-                    onChange={(e) => handleEditMerchantChange('surchargeMerchant', e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="surchargeCustomer">Customer Surcharge (%)</Label>
-                  <Input 
-                    id="surchargeCustomer" 
-                    type="number" 
-                    min="0" 
-                    step="0.1" 
-                    value={editMerchantData.surchargeCustomer} 
-                    onChange={(e) => handleEditMerchantChange('surchargeCustomer', e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="surchargeCap">Surcharge Cap (GHS)</Label>
-                  <Input 
-                    id="surchargeCap" 
-                    type="number" 
-                    min="0" 
-                    value={editMerchantData.surchargeCap} 
-                    onChange={(e) => handleEditMerchantChange('surchargeCap', e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <Separator />
-            
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium">Settlement Details</h3>
-              <div className="grid grid-cols-1 gap-3">
-                <div className="space-y-2">
-                  <Label htmlFor="settlementFrequency">Settlement Frequency</Label>
-                  <select 
-                    id="settlementFrequency" 
-                    className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                    value={editMerchantData.settlementFrequency} 
-                    onChange={(e) => handleEditMerchantChange('settlementFrequency', e.target.value)}
-                  >
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            
-            <Separator />
-            
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium">MOMO Details</h3>
-              <div className="grid grid-cols-1 gap-3">
-                <div className="space-y-2">
-                  <Label htmlFor="momoProvider">MOMO Provider</Label>
-                  <select 
-                    id="momoProvider" 
-                    className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                    value={editMerchantData.momoProvider} 
-                    onChange={(e) => handleEditMerchantChange('momoProvider', e.target.value)}
-                  >
-                    <option value="mtn">MTN Mobile Money</option>
-                    <option value="telecel">Telecel Cash</option>
-                    <option value="airteltigo">AirtelTigo Money</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="momoNumber">MOMO Number</Label>
-                  <Input 
-                    id="momoNumber" 
-                    value={editMerchantData.momoNumber} 
-                    onChange={(e) => handleEditMerchantChange('momoNumber', e.target.value)}
-                    placeholder="024 123 4567"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="momoAccountName">MOMO Account Name</Label>
-                  <Input 
-                    id="momoAccountName" 
-                    value={editMerchantData.momoAccountName} 
-                    onChange={(e) => handleEditMerchantChange('momoAccountName', e.target.value)}
-                    placeholder="John Doe"
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <Separator />
-            
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium">OVA Selection</h3>
-              <div className="grid grid-cols-1 gap-3">
-                <div className="space-y-2">
-                  <Label htmlFor="mtnOva">MTN OVA</Label>
-                  <Select 
-                    value={editMerchantData.mtnOva} 
-                    onValueChange={(value) => handleEditMerchantChange('mtnOva', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select MTN OVA" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="mtn-ova-001">MTN OVA 001 - 1234567890</SelectItem>
-                      <SelectItem value="mtn-ova-002">MTN OVA 002 - 1234567891</SelectItem>
-                      <SelectItem value="mtn-ova-003">MTN OVA 003 - 1234567892</SelectItem>
-                      <SelectItem value="mtn-ova-004">MTN OVA 004 - 1234567893</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="airtelOva">Airtel OVA</Label>
-                  <Select 
-                    value={editMerchantData.airtelOva} 
-                    onValueChange={(value) => handleEditMerchantChange('airtelOva', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Airtel OVA" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="airtel-ova-001">Airtel OVA 001 - 0987654321</SelectItem>
-                      <SelectItem value="airtel-ova-002">Airtel OVA 002 - 0987654322</SelectItem>
-                      <SelectItem value="airtel-ova-003">Airtel OVA 003 - 0987654323</SelectItem>
-                      <SelectItem value="airtel-ova-004">Airtel OVA 004 - 0987654324</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="telecelOva">Telecel OVA</Label>
-                  <Select 
-                    value={editMerchantData.telecelOva} 
-                    onValueChange={(value) => handleEditMerchantChange('telecelOva', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Telecel OVA" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="telecel-ova-001">Telecel OVA 001 - 1122334455</SelectItem>
-                      <SelectItem value="telecel-ova-002">Telecel OVA 002 - 1122334456</SelectItem>
-                      <SelectItem value="telecel-ova-003">Telecel OVA 003 - 1122334457</SelectItem>
-                      <SelectItem value="telecel-ova-004">Telecel OVA 004 - 1122334458</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditMerchantOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSaveEditMerchant}>
-              Save Changes
             </Button>
           </DialogFooter>
         </DialogContent>
