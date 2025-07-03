@@ -816,15 +816,13 @@ export function CreateMerchant() {
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                               <FormControl>
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select MTN virtual account" />
+                                  <SelectValue placeholder="Select" />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value="mtn_ova_001">MTN-OVA-001 (0244123001)</SelectItem>
-                                <SelectItem value="mtn_ova_002">MTN-OVA-002 (0244123002)</SelectItem>
-                                <SelectItem value="mtn_ova_003">MTN-OVA-003 (0244123003)</SelectItem>
-                                <SelectItem value="mtn_ova_004">MTN-OVA-004 (0244123004)</SelectItem>
-                                <SelectItem value="mtn_ova_005">MTN-OVA-005 (0244123005)</SelectItem>
+                                <SelectItem value="mtn_ova_001">EGANOW</SelectItem>
+                                <SelectItem value="mtn_ova_002">BLUPAY</SelectItem>
+                               
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -841,15 +839,12 @@ export function CreateMerchant() {
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                               <FormControl>
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select AirtelTigo virtual account" />
+                                  <SelectValue placeholder="Select " />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value="airtel_ova_001">AIRTEL-OVA-001 (0272123001)</SelectItem>
-                                <SelectItem value="airtel_ova_002">AIRTEL-OVA-002 (0272123002)</SelectItem>
-                                <SelectItem value="airtel_ova_003">AIRTEL-OVA-003 (0272123003)</SelectItem>
-                                <SelectItem value="airtel_ova_004">AIRTEL-OVA-004 (0272123004)</SelectItem>
-                                <SelectItem value="airtel_ova_005">AIRTEL-OVA-005 (0272123005)</SelectItem>
+                                <SelectItem value="airtel_ova_001">AIRTEL BLUPAY</SelectItem>
+                              
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -866,15 +861,12 @@ export function CreateMerchant() {
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                               <FormControl>
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select Telecel virtual account" />
+                                  <SelectValue placeholder="Select " />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value="telecel_ova_001">TELECEL-OVA-001 (0200123001)</SelectItem>
-                                <SelectItem value="telecel_ova_002">TELECEL-OVA-002 (0200123002)</SelectItem>
-                                <SelectItem value="telecel_ova_003">TELECEL-OVA-003 (0200123003)</SelectItem>
-                                <SelectItem value="telecel_ova_004">TELECEL-OVA-004 (0200123004)</SelectItem>
-                                <SelectItem value="telecel_ova_005">TELECEL-OVA-005 (0200123005)</SelectItem>
+                                <SelectItem value="telecel_ova_001">BLUPAY3</SelectItem>
+                              
                               </SelectContent>
                             </Select>
                             <FormMessage />
