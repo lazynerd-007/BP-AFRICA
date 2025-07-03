@@ -28,8 +28,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Link from "next/link";
 import { IconArrowLeft, IconEdit, IconBan, IconPlayerPause, IconPlayerPlay, IconWallet, IconCoins, IconDeviceMobile, IconBuildingBank, IconTrash, IconShield, IconSettings, IconCreditCard } from "@tabler/icons-react";
 import { mockCharges } from "@/components/admin/charges/types";
@@ -91,6 +89,14 @@ const merchantData = {
 // Define badge variant type
 type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline';
 
+// Define User type
+type User = {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+};
+
 export default function MerchantDetailPage() {
   const params = useParams();
   const [merchant, setMerchant] = useState(merchantData);
@@ -101,7 +107,7 @@ export default function MerchantDetailPage() {
   const [addUserOpen, setAddUserOpen] = useState(false);
   const [deleteUserOpen, setDeleteUserOpen] = useState(false);
   const [otpDialogOpen, setOtpDialogOpen] = useState(false);
-  const [userToDelete, setUserToDelete] = useState<any>(null);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [otpCode, setOtpCode] = useState('');
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [otpError, setOtpError] = useState('');
@@ -205,7 +211,7 @@ export default function MerchantDetailPage() {
     }));
   };
 
-  const handleDeleteUser = (user: any) => {
+  const handleDeleteUser = (user: User) => {
     setUserToDelete(user);
     setDeleteUserOpen(true);
   };
@@ -229,7 +235,7 @@ export default function MerchantDetailPage() {
         // Delete the user
         setMerchant(prev => ({
           ...prev,
-          users: prev.users.filter(u => u.id !== userToDelete.id)
+          users: prev.users.filter(u => u.id !== userToDelete?.id)
         }));
         
         setOtpDialogOpen(false);

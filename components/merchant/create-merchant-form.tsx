@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -261,18 +261,12 @@ export function CreateMerchant() {
     },
   });
 
-  // Load merchant data when in edit mode
-  useEffect(() => {
-    if (isEditMode && merchantId) {
-      loadMerchantData(merchantId);
-    }
-  }, [isEditMode, merchantId]);
-
-  const loadMerchantData = async (id: string) => {
+  const loadMerchantData = useCallback(async (merchantId: string) => {
     try {
       setIsLoading(true);
       
-      // Mock merchant data - in production, this would be an API call
+      // Mock merchant data - in production, this would be an API call using merchantId
+      console.log("Loading merchant data for ID:", merchantId);
       const mockMerchantData = {
         merchantCode: "BLUPAY1000",
         merchantName: "Banco Limited",
@@ -324,7 +318,14 @@ export function CreateMerchant() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [form]);
+
+  // Load merchant data when in edit mode
+  useEffect(() => {
+    if (isEditMode && merchantId) {
+      loadMerchantData(merchantId);
+    }
+  }, [isEditMode, merchantId, loadMerchantData]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);

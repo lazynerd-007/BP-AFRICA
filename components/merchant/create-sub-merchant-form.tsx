@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -230,13 +230,14 @@ export function CreateSubMerchant() {
     if (isEditMode && subMerchantId) {
       loadSubMerchantData(subMerchantId);
     }
-  }, [isEditMode, subMerchantId]);
+  }, [isEditMode, subMerchantId, loadSubMerchantData]);
 
-  const loadSubMerchantData = async (id: string) => {
+  const loadSubMerchantData = useCallback(async (id: string) => {
     try {
       setIsLoading(true);
       
-      // Mock sub-merchant data - in production, this would be an API call
+      // Mock sub-merchant data - in production, this would be an API call using id
+      console.log("Loading sub-merchant data for ID:", id);
       const mockSubMerchantData = {
         parentMerchant: "bluwave",
         merchantCode: "SUB001",
@@ -277,7 +278,7 @@ export function CreateSubMerchant() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [form, setUseParentSettlement, setInheritSurcharge, setSettlementType]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
