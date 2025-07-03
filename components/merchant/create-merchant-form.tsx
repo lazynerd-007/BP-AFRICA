@@ -1290,7 +1290,7 @@ export function CreateMerchant() {
                     <div className="space-y-6">
                       {Object.entries(mockCharges).map(([key, defaultCharge]) => {
                         const fieldPrefix = `custom${key.charAt(0).toUpperCase() + key.slice(1)}`;
-                        const chargeTypeField = `${fieldPrefix}Type` as keyof typeof form.control._formValues;
+                        const chargeTypeField = `${fieldPrefix}Type` as keyof z.infer<typeof formSchema>;
                         const currentChargeType = form.watch(chargeTypeField) || defaultCharge.chargeType;
                         
                         return (
@@ -1337,7 +1337,7 @@ export function CreateMerchant() {
                               {currentChargeType === "fixed" && (
                                 <FormField
                                   control={form.control}
-                                  name={`${fieldPrefix}Amount` as keyof typeof form.control._formValues}
+                                  name={`${fieldPrefix}Amount` as keyof z.infer<typeof formSchema>}
                                   render={({ field }) => (
                                     <FormItem>
                                       <FormLabel className="text-sm font-medium">Fixed Amount ({currency})</FormLabel>
@@ -1359,7 +1359,7 @@ export function CreateMerchant() {
                                 <>
                                   <FormField
                                     control={form.control}
-                                    name={`${fieldPrefix}Percentage` as keyof typeof form.control._formValues}
+                                    name={`${fieldPrefix}Percentage` as keyof z.infer<typeof formSchema>}
                                     render={({ field }) => (
                                       <FormItem>
                                         <FormLabel className="text-sm font-medium">Percentage (%)</FormLabel>
@@ -1378,7 +1378,7 @@ export function CreateMerchant() {
                                   
                                   <FormField
                                     control={form.control}
-                                    name={`${fieldPrefix}Cap` as keyof typeof form.control._formValues}
+                                    name={`${fieldPrefix}Cap` as keyof z.infer<typeof formSchema>}
                                     render={({ field }) => (
                                       <FormItem>
                                         <FormLabel className="text-sm font-medium">Cap Amount ({currency})</FormLabel>
