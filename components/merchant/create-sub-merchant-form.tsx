@@ -63,7 +63,6 @@ const formSchema = z.object({
   // Surcharge Details
   inheritSurcharge: z.boolean().default(true),
   surchargeOn: z.string().optional(),
-  partnerBankSplit: z.boolean().default(false),
   
   // Settlement Account
   useParentSettlement: z.boolean().default(true),
@@ -163,7 +162,6 @@ export function CreateSubMerchant() {
       phoneNumber: "",
       inheritSurcharge: true,
       surchargeOn: "",
-      partnerBankSplit: false,
       useParentSettlement: true,
       settlementType: "",
       merchantBank: "",
@@ -739,52 +737,7 @@ export function CreateSubMerchant() {
                       )}
                     />
                     
-                    {/* Surcharge Settings */}
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <FormField
-                        control={form.control}
-                        name="surchargeOn"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-sm font-medium">Surcharge Applied To</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select option" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="merchant">Merchant</SelectItem>
-                                <SelectItem value="customer">Customer</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <FormField
-                        control={form.control}
-                        name="partnerBankSplit"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-start space-x-3 space-y-0 pt-8">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                            <div className="space-y-1 leading-none">
-                              <FormLabel className="text-sm font-medium">Partner Bank Split</FormLabel>
-                              <p className="text-xs text-muted-foreground">
-                                Enable revenue sharing with partner bank
-                              </p>
-                            </div>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    
+
                     {!inheritSurcharge && (
                       <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                         <p className="text-sm text-blue-800 dark:text-blue-200 flex items-center gap-2">
@@ -926,6 +879,31 @@ export function CreateSubMerchant() {
                       <IconWallet className="h-5 w-5" />
                       Custom Charge Configuration
                     </h4>
+                    
+                    {/* Surcharge Applied To */}
+                    <div className="max-w-md">
+                      <FormField
+                        control={form.control}
+                        name="surchargeOn"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-sm font-medium">Surcharge Applied To</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select option" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="merchant">Merchant</SelectItem>
+                                <SelectItem value="customer">Customer</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                     
                     {Object.entries(mockCharges).map(([key, defaultCharge]) => {
                       const fieldPrefix = `custom${key.charAt(0).toUpperCase() + key.slice(1)}`;
