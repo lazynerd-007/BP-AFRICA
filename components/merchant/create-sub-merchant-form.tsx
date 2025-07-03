@@ -316,15 +316,17 @@ export function CreateSubMerchant() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => router.back()}
-              className="mr-4"
-            >
-              <IconArrowLeft className="h-4 w-4 mr-2" />
-              Back
-            </Button>
+            {isEditMode && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => router.back()}
+                className="mr-4"
+              >
+                <IconArrowLeft className="h-4 w-4 mr-2" />
+                Back
+              </Button>
+            )}
             <div className="flex items-center justify-center w-12 h-12 bg-primary rounded-full">
               <IconBuilding className="w-6 h-6 text-primary-foreground" />
             </div>

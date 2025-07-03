@@ -57,7 +57,6 @@ const formSchema = z.object({
   partnerBankSplit: z.boolean().default(false),
   partnerBank: z.string({ required_error: "Partner bank is required" }),
   bdm: z.string().optional(),
-  terminalId: z.string().optional(),
   phoneNumber: z.string().min(10, { message: "Valid phone number is required" }),
   organizationType: z.string({ required_error: "Organization type is required" }),
   merchantCategory: z.string({ required_error: "Merchant category is required" }),
@@ -191,7 +190,6 @@ export function CreateMerchant() {
       partnerBankSplit: false,
       partnerBank: "",
       bdm: "",
-      terminalId: "",
       phoneNumber: "",
       organizationType: "",
       merchantCategory: "",
@@ -287,7 +285,6 @@ export function CreateMerchant() {
         partnerBankSplit: false,
         partnerBank: "gcb",
         bdm: "john_asante",
-        terminalId: "term1",
         phoneNumber: "+233 55 123 4567",
         organizationType: "business",
         merchantCategory: "services",
@@ -375,15 +372,17 @@ export function CreateMerchant() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => router.back()}
-              className="mr-2"
-            >
-              <IconArrowLeft className="h-4 w-4 mr-2" />
-              Back
-            </Button>
+            {isEditMode && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => router.back()}
+                className="mr-2"
+              >
+                <IconArrowLeft className="h-4 w-4 mr-2" />
+                Back
+              </Button>
+            )}
             <div className="p-2 bg-primary/10 rounded-lg">
               <IconBuilding className="h-6 w-6 text-primary" />
             </div>
@@ -1197,31 +1196,6 @@ export function CreateMerchant() {
                               <SelectItem value="michael_osei">Michael Osei</SelectItem>
                               <SelectItem value="rebecca_adjei">Rebecca Adjei</SelectItem>
                               <SelectItem value="david_kwame">David Kwame</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="terminalId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-sm font-medium">Terminal ID</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select terminal" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="term1">Terminal 1 (TERM-001)</SelectItem>
-                              <SelectItem value="term2">Terminal 2 (TERM-002)</SelectItem>
-                              <SelectItem value="term3">Terminal 3 (TERM-003)</SelectItem>
-                              <SelectItem value="term4">Terminal 4 (TERM-004)</SelectItem>
-                              <SelectItem value="term5">Terminal 5 (TERM-005)</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />

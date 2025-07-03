@@ -31,7 +31,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Link from "next/link";
-import { IconArrowLeft, IconEdit, IconBan, IconPlayerPause, IconPlayerPlay } from "@tabler/icons-react";
+import { IconArrowLeft, IconEdit, IconBan, IconPlayerPause, IconPlayerPlay, IconWallet, IconCoins, IconDeviceMobile, IconBuildingBank, IconTrash, IconShield, IconSettings, IconCreditCard } from "@tabler/icons-react";
+import { mockCharges } from "@/components/admin/charges/types";
 
 // Mock merchant data - in a real app, this would come from an API
 const merchantData = {
@@ -98,6 +99,12 @@ export default function MerchantDetailPage() {
   const [statusAction, setStatusAction] = useState<'suspend' | 'deactivate' | 'activate' | null>(null);
   const [actionReason, setActionReason] = useState('');
   const [addUserOpen, setAddUserOpen] = useState(false);
+  const [deleteUserOpen, setDeleteUserOpen] = useState(false);
+  const [otpDialogOpen, setOtpDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<any>(null);
+  const [otpCode, setOtpCode] = useState('');
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [otpError, setOtpError] = useState('');
   const [newUser, setNewUser] = useState({
     name: '',
     email: '',
@@ -196,6 +203,55 @@ export default function MerchantDetailPage() {
       ...prev,
       [field]: value
     }));
+  };
+
+  const handleDeleteUser = (user: any) => {
+    setUserToDelete(user);
+    setDeleteUserOpen(true);
+  };
+
+  const initiateUserDeletion = () => {
+    setDeleteUserOpen(false);
+    setOtpDialogOpen(true);
+    setOtpCode('');
+    setOtpError('');
+    // In a real app, you would send OTP to admin's registered email/phone
+    console.log('OTP sent for user deletion verification');
+  };
+
+  const verifyOtpAndDeleteUser = () => {
+    setIsVerifyingOtp(true);
+    setOtpError('');
+
+    // Simulate OTP verification (in real app, this would be an API call)
+    setTimeout(() => {
+      if (otpCode === '123456') { // Mock OTP for demo
+        // Delete the user
+        setMerchant(prev => ({
+          ...prev,
+          users: prev.users.filter(u => u.id !== userToDelete.id)
+        }));
+        
+        setOtpDialogOpen(false);
+        setUserToDelete(null);
+        setOtpCode('');
+        setIsVerifyingOtp(false);
+        
+        // Show success message
+        console.log('User deleted successfully');
+      } else {
+        setOtpError('Invalid OTP. Please try again.');
+        setIsVerifyingOtp(false);
+      }
+    }, 1500);
+  };
+
+  const cancelUserDeletion = () => {
+    setDeleteUserOpen(false);
+    setOtpDialogOpen(false);
+    setUserToDelete(null);
+    setOtpCode('');
+    setOtpError('');
   };
   
   if (loading) {
@@ -366,19 +422,84 @@ export default function MerchantDetailPage() {
             <CardHeader>
               <CardTitle>Surcharge Configuration</CardTitle>
               <CardDescription>
-                {merchant.surchargeDetails.hasGlobalSurcharge 
-                  ? `Total surcharge of ${merchant.surchargeDetails.globalSurchargeValue} applied` 
-                  : "Custom surcharge per payment method"}
+                Detailed view of all applied charges and surcharge settings for this merchant
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-6">
+              {/* Global Surcharge Settings */}
               <div className="space-y-4">
-                {merchant.surchargeDetails.cardSchemes.map((scheme, index) => (
-                  <div key={index} className="flex justify-between items-center border-b pb-2">
-                    <p className="font-medium">{scheme.name}</p>
-                    <Badge variant="outline">{scheme.surcharge}</Badge>
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <IconSettings className="h-5 w-5" />
+                  Global Settings
+                </h3>
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div className="p-4 bg-muted/50 rounded-lg">
+                    <div className="text-sm text-muted-foreground">Surcharge Type</div>
+                    <div className="text-lg font-semibold">Default</div>
                   </div>
-                ))}
+                  <div className="p-4 bg-muted/50 rounded-lg">
+                    <div className="text-sm text-muted-foreground">Applied To</div>
+                    <div className="text-lg font-semibold">Merchant</div>
+                  </div>
+                  <div className="p-4 bg-muted/50 rounded-lg">
+                    <div className="text-sm text-muted-foreground">Partner Bank Split</div>
+                    <div className="text-lg font-semibold">Enabled</div>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Applied Charges */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <IconCreditCard className="h-5 w-5" />
+                  Applied Charges
+                </h3>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {Object.entries(mockCharges).map(([key, charge]) => (
+                    <div key={key} className="p-4 bg-background rounded-lg border shadow-sm">
+                      <div className="flex items-center gap-2 mb-3">
+                        {key.includes('wallet') && <IconWallet className="h-5 w-5 text-blue-600" />}
+                        {key.includes('momo') && !key.includes('Collection') && <IconDeviceMobile className="h-5 w-5 text-green-600" />}
+                        {key.includes('bank') && !key.includes('Collection') && <IconBuildingBank className="h-5 w-5 text-purple-600" />}
+                        {key.includes('Collection') && key.includes('momo') && <IconCoins className="h-5 w-5 text-orange-600" />}
+                        {key.includes('Collection') && key.includes('bank') && <IconCoins className="h-5 w-5 text-red-600" />}
+                        <span className="font-medium text-sm">
+                          {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                        </span>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-muted-foreground">Type</span>
+                          <Badge variant="secondary" className="text-xs">
+                            {charge.chargeType}
+                          </Badge>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-muted-foreground">Rate</span>
+                          <span className="font-medium text-sm">
+                            {charge.chargeType === "fixed" 
+                              ? `GHS${charge.amount.toFixed(2)}` 
+                              : `${charge.percentage}%`}
+                          </span>
+                        </div>
+                        {charge.chargeType === "percentage" && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs text-muted-foreground">Cap</span>
+                            <span className="text-sm font-medium">GHS{charge.cap.toFixed(2)}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-muted-foreground">Status</span>
+                          <Badge variant={charge.status === "Active" ? "default" : "secondary"} className="text-xs">
+                            {charge.status}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -398,7 +519,17 @@ export default function MerchantDetailPage() {
                       <p className="font-medium">{user.name}</p>
                       <p className="text-sm text-muted-foreground">{user.email}</p>
                     </div>
-                    <Badge>{user.role}</Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge>{user.role}</Badge>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8 text-destructive hover:text-destructive"
+                        onClick={() => handleDeleteUser(user)}
+                      >
+                        <IconTrash className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -541,6 +672,92 @@ export default function MerchantDetailPage() {
               disabled={!newUser.name || !newUser.email}
             >
               Create User
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Delete User Confirmation Dialog */}
+      <Dialog open={deleteUserOpen} onOpenChange={setDeleteUserOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <IconTrash className="h-5 w-5 text-destructive" />
+              Delete User
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete <strong>{userToDelete?.name}</strong>? This action cannot be undone and will require OTP verification.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="p-4 bg-destructive/10 rounded-lg border border-destructive/20">
+              <div className="flex items-center gap-2 text-destructive">
+                <IconShield className="h-4 w-4" />
+                <span className="text-sm font-medium">Security Notice</span>
+              </div>
+              <p className="text-sm text-destructive/80 mt-1">
+                This action requires OTP verification sent to your registered email address.
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={cancelUserDeletion}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={initiateUserDeletion}>
+              Proceed to OTP Verification
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* OTP Verification Dialog */}
+      <Dialog open={otpDialogOpen} onOpenChange={setOtpDialogOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <IconShield className="h-5 w-5 text-primary" />
+              OTP Verification
+            </DialogTitle>
+            <DialogDescription>
+              Enter the 6-digit OTP sent to your registered email address to confirm user deletion.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="otp">OTP Code</Label>
+              <Input
+                id="otp"
+                type="text"
+                placeholder="Enter 6-digit OTP"
+                value={otpCode}
+                onChange={(e) => setOtpCode(e.target.value)}
+                maxLength={6}
+                className={otpError ? "border-destructive" : ""}
+              />
+              {otpError && (
+                <p className="text-sm text-destructive">{otpError}</p>
+              )}
+            </div>
+            <div className="p-3 bg-muted/50 rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                <strong>User to delete:</strong> {userToDelete?.name} ({userToDelete?.email})
+              </p>
+            </div>
+            <div className="text-xs text-muted-foreground">
+              Demo OTP: 123456 (In production, this would be sent to your email)
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={cancelUserDeletion} disabled={isVerifyingOtp}>
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={verifyOtpAndDeleteUser}
+              disabled={!otpCode || otpCode.length !== 6 || isVerifyingOtp}
+            >
+              {isVerifyingOtp ? "Verifying..." : "Verify & Delete"}
             </Button>
           </DialogFooter>
         </DialogContent>
