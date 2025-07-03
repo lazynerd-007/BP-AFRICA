@@ -25,7 +25,6 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { 
   IconBuilding, 
@@ -37,8 +36,6 @@ import {
   IconPhone,
   IconWallet,
   IconCoins,
-  IconId,
-  IconCalendar,
   IconUpload,
   IconUserCheck
 } from "@tabler/icons-react";
@@ -796,6 +793,95 @@ export function CreateMerchant() {
                     )}
                   </CardContent>
                 </Card>
+
+                {/* OVA Configuration */}
+                <Card>
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <IconPhone className="h-5 w-5" />
+                      OVA Configuration
+                    </CardTitle>
+                    <p className="text-muted-foreground text-sm mt-1">
+                      Select virtual accounts for mobile money providers
+                    </p>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="mtn"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">MTN OVA</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select MTN virtual account" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="mtn_ova_001">MTN-OVA-001 (0244123001)</SelectItem>
+                              <SelectItem value="mtn_ova_002">MTN-OVA-002 (0244123002)</SelectItem>
+                              <SelectItem value="mtn_ova_003">MTN-OVA-003 (0244123003)</SelectItem>
+                              <SelectItem value="mtn_ova_004">MTN-OVA-004 (0244123004)</SelectItem>
+                              <SelectItem value="mtn_ova_005">MTN-OVA-005 (0244123005)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="airtel"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">AirtelTigo OVA</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select AirtelTigo virtual account" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="airtel_ova_001">AIRTEL-OVA-001 (0272123001)</SelectItem>
+                              <SelectItem value="airtel_ova_002">AIRTEL-OVA-002 (0272123002)</SelectItem>
+                              <SelectItem value="airtel_ova_003">AIRTEL-OVA-003 (0272123003)</SelectItem>
+                              <SelectItem value="airtel_ova_004">AIRTEL-OVA-004 (0272123004)</SelectItem>
+                              <SelectItem value="airtel_ova_005">AIRTEL-OVA-005 (0272123005)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="telecel"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">Telecel OVA</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Telecel virtual account" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="telecel_ova_001">TELECEL-OVA-001 (0200123001)</SelectItem>
+                              <SelectItem value="telecel_ova_002">TELECEL-OVA-002 (0200123002)</SelectItem>
+                              <SelectItem value="telecel_ova_003">TELECEL-OVA-003 (0200123003)</SelectItem>
+                              <SelectItem value="telecel_ova_004">TELECEL-OVA-004 (0200123004)</SelectItem>
+                              <SelectItem value="telecel_ova_005">TELECEL-OVA-005 (0200123005)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                </Card>
               </div>
 
                             {/* Right Column - Configuration */}
@@ -974,95 +1060,6 @@ export function CreateMerchant() {
                               </label>
                             </div>
                           </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </CardContent>
-                </Card>
-
-                {/* OVA Configuration */}
-                <Card>
-                  <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center gap-2 text-lg">
-                      <IconPhone className="h-5 w-5" />
-                      OVA Configuration
-                    </CardTitle>
-                    <p className="text-muted-foreground text-sm mt-1">
-                      Select virtual accounts for mobile money providers
-                    </p>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="mtn"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-sm font-medium">MTN OVA</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select MTN virtual account" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="mtn_ova_001">MTN-OVA-001 (0244123001)</SelectItem>
-                              <SelectItem value="mtn_ova_002">MTN-OVA-002 (0244123002)</SelectItem>
-                              <SelectItem value="mtn_ova_003">MTN-OVA-003 (0244123003)</SelectItem>
-                              <SelectItem value="mtn_ova_004">MTN-OVA-004 (0244123004)</SelectItem>
-                              <SelectItem value="mtn_ova_005">MTN-OVA-005 (0244123005)</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="airtel"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-sm font-medium">AirtelTigo OVA</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select AirtelTigo virtual account" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="airtel_ova_001">AIRTEL-OVA-001 (0272123001)</SelectItem>
-                              <SelectItem value="airtel_ova_002">AIRTEL-OVA-002 (0272123002)</SelectItem>
-                              <SelectItem value="airtel_ova_003">AIRTEL-OVA-003 (0272123003)</SelectItem>
-                              <SelectItem value="airtel_ova_004">AIRTEL-OVA-004 (0272123004)</SelectItem>
-                              <SelectItem value="airtel_ova_005">AIRTEL-OVA-005 (0272123005)</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="telecel"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-sm font-medium">Telecel OVA</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Telecel virtual account" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="telecel_ova_001">TELECEL-OVA-001 (0200123001)</SelectItem>
-                              <SelectItem value="telecel_ova_002">TELECEL-OVA-002 (0200123002)</SelectItem>
-                              <SelectItem value="telecel_ova_003">TELECEL-OVA-003 (0200123003)</SelectItem>
-                              <SelectItem value="telecel_ova_004">TELECEL-OVA-004 (0200123004)</SelectItem>
-                              <SelectItem value="telecel_ova_005">TELECEL-OVA-005 (0200123005)</SelectItem>
-                            </SelectContent>
-                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
