@@ -225,13 +225,6 @@ export function CreateSubMerchant() {
     },
   });
 
-  // Load sub-merchant data when in edit mode
-  useEffect(() => {
-    if (isEditMode && subMerchantId) {
-      loadSubMerchantData(subMerchantId);
-    }
-  }, [isEditMode, subMerchantId, loadSubMerchantData]);
-
   const loadSubMerchantData = useCallback(async (id: string) => {
     try {
       setIsLoading(true);
@@ -279,6 +272,13 @@ export function CreateSubMerchant() {
       setIsLoading(false);
     }
   }, [form, setUseParentSettlement, setInheritSurcharge, setSettlementType]);
+
+  // Load sub-merchant data when in edit mode
+  useEffect(() => {
+    if (isEditMode && subMerchantId) {
+      loadSubMerchantData(subMerchantId);
+    }
+  }, [isEditMode, subMerchantId, loadSubMerchantData]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
