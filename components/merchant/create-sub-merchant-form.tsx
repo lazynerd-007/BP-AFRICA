@@ -963,7 +963,8 @@ export function CreateSubMerchant() {
                                         type="number" 
                                         step="0.01" 
                                         placeholder={defaultCharge.amount.toString()} 
-                                        {...field} 
+                                        {...field}
+                                        value={field.value as string || ""}
                                       />
                                     </FormControl>
                                     <FormMessage />
@@ -985,7 +986,8 @@ export function CreateSubMerchant() {
                                           type="number" 
                                           step="0.01" 
                                           placeholder={defaultCharge.percentage.toString()} 
-                                          {...field} 
+                                          {...field}
+                                          value={field.value as string || ""}
                                         />
                                       </FormControl>
                                       <FormMessage />
@@ -1004,7 +1006,8 @@ export function CreateSubMerchant() {
                                           type="number" 
                                           step="0.01" 
                                           placeholder={defaultCharge.cap.toString()} 
-                                          {...field} 
+                                          {...field}
+                                          value={field.value as string || ""}
                                         />
                                       </FormControl>
                                       <FormMessage />
