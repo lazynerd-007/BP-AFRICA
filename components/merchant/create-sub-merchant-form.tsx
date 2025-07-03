@@ -25,7 +25,6 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { 
   IconBuilding, 
@@ -33,12 +32,7 @@ import {
   IconCreditCard, 
   IconSettings, 
   IconBuildingBank,
-  IconDeviceMobile,
-  IconPhone,
-  IconWallet,
-  IconCoins,
-  IconUpload,
-  IconUserCheck
+  IconPhone
 } from "@tabler/icons-react";
 
 // Mock parent merchants data
@@ -63,9 +57,6 @@ const formSchema = z.object({
   
   // Surcharge Details
   inheritSurcharge: z.boolean().default(true),
-  totalSurcharge: z.string().optional(),
-  merchantSurcharge: z.string().optional(),
-  customerSurcharge: z.string().optional(),
   
   // Settlement Account
   useParentSettlement: z.boolean().default(true),
@@ -88,17 +79,6 @@ const formSchema = z.object({
 
 }).refine(
   (data) => {
-    if (!data.inheritSurcharge) {
-      return !!data.totalSurcharge && !!data.merchantSurcharge && !!data.customerSurcharge;
-    }
-    return true;
-  },
-  {
-    message: "Surcharge details are required when not inheriting from parent",
-    path: ["totalSurcharge"],
-  }
-).refine(
-  (data) => {
     if (!data.useParentSettlement) {
       return !!data.merchantBank && !!data.accountNumber && !!data.accountName;
     }
@@ -112,7 +92,6 @@ const formSchema = z.object({
 
 export function CreateSubMerchant() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [inheritSurcharge, setInheritSurcharge] = useState(true);
   const [useParentSettlement, setUseParentSettlement] = useState(true);
 
 
@@ -127,9 +106,6 @@ export function CreateSubMerchant() {
       tinNumber: "",
       phoneNumber: "",
       inheritSurcharge: true,
-      totalSurcharge: "",
-      merchantSurcharge: "",
-      customerSurcharge: "",
       useParentSettlement: true,
       merchantBank: "",
       branch: "",
@@ -347,7 +323,7 @@ export function CreateSubMerchant() {
                           <div className="space-y-1 leading-none">
                             <FormLabel className="text-sm font-medium">Use Parent Settlement Account</FormLabel>
                             <p className="text-xs text-muted-foreground">
-                              Funds will be settled to the parent merchant's account
+                              Funds will be settled to the parent merchant&apos;s account
                             </p>
                           </div>
                         </FormItem>
@@ -557,10 +533,7 @@ export function CreateSubMerchant() {
                           <FormControl>
                             <Checkbox
                               checked={field.value}
-                              onCheckedChange={(checked) => {
-                                field.onChange(checked);
-                                setInheritSurcharge(!!checked);
-                              }}
+                              onCheckedChange={field.onChange}
                             />
                           </FormControl>
                           <div className="space-y-1 leading-none">
