@@ -431,101 +431,108 @@ export default function FinancialReportsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Partner Bank</label>
-                  <Select value={selectedBank} onValueChange={setSelectedBank}>
-                    <SelectTrigger className="w-full min-w-[200px]">
-                      <SelectValue placeholder="-- All --" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {ghanaBanks.map((bank) => (
-                        <SelectItem key={bank.id} value={bank.id}>
-                          {bank.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Merchant</label>
-                  <Select value={selectedMerchant} onValueChange={setSelectedMerchant}>
-                    <SelectTrigger className="w-full min-w-[200px]">
-                      <SelectValue placeholder="-- All --" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <div className="p-2">
-                        <Input
-                          placeholder="Search merchants..."
-                          value={merchantSearchTerm}
-                          onChange={(e) => setMerchantSearchTerm(e.target.value)}
-                          className="mb-2"
-                        />
-                      </div>
-                      <SelectItem value="all">-- All --</SelectItem>
-                      {filteredMerchants
-                        .filter(m => m.parent)
-                        .map((merchant) => (
+              <div className="space-y-6">
+                {/* Filter Controls */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Partner Bank</label>
+                    <Select value={selectedBank} onValueChange={setSelectedBank}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="-- All --" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {ghanaBanks.map((bank) => (
+                          <SelectItem key={bank.id} value={bank.id}>
+                            {bank.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Merchant</label>
+                    <Select value={selectedMerchant} onValueChange={setSelectedMerchant}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="-- All --" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <div className="p-2">
+                          <Input
+                            placeholder="Search merchants..."
+                            value={merchantSearchTerm}
+                            onChange={(e) => setMerchantSearchTerm(e.target.value)}
+                            className="mb-2"
+                          />
+                        </div>
+                        <SelectItem value="all">-- All --</SelectItem>
+                        {filteredMerchants
+                          .filter(m => m.parent)
+                          .map((merchant) => (
+                            <SelectItem key={merchant.id} value={merchant.id}>
+                              {merchant.name}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Sub Merchant</label>
+                    <Select value={selectedSubMerchant} onValueChange={setSelectedSubMerchant}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="-- All --" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">-- All --</SelectItem>
+                        {availableSubMerchants.map((merchant) => (
                           <SelectItem key={merchant.id} value={merchant.id}>
                             {merchant.name}
                           </SelectItem>
                         ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Sub Merchant</label>
-                  <Select value={selectedSubMerchant} onValueChange={setSelectedSubMerchant}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="-- All --" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">-- All --</SelectItem>
-                      {availableSubMerchants.map((merchant) => (
-                        <SelectItem key={merchant.id} value={merchant.id}>
-                          {merchant.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Date Range</label>
-                  <div className="flex gap-2 min-w-[200px]">
-                    <Input
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      className="w-1/2 min-w-[100px]"
-                    />
-                    <Input
-                      type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      className="w-1/2 min-w-[100px]"
-                    />
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2 xl:col-span-2">
+                    <label className="text-sm font-medium">Date Range</label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className="flex-1"
+                        placeholder="Start date"
+                      />
+                      <Input
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        className="flex-1"
+                        placeholder="End date"
+                      />
+                    </div>
                   </div>
                 </div>
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Transaction Type</label>
-                  <Select value={transactionType} onValueChange={setTransactionType}>
-                    <SelectTrigger className="w-full min-w-[150px]">
-                      <SelectValue placeholder="-- All --" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">-- All --</SelectItem>
-                      <SelectItem value="collection">Collection</SelectItem>
-                      <SelectItem value="payout">Payout</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
 
-                <div className="space-y-2 lg:col-span-5 flex justify-end">
-                  <div className="flex space-x-2">
+                {/* Second Row for Transaction Type and Actions */}
+                <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end justify-between">
+                  <div className="space-y-2 w-full sm:w-auto sm:min-w-[200px]">
+                    <label className="text-sm font-medium">Transaction Type</label>
+                    <Select value={transactionType} onValueChange={setTransactionType}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="-- All --" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">-- All --</SelectItem>
+                        <SelectItem value="collection">Collection</SelectItem>
+                        <SelectItem value="payout">Payout</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <div className="flex space-x-2">
                     <Dialog open={showDownloadStatementDialog} onOpenChange={setShowDownloadStatementDialog}>
                       <DialogTrigger asChild>
                         <Button variant="outline" className="flex items-center gap-1">
@@ -722,6 +729,7 @@ export default function FinancialReportsPage() {
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
+                    </div>
                   </div>
                 </div>
               </div>

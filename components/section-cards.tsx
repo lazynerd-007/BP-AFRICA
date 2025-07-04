@@ -17,15 +17,15 @@ export function SectionCards() {
   const { formatCurrency } = useCurrency();
   
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:gap-6">
       <Card className="flex flex-col h-full">
         <CardHeader>
           <CardDescription>Total Revenue</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums">
             {formatCurrency(1250.00)}
           </CardTitle>
-          <CardAction className="pr-1.5">
-            <Badge variant="outline" className="flex items-center gap-1 whitespace-nowrap">
+          <CardAction className="pr-1.5 ml-2">
+            <Badge variant="outline" className="flex items-center gap-1 whitespace-nowrap text-xs">
               <IconTrendingUp className="size-3" />
               +12.5%
             </Badge>
@@ -46,8 +46,8 @@ export function SectionCards() {
           <CardTitle className="text-2xl font-semibold tabular-nums">
             1,234
           </CardTitle>
-          <CardAction className="pr-1.5">
-            <Badge variant="outline" className="flex items-center gap-1 whitespace-nowrap">
+          <CardAction className="pr-1.5 ml-2">
+            <Badge variant="outline" className="flex items-center gap-1 whitespace-nowrap text-xs">
               <IconTrendingDown className="size-3" />
               -20%
             </Badge>
@@ -68,8 +68,8 @@ export function SectionCards() {
           <CardTitle className="text-2xl font-semibold tabular-nums">
             45,678
           </CardTitle>
-          <CardAction className="pr-1.5">
-            <Badge variant="outline" className="flex items-center gap-1 whitespace-nowrap">
+          <CardAction className="pr-1.5 ml-2">
+            <Badge variant="outline" className="flex items-center gap-1 whitespace-nowrap text-xs">
               <IconTrendingUp className="size-3" />
               +12.5%
             </Badge>
@@ -88,8 +88,8 @@ export function SectionCards() {
           <CardTitle className="text-2xl font-semibold tabular-nums">
             4.5%
           </CardTitle>
-          <CardAction className="pr-1.5">
-            <Badge variant="outline" className="flex items-center gap-1 whitespace-nowrap">
+          <CardAction className="pr-1.5 ml-2">
+            <Badge variant="outline" className="flex items-center gap-1 whitespace-nowrap text-xs">
               <IconTrendingUp className="size-3" />
               +4.5%
             </Badge>
