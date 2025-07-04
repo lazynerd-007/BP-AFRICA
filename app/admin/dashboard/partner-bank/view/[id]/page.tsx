@@ -444,7 +444,7 @@ export default function PartnerBankDetailPage() {
         <Button variant="outline" onClick={handleGoBack}>
           Go Back
         </Button>
-        <Button variant="default">
+        <Button variant="default" onClick={() => router.push(`/admin/dashboard/partner-bank/create?id=${params.id}`)}>
           Edit Bank Details
         </Button>
       </div>
