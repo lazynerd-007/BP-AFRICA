@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useState } from "react"
 import { toast } from "sonner"
 
@@ -14,10 +15,10 @@ export default function CreatePartnerBank() {
     bankName: string;
     emailAddress: string;
     accountManager: string;
-    settlementFile: File | null;
-    commissionBankName: string;
-    commissionAccountName: string;
-    commissionAccountNumber: string;
+    settlementFileDR: File | null;
+    settlementFileCR: File | null;
+    settlementFrequency: string;
+    settlementType: string;
     commissionRatio: string;
     settlementBankName: string;
     settlementAccountName: string;
@@ -30,12 +31,10 @@ export default function CreatePartnerBank() {
     bankName: "",
     emailAddress: "",
     accountManager: "",
-    settlementFile: null,
-    
-    // Commission Bank Details
-    commissionBankName: "",
-    commissionAccountName: "",
-    commissionAccountNumber: "",
+    settlementFileDR: null,
+    settlementFileCR: null,
+    settlementFrequency: "",
+    settlementType: "",
     commissionRatio: "",
     
     // Settlement Bank Details
@@ -54,9 +53,14 @@ export default function CreatePartnerBank() {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
   
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+  
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name } = e.target
     if (e.target.files && e.target.files[0]) {
-      setFormData(prev => ({ ...prev, settlementFile: e.target.files![0] }))
+      setFormData(prev => ({ ...prev, [name]: e.target.files![0] }))
     }
   }
   
@@ -77,10 +81,10 @@ export default function CreatePartnerBank() {
       bankName: "",
       emailAddress: "",
       accountManager: "",
-      settlementFile: null,
-      commissionBankName: "",
-      commissionAccountName: "",
-      commissionAccountNumber: "",
+      settlementFileDR: null,
+      settlementFileCR: null,
+      settlementFrequency: "",
+      settlementType: "",
       commissionRatio: "",
       settlementBankName: "",
       settlementAccountName: "",
@@ -90,9 +94,11 @@ export default function CreatePartnerBank() {
       momoAccountName: "",
     })
     
-    // Reset file input
-    const fileInput = document.getElementById("settlementFile") as HTMLInputElement
-    if (fileInput) fileInput.value = ""
+    // Reset file inputs
+    const fileInputDR = document.getElementById("settlementFileDR") as HTMLInputElement
+    const fileInputCR = document.getElementById("settlementFileCR") as HTMLInputElement
+    if (fileInputDR) fileInputDR.value = ""
+    if (fileInputCR) fileInputCR.value = ""
   }
   
   return (
@@ -146,56 +152,6 @@ export default function CreatePartnerBank() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="settlementFile">Settlement File</Label>
-              <Input 
-                id="settlementFile"
-                name="settlementFile"
-                type="file"
-                onChange={handleFileChange}
-                className="cursor-pointer"
-              />
-            </div>
-          </div>
-          
-          {/* Commission Bank Details Section */}
-          <h3 className="text-lg font-medium mb-4">Commission Bank Details</h3>
-          <Separator className="mb-6" />
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <div className="space-y-2">
-              <Label htmlFor="commissionBankName">Bank Name</Label>
-              <Input 
-                id="commissionBankName"
-                name="commissionBankName"
-                value={formData.commissionBankName}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="commissionAccountName">Account Name</Label>
-              <Input 
-                id="commissionAccountName"
-                name="commissionAccountName"
-                value={formData.commissionAccountName}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="commissionAccountNumber">Account Number</Label>
-              <Input 
-                id="commissionAccountNumber"
-                name="commissionAccountNumber"
-                value={formData.commissionAccountNumber}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
               <Label htmlFor="commissionRatio">Commission Ratio</Label>
               <Input 
                 id="commissionRatio"
@@ -206,8 +162,72 @@ export default function CreatePartnerBank() {
                 max="1"
                 value={formData.commissionRatio}
                 onChange={handleChange}
+                placeholder="e.g., 0.15 for 15%"
                 required
               />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="settlementFrequency">Settlement Frequency</Label>
+              <Select value={formData.settlementFrequency} onValueChange={(value) => handleSelectChange("settlementFrequency", value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select frequency" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="daily">Daily</SelectItem>
+                  <SelectItem value="weekly">Weekly</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="settlementType">Settlement Type</Label>
+              <Select value={formData.settlementType} onValueChange={(value) => handleSelectChange("settlementType", value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="bank">Bank Settlement</SelectItem>
+                  <SelectItem value="momo">MOMO Settlement</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          {/* Settlement Files Section */}
+          <h3 className="text-lg font-medium mb-4">Settlement Files</h3>
+          <Separator className="mb-6" />
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="space-y-2">
+              <Label htmlFor="settlementFileDR">Settlement File (DR - Debit)</Label>
+              <Input 
+                id="settlementFileDR"
+                name="settlementFileDR"
+                type="file"
+                onChange={handleFileChange}
+                className="cursor-pointer"
+                accept=".csv,.xlsx,.xls"
+              />
+              <p className="text-xs text-muted-foreground">
+                Upload debit settlement file (CSV, Excel)
+              </p>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="settlementFileCR">Settlement File (CR - Credit)</Label>
+              <Input 
+                id="settlementFileCR"
+                name="settlementFileCR"
+                type="file"
+                onChange={handleFileChange}
+                className="cursor-pointer"
+                accept=".csv,.xlsx,.xls"
+              />
+              <p className="text-xs text-muted-foreground">
+                Upload credit settlement file (CSV, Excel)
+              </p>
             </div>
           </div>
           
@@ -257,19 +277,16 @@ export default function CreatePartnerBank() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             <div className="space-y-2">
               <Label htmlFor="momoProvider">MOMO Provider</Label>
-              <select
-                id="momoProvider"
-                name="momoProvider"
-                value={formData.momoProvider}
-                onChange={(e) => setFormData(prev => ({ ...prev, momoProvider: e.target.value }))}
-                className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
-                required
-              >
-                <option value="">Select Provider</option>
-                <option value="MTN Mobile Money">MTN Mobile Money</option>
-                <option value="Vodafone Cash">Vodafone Cash</option>
-                <option value="AirtelTigo Money">AirtelTigo Money</option>
-              </select>
+              <Select value={formData.momoProvider} onValueChange={(value) => handleSelectChange("momoProvider", value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Provider" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="MTN Mobile Money">MTN Mobile Money</SelectItem>
+                  <SelectItem value="Vodafone Cash">Vodafone Cash</SelectItem>
+                  <SelectItem value="AirtelTigo Money">AirtelTigo Money</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             
             <div className="space-y-2">

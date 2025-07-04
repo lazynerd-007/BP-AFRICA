@@ -50,14 +50,6 @@ const paymentMethodData = [
   { name: "USSD", value: 10 },
 ];
 
-const locationData = [
-  { name: "Lagos", value: 35 },
-  { name: "Accra", value: 25 },
-  { name: "Nairobi", value: 20 },
-  { name: "Abuja", value: 10 },
-  { name: "Kumasi", value: 10 },
-];
-
 // New usage data for POS, API, Mobile
 const usageData = [
   { name: "POS", value: 45 },
@@ -384,7 +376,6 @@ export default function AnalyticsPage() {
       <Tabs defaultValue="transactions" className="w-full">
         <TabsList>
           <TabsTrigger value="transactions">Transaction Breakdown</TabsTrigger>
-          <TabsTrigger value="locations">Geographic Analysis</TabsTrigger>
           <TabsTrigger value="devices">Usage Analysis</TabsTrigger>
         </TabsList>
         
@@ -448,86 +439,6 @@ export default function AnalyticsPage() {
           </div>
         </TabsContent>
         
-        <TabsContent value="locations" className="mt-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Top Locations</CardTitle>
-                <CardDescription>
-                  Transaction volume by location
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[300px]">
-                  <ChartPieComponent data={locationData} />
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Regional Performance</CardTitle>
-                <CardDescription>
-                  Success rates by region
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium">Lagos</p>
-                      <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                        <div className="bg-blue-500 h-full rounded-full" style={{ width: "96.5%" }}></div>
-                      </div>
-                    </div>
-                    <p className="font-medium">96.5%</p>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium">Accra</p>
-                      <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                        <div className="bg-blue-500 h-full rounded-full" style={{ width: "94.8%" }}></div>
-                      </div>
-                    </div>
-                    <p className="font-medium">94.8%</p>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium">Nairobi</p>
-                      <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                        <div className="bg-blue-500 h-full rounded-full" style={{ width: "93.2%" }}></div>
-                      </div>
-                    </div>
-                    <p className="font-medium">93.2%</p>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium">Abuja</p>
-                      <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                        <div className="bg-blue-500 h-full rounded-full" style={{ width: "92.1%" }}></div>
-                      </div>
-                    </div>
-                    <p className="font-medium">92.1%</p>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium">Kumasi</p>
-                      <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                        <div className="bg-blue-500 h-full rounded-full" style={{ width: "91.5%" }}></div>
-                      </div>
-                    </div>
-                    <p className="font-medium">91.5%</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-        
         <TabsContent value="devices" className="mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card>
@@ -577,10 +488,10 @@ export default function AnalyticsPage() {
                     <div className="space-y-1">
                       <p className="text-sm font-medium">Mobile</p>
                       <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                        <div className="bg-purple-500 h-full rounded-full" style={{ width: "93.5%" }}></div>
+                        <div className="bg-purple-500 h-full rounded-full" style={{ width: "94.3%" }}></div>
                       </div>
                     </div>
-                    <p className="font-medium">93.5%</p>
+                    <p className="font-medium">94.3%</p>
                   </div>
                 </div>
               </CardContent>
