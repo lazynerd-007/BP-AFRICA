@@ -7,11 +7,11 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useSearchParams, useRouter } from "next/navigation"
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, Suspense } from "react"
 import { toast } from "sonner"
 import { IconArrowLeft, IconBuilding } from "@tabler/icons-react"
 
-export default function CreatePartnerBank() {
+function CreatePartnerBankContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const bankId = searchParams.get('id')
@@ -434,4 +434,19 @@ export default function CreatePartnerBank() {
       </div>
     </div>
   )
-} 
+}
+
+export default function CreatePartnerBank() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-muted/30 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    }>
+      <CreatePartnerBankContent />
+    </Suspense>
+  )
+}
